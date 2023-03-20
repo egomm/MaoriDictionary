@@ -1,0 +1,102 @@
+/* Set background color */
+body {
+  background-color: #f8f9fa;
+}
+
+/* Style for the header */
+header {
+  background-color: #343a40;
+  color: #fff;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Style for the logo */
+.logo {
+    font-size: 1.5rem;
+    font-weight: normal;
+    text-transform: none;
+}
+
+/* Style for the navigation links */
+nav {
+  display: flex;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 1.2rem;
+}
+
+/* Style for the search box */
+.search-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.search-box input[type="text"] {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  font-size: 1.2rem;
+  width: 60%;
+  margin-bottom: 10px;
+}
+
+.search-box button {
+  background-color: #343a40;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* Centre search box */
+.centre-search {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.centre-search input[type="text"] {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    font-size: 1.2rem;
+    width: 60%;
+    margin-bottom: 10px;
+}
+
+.centre-search button {
+    background-color: #343a40;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+/* Style for the footer */
+footer {
+  background-color: #343a40;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
