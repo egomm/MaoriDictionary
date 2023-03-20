@@ -33,6 +33,33 @@
 .header .search-box button {
     background-color: #dc3545;
     color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Main search in the centre */
+.main-content .centre-search {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.main-content .centre-search input[type="text"] {
+    padding: 8px;
+    border-radius: 50px;
+    outline-style: hidden;
+    border-style: groove;
+    border-width: thin;
+    outline-width: thick;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.main-content .centre-search button {
+    background-color: #dc3545;
+    color: #fff;
     border: none;
     padding: 8px 12px;
     border-radius: 5px;
