@@ -11,7 +11,7 @@
 .header .logo {
     font-size: 1.5em;
     font-weight: bold;
-    text-transform: uppercase;
+    text-transform: none;
     letter-spacing: 2px;
     margin: 0;
 }
