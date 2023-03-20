@@ -1,97 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
-          crossorigin="anonymous">
-
     <title>Maori Dictionary</title>
-    <style>
-        /* Header */
-        .header {
-            background-color: #333;
-            color: #fff;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
-        .header .logo {
-            font-size: 1.5em;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 0;
-        }
-
-        .header .search-box {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-        }
-
-        .header .search-box input[type="text"] {
-            padding: 8px;
-            border-radius: 5px;
-            border: none;
-            font-size: 16px;
-            margin-right: 10px;
-        }
-
-        .header .search-box button {
-            background-color: #dc3545;
-            color: #fff;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        /* Main content */
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 500px;
-        }
-
-        .main-content h1 {
-            font-size: 48px;
-            margin-bottom: 30px;
-        }
-    </style>
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
+
 <body>
-<header class="header">
-    <h1 class="logo">Maori Dictionary</h1>
-    <div class="search-box">
-        <input type="text" placeholder="Search...">
-        <button type="button">Search</button>
+    <header class="header">
+        <h1 class="logo">Maori Dictionary</h1>
+        <div class="search-box">
+            <input type="text" placeholder="Search...">
+            <button type="button">Search</button>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <h1>Welcome to my website!</h1>
+        <p>Here you can find all the information you need about my products and services.</p>
+        <div class="centre-search">
+            <input type="text" placeholder="Search...">
+            <button type="button">Search</button>
+        </div>
     </div>
-</header>
 
-<div class="main-content">
-    <h1>Welcome to my website!</h1>
-    <p>Here you can find all the information you need about my products and services.</p>
-    <div class="centre-search">
-        <input type="text" placeholder="Search...">
-        <button type="button">Search</button>
-    </div>
-</div>
-
-<!--<footer class="footer">
-    <p>&copy; 2022 My Website. All Rights Reserved.</p>
-</footer>-->
-
-    <!-- Bootstrap core JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-LPQz8iBbDlKbJ1iX9+/Hb5e5oAQNGgiNrjRv70zZkdSEh1injKgzsbN/nm+nX9xM" crossorigin="anonymous"></script>
-  </body>
+    <!--<footer class="footer">
+        <p>&copy; 2022 My Website. All Rights Reserved.</p>
+    </footer>-->
+</body>
 </html>
