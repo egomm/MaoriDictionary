@@ -1,21 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maori Dictionary</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-
-    <!-- Custom CSS -->
+    <meta charset="utf-8">
+    <title>smile | home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"/>
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
 
 <body>
 <nav>
     <div class="container">
-        <div class="navbar-brand">smile.</div>
+        <div class="navbar-brand">Maori Dictionary</div>
         <div class="navbar-links">
             <a href="/">home</a>
             <a href="/menu/1">menu</a>
@@ -41,17 +39,6 @@
         {% endblock %}
     </main>
 </div>
-    <div class="main-content">
-        <h1>Maori dictionary</h1>
-        <p>Kia ora</p>
-        <div class="centre-search">
-            <input type="text" placeholder="Search...">
-            <button type="button">Search</button>
-        </div>
-    </div>
-
-    <!--<footer class="footer">
-        <p>&copy; 2022 My Website. All Rights Reserved.</p>
-    </footer>-->
 </body>
+
 </html>

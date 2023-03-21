@@ -1,3 +1,50 @@
+* {
+    font-family: 'Manrope', sans-serif;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: rgba(236, 240, 241, 1.0);
+}
+
+.container {
+    width: 60vw;
+    margin: auto;
+    /*background-color: rgba(52, 73, 94, 1.0);*/
+    /*color: rgba(236, 240, 241, 1.0);*/
+}
+
+.container::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+img {
+    object-position: bottom;
+    object-fit: cover;
+}
+
+h1 {
+    text-align: center;
+    font-weight: 200;
+    font-size: 4rem;
+    margin: 0;
+}
+
+h2 {
+    font-size: 2rem;
+    text-align: center;
+    margin: 0 0 0.5rem 0;
+}
+
+h3, h4 {
+    text-align: center;
+    margin: 2rem 0 0.5rem 0;
+}
+
 /* Header */
 .header {
     background-color: #333;
@@ -38,6 +85,46 @@
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
+}
+
+nav {
+    background-color: rgba(44, 62, 80, 1.0); /* darkest blue */
+    text-align: center;
+    /*color: rgba(52, 152, 219, 1.0);!*light blue*!*/
+    font-size: 1.5rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.7rem;
+    color: rgba(52, 152, 219, 1.0); /*light blue*/
+}
+
+.navbar-brand {
+    display: inline;
+    float: left;
+}
+
+.navbar-links {
+    display: inline;
+    float: right;
+}
+
+nav a {
+    /*margin:0 0.5rem;*/
+    padding: 0 0.5rem;
+    font-size: 1.5rem;
+    /*border: 1px solid rgba(52, 152, 219, 1.0);*/
+    /*border-radius:0.5rem;*/
+}
+
+nav a:hover {
+    /*color: rgba(44, 62, 80, 1.0); !* darkest blue *!*/
+    /*background-color: rgba(52, 152, 219, 1.0); !*light blue*!*/
+    border-bottom: 3px solid rgba(52, 152, 219, 1.0);
+}
+
+a, a:visited {
+    color: rgba(52, 152, 219, 1.0);
+    /*color:hotpink;*/
+    text-decoration: none;
 }
 
 /* Main search in the centre */
@@ -85,4 +172,10 @@
 .main-content h1 {
     font-size: 48px;
     margin-bottom: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+    .container {
+        width: 100%;
+    }
 }
