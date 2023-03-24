@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>smile | home</title>
+    <title>{% block title %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"/>
@@ -13,12 +13,9 @@
 <body>
 <nav>
     <div class="container">
-        <div class="navbar-brand">Maori Dictionary</div>
+        <div class="navbar-brand">Māori Dictionary</div>
         <div class="navbar-links">
             <a href="/">home</a>
-            <a href="/menu/1">menu</a>
-            <a href="/contact">contact</a>
-            <a href="/checkout">checkout</a>
             {% if logged_in %}
             <a href="/logout">logout</a>
             <a href="/admin">admin</a>
@@ -30,7 +27,7 @@
 </nav>
 <div class="container">
     <header>
-        <h1>smile</h1>
+        <h1>{% block header %}{% endblock %}</h1>
         <h2>{% block pageheading %}{% endblock %}</h2>
     </header>
 

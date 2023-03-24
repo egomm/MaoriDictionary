@@ -29,7 +29,7 @@ img {
 
 h1 {
     text-align: center;
-    font-weight: 200;
+    font-weight: bold;
     font-size: 4rem;
     margin: 0;
 }
@@ -88,13 +88,15 @@ h3, h4 {
 }
 
 nav {
-    background-color: rgba(44, 62, 80, 1.0); /* darkest blue */
+    background-color: rgba(51, 51, 51, 1.0); /* grey */
     text-align: center;
+    height: 5vh;
     /*color: rgba(52, 152, 219, 1.0);!*light blue*!*/
     font-size: 1.5rem;
     padding-top: 0.4rem;
     padding-bottom: 0.7rem;
-    color: rgba(52, 152, 219, 1.0); /*light blue*/
+    color: rgba(255, 255, 255, 1.0); /*white*/
+    font-weight: bold;
 }
 
 .navbar-brand {
@@ -118,11 +120,11 @@ nav a {
 nav a:hover {
     /*color: rgba(44, 62, 80, 1.0); !* darkest blue *!*/
     /*background-color: rgba(52, 152, 219, 1.0); !*light blue*!*/
-    border-bottom: 3px solid rgba(52, 152, 219, 1.0);
+    border-bottom: 3px solid rgba(255, 255, 255, 1.0);
 }
 
 a, a:visited {
-    color: rgba(52, 152, 219, 1.0);
+    color: rgba(255, 255, 255, 1.0);
     /*color:hotpink;*/
     text-decoration: none;
 }

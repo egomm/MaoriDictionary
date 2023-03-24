@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():  # put application's code here
-    return render_template('contact.html')
+    return render_template('newhome.html')
 
 
 if __name__ == '__main__':
