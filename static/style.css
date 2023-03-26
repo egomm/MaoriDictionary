@@ -1,17 +1,45 @@
 * {
     font-family: 'Manrope', sans-serif;
-    padding: 0;
-    margin: 0;
     box-sizing: border-box;
 }
 
-body {
-    background-color: rgba(236, 240, 241, 1.0);
+.search-bar {
+    width: 80%;
+    border: thin solid black;
+    background: rgba(255, 255, 255, 1.0);
+    display: flex;
+    align-items: center;
+    border-radius: 60px;
+    padding: 5px 10px;
+}
+
+.search-bar input {
+    background: transparent;
+    border: 0;
+    flex: 1;
+    outline: none;
+    padding: 24px 20px;
+    font-size: 24px;
+    color: #000;
+}
+
+.search-bar button {
+    border: none;
+    background: none;
+    filter: grayscale(1) invert(1);
+}
+
+::placeholder {
+    color: #000;
 }
 
 .container {
-    width: 60vw;
-    margin: auto;
+    width: 100%;
+    min-height: 100vh;
+    padding: 5%;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("images/ferns.jpg");
+    background-position: center;
+    background-size: cover;
     /*background-color: rgba(52, 73, 94, 1.0);*/
     /*color: rgba(236, 240, 241, 1.0);*/
 }
@@ -47,12 +75,12 @@ h3, h4 {
 
 /* Header */
 .header {
-    background-color: #333;
-    color: #fff;
-    padding: 15px;
+    background-color: rgba(51, 51, 51, 1.0);
+    height: 8vh;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: auto;
     width: 100%;
 }
 
@@ -90,11 +118,10 @@ h3, h4 {
 nav {
     background-color: rgba(51, 51, 51, 1.0); /* grey */
     text-align: center;
-    height: 5vh;
+    height: 8vh;
     /*color: rgba(52, 152, 219, 1.0);!*light blue*!*/
     font-size: 1.5rem;
-    padding-top: 0.4rem;
-    padding-bottom: 0.7rem;
+    padding: 0 2rem 0.7rem;
     color: rgba(255, 255, 255, 1.0); /*white*/
     font-weight: bold;
 }
@@ -127,38 +154,6 @@ a, a:visited {
     color: rgba(255, 255, 255, 1.0);
     /*color:hotpink;*/
     text-decoration: none;
-}
-
-/* Main search in the centre */
-.main-content .centre-search {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 75%;
-}
-
-.main-content .centre-search input[type="text"] {
-    padding: 8px;
-    border-radius: 50px;
-    outline-style: hidden;
-    border-style: groove;
-    border-width: thin;
-    outline-width: thick;
-    font-size: 16px;
-    width: 100%;
-    margin: 0 auto;
-    display: block;
-    box-sizing: border-box;
-}
-
-.main-content .centre-search button {
-    background-color: #dc3545;
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
 }
 
 /* Main content */
