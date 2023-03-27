@@ -37,8 +37,7 @@
     width: 100%;
     min-height: 100vh;
     padding: 5%;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("images/ferns.jpg");
-    background-position: center;
+    background: white center;
     background-size: cover;
     /*background-color: rgba(52, 73, 94, 1.0);*/
     /*color: rgba(236, 240, 241, 1.0);*/
@@ -50,12 +49,28 @@
     display: table;
 }
 
+.homecontainer {
+    width: 100%;
+    min-height: 100vh;
+    padding: 5%;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("images/ferns.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
+.homecontainer::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
 img {
     object-position: bottom;
     object-fit: cover;
 }
 
 h1 {
+    color: black;
     text-align: center;
     font-weight: bold;
     font-size: 4rem;
@@ -173,6 +188,9 @@ a, a:visited {
 
 @media only screen and (max-width: 600px) {
     .container {
+        width: 100%;
+    }
+    .homecontainer {
         width: 100%;
     }
 }
