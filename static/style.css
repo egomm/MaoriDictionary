@@ -16,7 +16,8 @@
 
 .search-bar input {
     background: transparent;
-    border: 0;
+    border: none;
+    /*border: 0;*/
     flex: 1;
     outline: none;
     padding: 24px 20px;
@@ -183,6 +184,18 @@ a, a:visited {
     align-items: center;
     height: 42.5vh;
     width: 100%;
+}
+
+@media only screen and (max-width: 400px) {
+    .search-bar input {
+        padding: 24px 0;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .search-bar {
+        width: 100vw;
+    }
 }
 
 @media only screen and (max-width: 600px) {
