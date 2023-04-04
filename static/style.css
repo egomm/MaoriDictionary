@@ -4,6 +4,7 @@
 }
 
 .search-bar {
+    margin-top: 5%;
     width: 80%;
     border: thin solid black;
     background: rgba(255, 255, 255, 1.0);
@@ -50,9 +51,10 @@
 }
 
 .homecontainer {
+    overflow: hidden;
     width: 100%;
-    min-height: 100vh;
-    padding: 5%;
+    height: 92vh; /* As the navbar is 8vh */
+    padding-top: 5%;
     background-image: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url("images/fernsNew.png");
     background-position: center;
     background-size: cover;
@@ -64,9 +66,19 @@
     display: table;
 }
 
-img {
+.main-content img {
     object-position: bottom;
     object-fit: cover;
+}
+
+.title img {
+    width: 40%;
+    pointer-events: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
 h2 {
@@ -171,13 +183,6 @@ a, a:visited {
     align-items: center;
     height: 42.5vh;
     width: 100%;
-}
-
-.main-content h1 {
-    color: white;
-    font-size: 144px;
-    margin-bottom: 10vh;
-/*    add some sort of text stroke (custom logo)*/
 }
 
 @media only screen and (max-width: 600px) {
