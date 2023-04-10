@@ -17,12 +17,10 @@
 .search-bar input {
     background: transparent;
     border: none;
-    /*border: 0;*/
     flex: 1;
     outline: none;
     padding: 24px 20px;
     font-size: 24px;
-    color: #000;
 }
 
 .search-bar button {
@@ -32,7 +30,7 @@
 }
 
 ::placeholder {
-    color: #000;
+    color: #454545;
 }
 
 .container {
@@ -140,7 +138,8 @@ nav {
     text-align: center;
     height: 8vh;
     /*color: rgba(52, 152, 219, 1.0);!*light blue*!*/
-    font-size: 1.5rem;
+    /*font-size: 1.5rem;*/
+    font-size: 3vh;
     padding: 0 2rem 0.7rem;
     color: rgba(255, 255, 255, 1.0); /*white*/
     font-weight: bold;
@@ -159,7 +158,8 @@ nav {
 nav a {
     /*margin:0 0.5rem;*/
     padding: 0 0.5rem;
-    font-size: 1.5rem;
+    /*font-size: 1.5rem;*/
+    font-size: 2.5vh;
     /*border: 1px solid rgba(52, 152, 219, 1.0);*/
     /*border-radius:0.5rem;*/
 }
@@ -182,13 +182,22 @@ a, a:visited {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 42.5vh;
+    height: 40vh;
     width: 100%;
 }
 
 @media only screen and (max-width: 400px) {
     .search-bar input {
         padding: 24px 0;
+    }
+}
+
+@media only screen and (max-width: 450px) {
+    nav {
+        font-size: 2.5vh;
+    }
+    nav a {
+        font-size: 2vh;
     }
 }
 
