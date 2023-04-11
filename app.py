@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -11,15 +11,17 @@ def home():  # put application's code here
 # make the request go under a custom thing
 @app.route('/contact', methods=['POST', 'GET'])
 def contact():
-    print(request.form.get("text"))
-    print(len(request.form.get("text")))
     return render_template('contact.html')
 
 
-@app.route('/translate/<word>', methods=['POST', 'GET'])
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    return render_template("login.html")
+
+
+@app.route('/translate', methods=['POST', 'GET'])
 def translate():
-     # need to validate the search
-     return render_template('translate.html')
+    return render_template('translate.html', text=request.form.get("text"))
 
 
 if __name__ == '__main__':
