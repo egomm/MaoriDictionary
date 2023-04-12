@@ -7,7 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"/>
-    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
@@ -20,7 +23,7 @@
             <a href="/logout">logout</a>
             <a href="/admin">admin</a>
             {% else %}
-            <a href="/login">login</a>
+            <a data-target="#myModal" role="button" data-toggle="modal">login</a>
             {% endif %}
         </div>
     </div>
@@ -37,5 +40,60 @@
     </main>
 </div>
 </body>
+
+
+ <div id="myModal" class="modal fade">
+      <div class="modal-dialog">
+           <div class="modal-content">
+                <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal">×</button>
+                     <h4 class="modal-title">Login</h4>
+                </div>
+                <div class="modal-body">
+                     <label>Username</label>
+                     <input type="text" name="username" id="username" class="form-control" />
+                     <br />
+                     <label>Password</label>
+                     <input type="password" name="password" id="password" class="form-control" />
+                     <br />
+                     <button type="button" name="login_button" id="login_button" class="btn btn-warning">Login</button>
+                </div>
+           </div>
+      </div>
+ </div>
+ <script>
+ $(document).ready(function(){
+      $('#login_button').click(function(){
+           var username = $('#username').val();
+           var password = $('#password').val();
+           if(username != '' && password != '')
+           {
+                $.ajax({
+                     url:"/action",
+                     method:"POST",
+                     data: {username:username, password:password},
+                     success:function(data)
+                     {
+                          alert(data);
+                          if(data == 'No-data')
+                          {
+                               alert("Invalid Email Or Password!");
+                          }
+                          else
+                          {
+                               $('#loginModal').hide();
+                               location.reload();
+                          }
+                     }
+                });
+           }
+           else
+           {
+                alert("Both Fields are required");
+           }
+      });
+ });
+ </script>
+
 
 </html>

@@ -14,11 +14,6 @@ def contact():
     return render_template('contact.html')
 
 
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    return render_template("login.html")
-
-
 @app.route('/translate', methods=['POST', 'GET'])
 def translate():
     return render_template('translate.html', text=request.form.get("text"))
