@@ -16,9 +16,34 @@
     margin: auto;
 }
 
-.form-group {
-    padding-top: 3rem;
+.forgot-password {
+    margin-top: 3rem;
+    color: #0074cc;
+    text-align: center;
+    font-size: 18px;
 }
+
+.form-group-email {
+    padding-top: 2rem;
+}
+
+.form-group-password {
+    padding-top: 1rem;
+}
+
+.form-group-submit {
+    padding-top: 2.5rem;
+    margin-left: 5%;
+}
+
+#login-submit {
+    font-size: 2vh;
+    width: 95%;
+    height: 4vh;
+    background: #EFEFEF;
+    border-width: thin;
+}
+
 
 .form-label {
     font-size: 20px;
@@ -205,10 +230,11 @@ nav a:hover {
     border-bottom: 3px solid white;
 }
 
-a, a:visited {
-    color: rgba(255, 255, 255, 1.0);
+.navbar-links a, a:visited {
+    /*color: rgba(255, 255, 255, 1.0);*/
     /*color:hotpink;*/
     text-decoration: none;
+    color: inherit;
 }
 
 /* Main content */

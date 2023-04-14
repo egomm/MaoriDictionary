@@ -58,16 +58,19 @@
 {#                     <br />#}
 {#                     <button type="button" name="login_button" id="login_button" class="login-button">Login</button>#}
                     <form class="loginform" method="POST">
-                        <div class="form-group">
+                        <div class="form-group-email">
                             <div class="form-label">Email:</div>
                             <input type="text" name="username" id="username" class="form-element"/>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group-password">
                             <div class="form-label">Password:</div>
                             <input type="password" name="password" id="password" required class="form-element">
                         </div>
-                        <div class="form-group">
-                            <div class="form-submit"><input type="submit" value="Login"></div>
+                        <div class="form-group-submit">
+                            <div class="form-submit"><input type="submit" value="Login" id="login-submit"></div>
+                        </div>
+                        <div class="forgot-password">
+                            <p><a href="/signup">Forgot Password?</a></p>
                         </div>
                     </form>
                 </div>
