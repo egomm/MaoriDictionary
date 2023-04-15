@@ -23,7 +23,7 @@
             <a href="/logout">logout</a>
             <a href="/admin">admin</a>
             {% else %}
-            <a data-target="#myModal" role="button" data-toggle="modal">login</a>
+            <a data-target="#loginModal" role="button" data-toggle="modal">login</a>
             {% endif %}
         </div>
     </div>
@@ -42,7 +42,7 @@
 </body>
 
 
- <div id="myModal" class="modal fade">
+ <div id="loginModal" class="modal fade">
       <div class="modal-dialog">
            <div class="modal-content">
                 <div class="modal-header">
@@ -50,67 +50,55 @@
                      <h4 class="modal-title">Login</h4>
                 </div>
                 <div class="modal-body">
-{#                     <label>Username</label>#}
-{#                     <input type="text" name="username" id="username" class="form-control" />#}
-{#                     <br />#}
-{#                     <label>Password</label>#}
-{#                     <input type="password" name="password" id="password" class="form-control" />#}
-{#                     <br />#}
-{#                     <button type="button" name="login_button" id="login_button" class="login-button">Login</button>#}
-                    <form class="loginform" method="POST">
+                    <form class="loginform" method="POST" onsubmit="return validateForm()">
                         <div class="form-group-email">
-                            <div class="form-label">Email:</div>
+                            <div class="form-label">Email or Username:</div>
                             <input type="text" name="username" id="username" class="form-element"/>
                         </div>
                         <div class="form-group-password">
                             <div class="form-label">Password:</div>
-                            <input type="password" name="password" id="password" required class="form-element">
+                            <input type="password" name="password" id="password" class="form-element">
                         </div>
                         <div class="form-group-submit">
                             <div class="form-submit"><input type="submit" value="Login" id="login-submit"></div>
                         </div>
                         <div class="forgot-password">
-                            <p><a href="/signup">Forgot Password?</a></p>
+                            <p><a href="/forgotpassword">Forgot Password?</a></p>
                         </div>
                     </form>
+                </div>
+                <div class="modal-footer">
+                    <p>Don't have an account yet? <a data-target="#signUpModal" role="button" data-toggle="modal" id="closeLoginModal">Sign Up</a>.</p>
                 </div>
            </div>
       </div>
  </div>
- <script>
- $(document).ready(function(){
-      $('#login_button').click(function(){
-           var username = $('#username').val();
-           var password = $('#password').val();
-           alert(`CLICKED! ${username} ${password}`)
-           if(username != '' && password != '')
-           {
-                $.ajax({
-                     url:"/action",
-                     method:"POST",
-                     data: {username:username, password:password},
-                     success:function(data)
-                     {
-                          alert(data);
-                          if (data == 'No-data')
-                          {
-                               alert("Invalid Email Or Password!");
-                          }
-                          else
-                          {
-                               $('#loginModal').hide();
-                               location.reload();
-                          }
-                     }
-                });
-           }
-           else
-           {
-                alert("Both Fields are required");
-           }
-      });
- });
- </script>
 
+<div id="signUpModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal">×</button>
+                     <h4 class="modal-title">Sign Up</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
 
+<script>
+    function validateForm() {
+        var emailUsernameInput = document.getElementById("username").value
+        var passwordInput = document.getElementById("password").value
+        if (emailUsernameInput.trim() === "" || passwordInput.trim() === "") {
+            return false;
+        }
+    }
+    $('#closeLoginModal').click(function() {
+        $('#loginModal').modal('hide');
+    });
+</script>
 </html>

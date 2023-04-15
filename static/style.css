@@ -23,6 +23,11 @@
     font-size: 18px;
 }
 
+.modal-footer p {
+    font-size: 18px;
+    text-align: center;
+}
+
 .form-group-email {
     padding-top: 2rem;
 }
@@ -34,14 +39,16 @@
 .form-group-submit {
     padding-top: 2.5rem;
     margin-left: 5%;
+    color: white;
 }
 
 #login-submit {
     font-size: 2vh;
     width: 95%;
     height: 4vh;
-    background: #EFEFEF;
+    background: rgba(66, 134, 245, 1.0);
     border-width: thin;
+    border-color: rgba(66, 134, 245, 0.5);
 }
 
 
@@ -262,7 +269,11 @@ nav a:hover {
 }
 
 .modal-body {
-    height: 75vh;
+    height: 34vh;
+}
+
+.modal-footer {
+    height: 6vh;
 }
 
 @media only screen and (max-width: 400px) {

@@ -23,8 +23,8 @@
 
             <script>
             function validateForm() {
-                var input = document.getElementById("text"); // get the text element
-                if (input.value.trim() === "") { // remove the whitespace to check if the input is nothing
+                var input = document.getElementById("text").value // get the text element
+                if (input.trim() === "") { // remove the whitespace to check if the input is nothing
                     return false; // returning false will stop the form being posted
                 }
             }

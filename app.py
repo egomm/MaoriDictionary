@@ -46,7 +46,7 @@ def create_connection(db_file):
 def home():  # put application's code here
     print(request.form.get("username"))
     print(request.form.get("password"))
-    return render_template('newhome.html')
+    return render_template('home.html')
 
 
 # make the request go under a custom thing
