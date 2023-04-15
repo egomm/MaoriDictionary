@@ -49,6 +49,11 @@ def home():  # put application's code here
     return render_template('home.html')
 
 
+@app.route('/categories', methods=['POST', 'GET'])
+def categories():
+    return render_template('categories.html')
+
+
 # make the request go under a custom thing
 @app.route('/contact', methods=['POST', 'GET'])
 def contact():
