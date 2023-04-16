@@ -145,7 +145,9 @@
 
 <script>
     function ValidateLoginForm() {
-        const emailUsernameInput = document.getElementById("login-username").value;
+        clearText(["login-incorrect", "login-email-incomplete", "login-password-incomplete"])
+        clearColour(["login-username", "login-password"])
+        const emailUsernameInput = document.getElementById("login-username").value
         const passwordInput = document.getElementById("login-password").value
         if (emailUsernameInput.trim().length === 0) {
             document.getElementById("login-username").style.borderColor = "#e54b72";
@@ -169,19 +171,26 @@
         const confirmPasswordInput = document.getElementById("signup-confirmpassword").value
     }
 
-    function clearText(clearText) {
-        for (const text of clearText) {
+    function clearValue(inputValues) {
+        for (const value of inputValues) {
+            document.getElementById(value).value = ""
+        }
+    }
+
+    function clearText(inputText) {
+        for (const text of inputText) {
             document.getElementById(text).innerText = ""
         }
     }
 
-    function clearColour(clearColour) {
-        for (const colour of clearColour) {
+    function clearColour(inputColour) {
+        for (const colour of inputColour) {
             document.getElementById(colour).style.borderColor = "#000";
         }
     }
 
     $('#loginModal').on('hidden.bs.modal', function () {
+        clearValue(["login-username", "login-password"])
         clearText(["login-incorrect", "login-email-incomplete", "login-password-incomplete"])
         clearColour(["login-username", "login-password"])
     })

@@ -17,7 +17,7 @@
 }
 
 .forgot-password {
-    margin-top: 3rem;
+    margin-top: 2.5rem;
     color: #0074cc;
     text-align: center;
     font-size: 18px;
@@ -337,7 +337,7 @@ nav a:hover {
 }
 
 #loginModal .modal-body {
-    height: 34vh;
+    height: 34.5vh;
 }
 
 #signUpModal .modal-body {
