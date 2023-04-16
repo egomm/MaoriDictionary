@@ -99,10 +99,10 @@
 
 .container {
     width: 100%;
-    min-height: 100vh;
     padding: 5%;
     background: white center;
     background-size: cover;
+    height: 92vh;
     /*background-color: rgba(52, 73, 94, 1.0);*/
     /*color: rgba(236, 240, 241, 1.0);*/
 }
