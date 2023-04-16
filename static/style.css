@@ -28,21 +28,81 @@
     text-align: center;
 }
 
-.form-group-email {
+/* Sign Up */
+.form-signup-firstname {
     padding-top: 2rem;
 }
 
-.form-group-password {
+.form-signup-lastname {
     padding-top: 1rem;
 }
 
-.form-group-submit {
+.form-signup-username {
+    padding-top: 1rem;
+}
+
+.form-signup-email {
+    padding-top: 1rem;
+}
+
+.form-signup-password {
+    padding-top: 1rem;
+}
+
+.form-signup-confirmpassword {
+    padding-top: 1rem;
+}
+
+.form-signup-submit {
     padding-top: 2.5rem;
     margin-left: 5%;
     color: white;
 }
 
-#login-submit {
+/* Login */
+#login-incorrect {
+    height: 2rem;
+    margin-left: 5%;
+    width: 90%;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: red;
+}
+
+.form-login-email {
+    padding-top: 0;
+}
+
+#login-email-incomplete {
+    height: 1.5rem;
+    direction: rtl;
+    margin-right: 5%;
+    color: red;
+}
+
+#login-password-incomplete {
+    height: 1.5rem;
+    direction: rtl;
+    margin-right: 5%;
+    color: red;
+}
+
+.form-login-password {
+    padding-top: 0;
+}
+
+#login-password-incomplete {
+    height: 1.5rem;
+}
+
+.form-login-submit {
+    padding-top: 1.5rem;
+    margin-left: 5%;
+    color: white;
+}
+
+.form-submit {
     font-size: 2vh;
     width: 95%;
     height: 4vh;
@@ -65,6 +125,14 @@
     margin-left: 5%;
     border-radius: 4px;
     border-width: thin;
+    border-style: solid;
+    border-color: black;
+}
+
+.form-element:focus {
+    outline: none;
+    /*border-color: inherit;*/
+    box-shadow: 0 0 0 0.05rem;
 }
 
 .search-bar {
@@ -268,8 +336,12 @@ nav a:hover {
     font-weight: bold;
 }
 
-.modal-body {
+#loginModal .modal-body {
     height: 34vh;
+}
+
+#signUpModal .modal-body {
+    height: 61vh;
 }
 
 .modal-footer {

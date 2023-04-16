@@ -44,8 +44,8 @@ def create_connection(db_file):
 
 @app.route('/', methods=['POST', 'GET'])
 def home():  # put application's code here
-    print(request.form.get("username"))
-    print(request.form.get("password"))
+    print(request.form.get("login-form") is not None)
+    print(request.form.get("signup-form") is not None)
     return render_template('home.html')
 
 

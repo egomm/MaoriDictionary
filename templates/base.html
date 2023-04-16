@@ -42,7 +42,7 @@
 </div>
 </body>
 
-
+{# Login Modal #}
  <div id="loginModal" class="modal fade">
       <div class="modal-dialog">
            <div class="modal-content">
@@ -51,17 +51,27 @@
                      <h4 class="modal-title">Login</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="loginform" method="POST" onsubmit="return validateForm()">
-                        <div class="form-group-email">
-                            <div class="form-label">Email or Username:</div>
-                            <input type="text" name="username" id="username" class="form-element"/>
+                    <form class="loginform" method="POST" onsubmit="return ValidateLoginForm()">
+                        <input type="hidden" name="loginform" value=""/>
+                        <div id="login-incorrect">
+
                         </div>
-                        <div class="form-group-password">
-                            <div class="form-label">Password:</div>
-                            <input type="password" name="password" id="password" class="form-element">
+                        <div class="form-login-email">
+                            <div class="form-label">Email or Username</div>
+                            <input type="text" name="login-username" id="login-username" class="form-element"/>
                         </div>
-                        <div class="form-group-submit">
-                            <div class="form-submit"><input type="submit" value="Login" id="login-submit"></div>
+                        <div id="login-email-incomplete">
+
+                        </div>
+                        <div class="form-login-password">
+                            <div class="form-label" id="login-password-text">Password</div>
+                            <input type="password" name="login-password" id="login-password" class="form-element">
+                        </div>
+                        <div id="login-password-incomplete">
+
+                        </div>
+                        <div class="form-login-submit">
+                            <input type="submit" value="Login" class="form-submit" id="login-submit">
                         </div>
                         <div class="forgot-password">
                             <p><a href="/forgotpassword">Forgot Password?</a></p>
@@ -75,31 +85,113 @@
       </div>
  </div>
 
+{# Sign Up Modal #}
 <div id="signUpModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                     <button type="button" class="close" data-dismiss="modal">×</button>
-                     <h4 class="modal-title">Sign Up</h4>
+                 <button type="button" class="close" data-dismiss="modal">×</button>
+                 <h4 class="modal-title">Sign Up</h4>
             </div>
             <div class="modal-body">
+                <form class="signupform" method="POST" onsubmit="return ValidateLoginForm">
+                    <input type="hidden" name="signup-form" value=""/>
+                    <div class="form-signup-firstname">
+                        <div class="form-label">First Name</div>
+                        <input type="text" name="signup-firstname" id="signup-firstname" class="form-element"/>
+                    </div>
+                    <div class="form-signup-lastname">
+                        <div class="form-label">Last Name</div>
+                        <input type="text" name="signup-lastname" id="signup-lastname" class="form-element"/>
+                    </div>
+                    <div class="form-signup-username">
+                        <div class="form-label">Username</div>
+                        <input type="text" name="signup-username" id="signup-username" class="form-element"/>
+                    </div>
+                    <div class="form-signup-email">
+                        <div class="form-label">Email</div>
+                        <input type="text" name="signup-email" id="signup-email" class="form-element"/>
+                    </div>
+                    <div class="form-signup-password">
+                        <div class="form-label">Password</div>
+                        <input type="text" name="signup-password" id="signup-password" class="form-element"/>
+                    </div>
+                    <div class="form-signup-confirmpassword">
+                        <div class="form-label">Confirm Password</div>
+                        <input type="text" name="signup-confirmpassword" id="signup-confirmpassword" class="form-element"/>
+                    </div>
+                    <div class="form-signup-submit">
+                        <input type="submit" value="Sign Up" class="form-submit" id="signup-submit">
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
+                <p>Already have an account? <a data-target="#loginModal" role="button" data-toggle="modal" id="closeSignUpModal">Login</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="forgotPasswordModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                 <button type="button" class="close" data-dismiss="modal">×</button>
+                 <h4 class="modal-title">Sign Up</h4>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function validateForm() {
-        var emailUsernameInput = document.getElementById("username").value
-        var passwordInput = document.getElementById("password").value
-        if (emailUsernameInput.trim() === "" || passwordInput.trim() === "") {
+    function ValidateLoginForm() {
+        const emailUsernameInput = document.getElementById("login-username").value;
+        const passwordInput = document.getElementById("login-password").value
+        if (emailUsernameInput.trim().length === 0) {
+            document.getElementById("login-username").style.borderColor = "#e54b72";
+            document.getElementById("login-email-incomplete").innerText = ".Email or Username is required"
+        }
+        if (passwordInput.trim().length === 0) {
+            document.getElementById("login-password").style.borderColor = "#e54b72";
+            document.getElementById("login-password-incomplete").innerText = ".Password is required"
+        }
+        if (emailUsernameInput.trim().length === 0 || passwordInput.trim().length === 0) {
             return false;
         }
+        //document.getElementById("login-incorrect").innerText = "Incorrect email/username or password."
     }
+
+    function ValidateSignUpForm() {
+        const firstNameInput = document.getElementById("signup-firstname").value
+        const lastNameInput = document.getElementById("signup-lastname").value
+        const usernameInput = document.getElementById("signup-username").value
+        const passwordInput = document.getElementById("signup-password").value
+        const confirmPasswordInput = document.getElementById("signup-confirmpassword").value
+    }
+
+    function clearText(clearText) {
+        for (const text of clearText) {
+            document.getElementById(text).innerText = ""
+        }
+    }
+
+    function clearColour(clearColour) {
+        for (const colour of clearColour) {
+            document.getElementById(colour).style.borderColor = "#000";
+        }
+    }
+
+    $('#loginModal').on('hidden.bs.modal', function () {
+        clearText(["login-incorrect", "login-email-incomplete", "login-password-incomplete"])
+        clearColour(["login-username", "login-password"])
+    })
+
     $('#closeLoginModal').click(function() {
         $('#loginModal').modal('hide');
     });
+
+    $('#closeSignUpModal').click(function() {
+        $('#signUpModal').modal('hide');
+    })
 </script>
 </html>
