@@ -29,32 +29,38 @@
 }
 
 /* Sign Up */
-.form-signup-firstname {
+.student-teacher-button {
     padding-top: 2rem;
+    margin-left: 5%;
+    width: 90%;
 }
 
-.form-signup-lastname {
-    padding-top: 1rem;
+.button-student-teacher {
+    height: 4rem;
+    font-size: 20px;
+    width: 50%;
+    border-width: thin;
+    border-color: black;
+    border-style: solid;
 }
 
-.form-signup-username {
-    padding-top: 1rem;
+.button-student-teacher:active, .button-student-teacher:focus, .button-student-teacher:hover {
+    outline:none !important;
 }
 
-.form-signup-email {
-    padding-top: 1rem;
+.active {
+    box-shadow: 0 0 0 0.1rem;
 }
 
-.form-signup-password {
-    padding-top: 1rem;
+.field-incomplete { /* Used for error message on incomplete fields */
+    height: 1.5rem;
+    direction: rtl;
+    margin-right: 5%;
+    color: red;
 }
 
-.form-signup-confirmpassword {
-    padding-top: 1rem;
-}
-
-.form-signup-submit {
-    padding-top: 2.5rem;
+#form-signup-submit { /* Used for submit button on sign up */
+    padding-top: 1.5rem;
     margin-left: 5%;
     color: white;
 }
@@ -72,20 +78,6 @@
 
 .form-login-email {
     padding-top: 0;
-}
-
-#login-email-incomplete {
-    height: 1.5rem;
-    direction: rtl;
-    margin-right: 5%;
-    color: red;
-}
-
-#login-password-incomplete {
-    height: 1.5rem;
-    direction: rtl;
-    margin-right: 5%;
-    color: red;
 }
 
 .form-login-password {
@@ -117,7 +109,7 @@
     margin-left: 5%;
 }
 
-.form-element {
+.form-element { /* Modify the form elements used for login/sign up/forgot password*/
     background: #E5E5E5;
     width: 90%;
     height: 4vh;
@@ -341,7 +333,7 @@ nav a:hover {
 }
 
 #signUpModal .modal-body {
-    height: 61vh;
+    height: 70vh;
 }
 
 .modal-footer {

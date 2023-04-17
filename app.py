@@ -7,7 +7,7 @@ import os
 
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-DATABASE = os.path.join(PROJECT_ROOT, 'maoridictionary.db')
+DATABASE = os.path.join(PROJECT_ROOT, "maoridictionary.db")
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -46,7 +46,10 @@ def create_connection(db_file):
 def home():  # put application's code here
     print(request.form.get("login-form") is not None)
     print(request.form.get("signup-form") is not None)
-    return render_template('home.html')
+    if request.form.get("signup-form") is not None:
+        print(request.form.get("signup-username"))
+        print(request.form.get("teacherButton"))
+    return render_template('home.html', text="hi")
 
 
 @app.route('/categories', methods=['POST', 'GET'])
@@ -67,3 +70,5 @@ def translate():
 
 if __name__ == '__main__':
     app.run()
+    #app.run(host='0.0.0.0', debug=True) 
+    # runs website locally

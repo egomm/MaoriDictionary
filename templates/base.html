@@ -53,23 +53,17 @@
                 <div class="modal-body">
                     <form class="loginform" method="POST" onsubmit="return ValidateLoginForm()">
                         <input type="hidden" name="loginform" value=""/>
-                        <div id="login-incorrect">
-
-                        </div>
+                        <div id="login-incorrect"></div>
                         <div class="form-login-email">
                             <div class="form-label">Email or Username</div>
                             <input type="text" name="login-username" id="login-username" class="form-element"/>
                         </div>
-                        <div id="login-email-incomplete">
-
-                        </div>
+                        <div class="field-incomplete" id="login-username-incomplete"></div>
                         <div class="form-login-password">
                             <div class="form-label" id="login-password-text">Password</div>
                             <input type="password" name="login-password" id="login-password" class="form-element">
                         </div>
-                        <div id="login-password-incomplete">
-
-                        </div>
+                        <div class="field-incomplete" id="login-password-incomplete"></div>
                         <div class="form-login-submit">
                             <input type="submit" value="Login" class="form-submit" id="login-submit">
                         </div>
@@ -94,33 +88,40 @@
                  <h4 class="modal-title">Sign Up</h4>
             </div>
             <div class="modal-body">
-                <form class="signupform" method="POST" onsubmit="return ValidateLoginForm">
+                <form class="signupform" method="POST" onsubmit="return ValidateSignUpForm()">
                     <input type="hidden" name="signup-form" value=""/>
-                    <div class="form-signup-firstname">
-                        <div class="form-label">First Name</div>
-                        <input type="text" name="signup-firstname" id="signup-firstname" class="form-element"/>
+                    {# Student teacher button #}
+                    <div class="student-teacher-button" id="student-teacher-button">
+                        <button type="button" class="button-student-teacher" id="student-button">Student</button><button type="button" class="button-student-teacher" id="teacher-button">Teacher</button>
                     </div>
-                    <div class="form-signup-lastname">
-                        <div class="form-label">Last Name</div>
-                        <input type="text" name="signup-lastname" id="signup-lastname" class="form-element"/>
-                    </div>
-                    <div class="form-signup-username">
-                        <div class="form-label">Username</div>
-                        <input type="text" name="signup-username" id="signup-username" class="form-element"/>
-                    </div>
-                    <div class="form-signup-email">
-                        <div class="form-label">Email</div>
-                        <input type="text" name="signup-email" id="signup-email" class="form-element"/>
-                    </div>
-                    <div class="form-signup-password">
-                        <div class="form-label">Password</div>
-                        <input type="text" name="signup-password" id="signup-password" class="form-element"/>
-                    </div>
-                    <div class="form-signup-confirmpassword">
-                        <div class="form-label">Confirm Password</div>
-                        <input type="text" name="signup-confirmpassword" id="signup-confirmpassword" class="form-element"/>
-                    </div>
-                    <div class="form-signup-submit">
+                    <div class="field-incomplete" id="signup-button-incomplete"></div>
+                    <input type="hidden" name="teacherButton" id="teacherButton" value="Student"/>
+                    {# First name field #}
+                    <div class="form-label">First Name</div>
+                    <input type="text" name="signup-firstname" id="signup-firstname" class="form-element"/>
+                    <div class="field-incomplete" id="signup-firstname-incomplete"></div>
+                    {# Last name field #}
+                    <div class="form-label">Last Name</div>
+                    <input type="text" name="signup-lastname" id="signup-lastname" class="form-element"/>
+                    <div class="field-incomplete" id="signup-lastname-incomplete"></div>
+                    {# Username field #}
+                    <div class="form-label">Username</div>
+                    <input type="text" name="signup-username" id="signup-username" class="form-element"/>
+                    <div class="field-incomplete" id="signup-username-incomplete"></div>
+                    {# Email field #}
+                    <div class="form-label">Email</div>
+                    <input type="text" name="signup-email" id="signup-email" class="form-element"/>
+                    <div class="field-incomplete" id="signup-email-incomplete"></div>
+                    {# Password field #}
+                    <div class="form-label">Password</div>
+                    <input type="password" name="signup-password" id="signup-password" class="form-element"/>
+                    <div class="field-incomplete" id="signup-password-incomplete"></div>
+                    {# Confirm password field #}
+                    <div class="form-label">Confirm Password</div>
+                    <input type="password" name="signup-confirmpassword" id="signup-confirmpassword" class="form-element"/>
+                    <div class="field-incomplete" id="signup-confirmpassword-incomplete"></div>
+                    {# Submit #}
+                    <div id="form-signup-submit">
                         <input type="submit" value="Sign Up" class="form-submit" id="signup-submit">
                     </div>
                 </form>
@@ -145,13 +146,13 @@
 
 <script>
     function ValidateLoginForm() {
-        clearText(["login-incorrect", "login-email-incomplete", "login-password-incomplete"])
+        clearText(["login-incorrect", "login-username-incomplete", "login-password-incomplete"])
         clearColour(["login-username", "login-password"])
         const emailUsernameInput = document.getElementById("login-username").value
         const passwordInput = document.getElementById("login-password").value
         if (emailUsernameInput.trim().length === 0) {
             document.getElementById("login-username").style.borderColor = "#e54b72";
-            document.getElementById("login-email-incomplete").innerText = ".Email or Username is required"
+            document.getElementById("login-username-incomplete").innerText = ".Email or Username is required"
         }
         if (passwordInput.trim().length === 0) {
             document.getElementById("login-password").style.borderColor = "#e54b72";
@@ -164,11 +165,82 @@
     }
 
     function ValidateSignUpForm() {
-        const firstNameInput = document.getElementById("signup-firstname").value
-        const lastNameInput = document.getElementById("signup-lastname").value
-        const usernameInput = document.getElementById("signup-username").value
-        const passwordInput = document.getElementById("signup-password").value
-        const confirmPasswordInput = document.getElementById("signup-confirmpassword").value
+        let fail = false
+        alert("{{ text }}")
+        const teacherButton = document.getElementById("teacher-button").classList.contains("active")
+        const studentButton = document.getElementById("student-button").classList.contains("active")
+        if (!studentButton && !teacherButton) {
+            document.getElementById("teacher-button").style.borderColor = "#e54b72"
+            document.getElementById("student-button").style.borderColor = "#e54b72"
+            document.getElementById("signup-button-incomplete").innerText = ".Selecting student or teacher is required"
+            fail = true
+        } else {
+            document.getElementById("teacher-button").style.borderColor = "#000"
+            document.getElementById("student-button").style.borderColor = "#000"
+            document.getElementById("signup-button-incomplete").innerText = ""
+        }
+        const elementsToCheck = ["signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"]
+        const elementMessages = {
+            "signup-firstname": ".First name is required",
+            "signup-lastname": ".Last name is required",
+            "signup-username": ".Username is required",
+            "signup-email": ".Email is required",
+            "signup-password": ".Password is required",
+            "signup-confirmpassword": ".Password confirmation is required"
+        }
+        for (const x in elementsToCheck) {
+            const elementId = elementsToCheck[x]
+            const element = document.getElementById(elementId).value
+            if (element.trim().length === 0) {
+                fail = true
+                document.getElementById(elementId).style.borderColor = "#e54b72"
+                document.getElementById(`${elementId}-incomplete`).innerText = elementMessages[elementId]
+            } else {
+                document.getElementById(elementId).style.borderColor = "#000"
+                document.getElementById(`${elementId}-incomplete`).innerText = ""
+            }
+        }
+        const firstNameInput = $.trim(document.getElementById("signup-firstname").value)
+        if (firstNameInput.length > 64) {
+            document.getElementById("signup-firstname").style.borderColor = "#e54b72"
+            document.getElementById("signup-firstname-incomplete").innerText = ".First name must be no more than 64 characters"
+            fail = true
+        }
+        const lastNameInput = $.trim(document.getElementById("signup-lastname").value)
+        if (lastNameInput.length > 64) {
+            document.getElementById("signup-lastname").style.borderColor = "#e54b72"
+            document.getElementById("signup-lastname-incomplete").innerText = ".Last name must be no more than 64 characters"
+            fail = true
+        }
+        const usernameInput = $.trim(document.getElementById("signup-username").value)
+        if (usernameInput.length > 32) {
+            document.getElementById("signup-username").style.borderColor = "#e54b72"
+            document.getElementById("signup-username-incomplete").innerText = ".Username must be no more than 32 characters"
+            fail = true
+        }
+        const emailInput = $.trim(document.getElementById("signup-email").value)
+        if (emailInput.length > 64) {
+            document.getElementById("signup-email").style.borderColor = "#e54b72"
+            document.getElementById("signup-email-incomplete").innerText = ".Email must be no more than 64 characters"
+            fail = true
+        } else if (!(emailInput.includes('@') && emailInput.split('@')[emailInput.split('@').length-1].includes('.'))) { {# "very.(),:;<>[]\".VERY.\"very@\\ \"very\".unusual"@strange.example.com <- this email address is valid, so this should accept that #}
+            document.getElementById("signup-email").style.borderColor = "#e54b72"
+            document.getElementById("signup-email-incomplete").innerText = ".Email must include '@' and '.' afterwards"
+            fail = true
+        }
+        const passwordInput = $.trim(document.getElementById("signup-password").value)
+        const confirmPasswordInput = $.trim(document.getElementById("signup-confirmpassword").value)
+        if (passwordInput.length > 0 && confirmPasswordInput.length > 0 && passwordInput !== confirmPasswordInput) {
+            document.getElementById("signup-password").style.borderColor = "#e54b72"
+            document.getElementById("signup-password-incomplete").innerText = ".Passwords do not match"
+            document.getElementById("signup-confirmpassword").style.borderColor = "#e54b72"
+            document.getElementById("signup-confirmpassword-incomplete").innerText = ".Passwords do not match"
+            fail = true
+        }
+        if (!fail) {
+            document.getElementById("teacherButton").value = teacherButton ? "Teacher" : "Student"
+        }
+        return !fail;
     }
 
     function clearValue(inputValues) {
@@ -189,10 +261,50 @@
         }
     }
 
+    function removeTeacherButtonInput() {
+        const teacherButton = document.getElementById("teacher-button")
+        if (teacherButton.classList.contains("active")) {
+            teacherButton.classList.remove("active")
+        }
+    }
+
+    function removeStudentButtonInput() {
+        const studentButton = document.getElementById("student-button")
+        if (studentButton.classList.contains("active")) {
+            studentButton.classList.remove("active")
+        }
+    }
+
+    $('#student-button').click(function() { {# Manage the click event of the student button #}
+        if (!document.getElementById("student-button").classList.contains("active")) {
+            document.getElementById("student-button").classList.add("active")
+            removeTeacherButtonInput()
+        } else {
+            removeStudentButtonInput()
+        }
+    })
+
+    $('#teacher-button').click(function() { {# Manage the click event of the teacher button #}
+        if (!document.getElementById("teacher-button").classList.contains("active")) {
+            document.getElementById("teacher-button").classList.add("active")
+            removeStudentButtonInput()
+        } else {
+            removeTeacherButtonInput()
+        }
+    })
+
     $('#loginModal').on('hidden.bs.modal', function () {
         clearValue(["login-username", "login-password"])
-        clearText(["login-incorrect", "login-email-incomplete", "login-password-incomplete"])
+        clearText(["login-incorrect", "login-username-incomplete", "login-password-incomplete"])
         clearColour(["login-username", "login-password"])
+    })
+
+    $('#signUpModal').on('hidden.bs.modal', function () {
+        removeTeacherButtonInput()
+        removeStudentButtonInput()
+        clearValue(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
+        clearText(["signup-button-incomplete", "signup-firstname-incomplete", "signup-lastname-incomplete", "signup-username-incomplete", "signup-email-incomplete", "signup-password-incomplete", "signup-confirmpassword-incomplete"])
+        clearColour(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
     })
 
     $('#closeLoginModal').click(function() {
