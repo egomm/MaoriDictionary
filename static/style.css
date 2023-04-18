@@ -49,7 +49,7 @@
 }
 
 .active {
-    box-shadow: 0 0 0 0.1rem;
+    box-shadow: 0 0 0 0.1rem currentColor;
 }
 
 .field-incomplete { /* Used for error message on incomplete fields */
@@ -111,6 +111,8 @@
 
 .form-element { /* Modify the form elements used for login/sign up/forgot password*/
     background: #E5E5E5;
+    box-shadow: none;
+    outline: none;
     width: 90%;
     height: 4vh;
     font-size: 18px;
@@ -121,10 +123,9 @@
     border-color: black;
 }
 
-.form-element:focus {
+.form-element:focus-visible {
     outline: none;
-    /*border-color: inherit;*/
-    box-shadow: 0 0 0 0.05rem;
+    box-shadow: 0 0 0.25rem currentColor;
 }
 
 .search-bar {

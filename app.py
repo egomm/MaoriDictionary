@@ -44,34 +44,27 @@ def create_connection(db_file):
 
 
 def signup(teacher, firstnamevalue, lastnamevalue, usernamevalue, emailvalue, passwordvalue):
-    administrator = teacher == "Teacher"
     con = open_database(DATABASE)
     query = "INSERT INTO users (username, email, password, administrator, firstName, lastName) VALUES (?, ?, ?, ?, ?, ?)"
     cur = con.cursor()
-    cur.execute(query, (usernamevalue, emailvalue, passwordvalue, administrator, firstnamevalue, lastnamevalue))
+    cur.execute(query, (usernamevalue, emailvalue, passwordvalue, teacher, firstnamevalue, lastnamevalue))
     con.commit()
     con.close()
-    print("{}, {}, {}, {}, {}, {}".format(teacher, firstnamevalue, lastnamevalue, usernamevalue, emailvalue, passwordvalue))
 
 
 @app.context_processor
-def inject_data():
-    print("SENT REQUEST")
+def inject_data(): # Used for getting the data when there is a ajax post
     if request.method == "POST":
         json_data = request.get_json()
-        if json_data["type"] == "signup":
-            print("{} {} {} {} {} {}".format(json_data["role"], json_data["firstname"], json_data["lastname"], json_data["username"], json_data["email"], json_data["password"]))
+        if json_data["type"] == "signup": # check where the data came from, proceed accordingly
             signup(json_data["role"], json_data["firstname"], json_data["lastname"],
                    json_data["username"], json_data["email"], bcrypt.generate_password_hash(json_data["password"]))
-            print("WHY")
-        else:
-            print("not sign up")
     return {}
 
 
-@app.route('/your-flask-route', methods=['POST'])
-def your_function():
-    data = request.get_json()
+@app.route('/getlogininformation', methods=['POST'])
+def data_manager(): # function for managing the data which comes through from the modal requests
+    data = request.get_json() # get the data from the html
     email = data['email']
     username = data['username']
     con = create_connection(DATABASE)
@@ -79,26 +72,19 @@ def your_function():
     query = "SELECT username FROM users"
     cur.execute(query)
     usernames = [username[0] for username in cur.fetchall()]
-    hasusername = False
-    for eachUsername in usernames:
-        if eachUsername.lower() == username.lower():
-            hasusername = True
-            break
+    # check if the username is already present in the database
+    hasusername = [x.lower() for x in usernames].count(username.lower()) > 0
     query = "SELECT email FROM users"
     cur.execute(query)
     emails = [email[0] for email in cur.fetchall()]
-    hasemail = False
-    for eachEmail in emails:
-        if eachEmail.lower() == email.lower():
-            hasemail = True
-            break
+    # check if the email address is already present in the database
+    hasemail = [x.lower() for x in emails].count(email.lower()) > 0
+    # return the validated data back to the html
     return jsonify({'usernameUsed': hasusername, 'emailUsed': hasemail})
 
 
 @app.route('/', methods=['POST', 'GET'])
 def home():  # put application's code here
-    # if request.method == "POST":
-    #     return redirect(url_for('home'))
     return render_template('home.html')
 
 
