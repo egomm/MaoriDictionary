@@ -145,144 +145,10 @@
 </div>
 
 <script>
-    function ValidateLoginForm() {
-        clearText(["login-incorrect", "login-username-incomplete", "login-password-incomplete"])
-        clearColour(["login-username", "login-password"])
-        const emailUsernameInput = document.getElementById("login-username").value
-        const passwordInput = document.getElementById("login-password").value
-        if (emailUsernameInput.trim().length === 0) {
-            document.getElementById("login-username").style.borderColor = "#e54b72";
-            document.getElementById("login-username-incomplete").innerText = ".Email or Username is required"
-        }
-        if (passwordInput.trim().length === 0) {
-            document.getElementById("login-password").style.borderColor = "#e54b72";
-            document.getElementById("login-password-incomplete").innerText = ".Password is required"
-        }
-        if (emailUsernameInput.trim().length === 0 || passwordInput.trim().length === 0) {
-            return false;
-        }
-    }
-
-    function ValidateSignUpForm() { // Function for validating the sign-up form
-        (async () => { // Use an async to get whether the username & email are already used in the database
-            try { // use try catch just in case
-                const usernameInput = $.trim(document.getElementById("signup-username").value) // $.trim is used to clear the white space at start/end of string
-                const emailInput = $.trim(document.getElementById("signup-email").value)
-                const data = {email: emailInput, username: usernameInput};
-                const response = await fetch('/getlogininformation', { // fetch /getlogininformation from app.py
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify(data) // parse through the data (email and username input)
-                });
-                const responseText = await response.json(); // wait for the response
-                let usernameInUse = responseText.usernameUsed
-                let emailInUse = responseText.emailUsed
-                // clear the text and colour from previous errors
-                clearText(["signup-button-incomplete", "signup-firstname-incomplete", "signup-lastname-incomplete", "signup-username-incomplete", "signup-email-incomplete", "signup-password-incomplete", "signup-confirmpassword-incomplete"])
-                clearColour(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
-                let fail = false // variable used throughout the check if the data the user inputted is valid
-                const teacherButton = document.getElementById("teacher-button").classList.contains("active")
-                const studentButton = document.getElementById("student-button").classList.contains("active")
-                if (!studentButton && !teacherButton) { // If a button isn't selected, highlight this as an error
-                    document.getElementById("teacher-button").style.borderColor = "#e54b72"
-                    document.getElementById("student-button").style.borderColor = "#e54b72"
-                    document.getElementById("signup-button-incomplete").innerText = ".Selecting student or teacher is required"
-                    fail = true // data won't be accepted now
-                }
-                // Iterate over fields to check if they have any input, if they don't notify their respected error message
-                const elementsToCheck = ["signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"]
-                const elementMessages = {
-                    "signup-firstname": ".First name is required",
-                    "signup-lastname": ".Last name is required",
-                    "signup-username": ".Username is required",
-                    "signup-email": ".Email is required",
-                    "signup-password": ".Password is required",
-                    "signup-confirmpassword": ".Password confirmation is required"
-                }
-                for (const x in elementsToCheck) {
-                    const elementId = elementsToCheck[x]
-                    const element = document.getElementById(elementId).value
-                    if (element.trim().length === 0) {
-                        fail = true
-                        document.getElementById(elementId).style.borderColor = "#e54b72"
-                        document.getElementById(`${elementId}-incomplete`).innerText = elementMessages[elementId]
-                    }
-                }
-                const firstNameInput = $.trim(document.getElementById("signup-firstname").value)
-                if (firstNameInput.length > 64) { // Limit first name input to 64 characters
-                    document.getElementById("signup-firstname").style.borderColor = "#e54b72"
-                    document.getElementById("signup-firstname-incomplete").innerText = ".First name must be no more than 64 characters"
-                    fail = true
-                }
-                const lastNameInput = $.trim(document.getElementById("signup-lastname").value)
-                if (lastNameInput.length > 64) { // Limit last name input to 64 characters
-                    document.getElementById("signup-lastname").style.borderColor = "#e54b72"
-                    document.getElementById("signup-lastname-incomplete").innerText = ".Last name must be no more than 64 characters"
-                    fail = true
-                }
-                if (usernameInput.length > 32) { // Limit username name input to 64 characters
-                    document.getElementById("signup-username").style.borderColor = "#e54b72"
-                    document.getElementById("signup-username-incomplete").innerText = ".Username must be no more than 32 characters"
-                    fail = true
-                } else if (usernameInUse) { // Disallow duplicate usernames
-                    document.getElementById("signup-username").style.borderColor = "#e54b72"
-                    document.getElementById("signup-username-incomplete").innerText = ".This username is already in use"
-                    fail = true
-                }
-                if (emailInput.length > 64 || emailInput.length < 4) { // Limit email address to be between 4-64 characters
-                    document.getElementById("signup-email").style.borderColor = "#e54b72"
-                    document.getElementById("signup-email-incomplete").innerText = ".Email must be between 4-64 characters"
-                    fail = true
-                } else if (!(emailInput.includes('@') && emailInput.split('@')[emailInput.split('@').length-1].includes('.'))) { // "very.(),:;<>[]\".VERY.\"very@\\ \"very\".unusual"@strange.example.com <- this email address is valid, so this should accept that
-                    document.getElementById("signup-email").style.borderColor = "#e54b72"
-                    document.getElementById("signup-email-incomplete").innerText = ".Email must include '@' and '.' afterwards"
-                    fail = true
-                } else if (emailInUse) { // Disallow duplicate email addresses
-                    document.getElementById("signup-email").style.borderColor = "#e54b72"
-                    document.getElementById("signup-email-incomplete").innerText = ".This email address is already in use"
-                    fail = true
-                }
-                const passwordInput = $.trim(document.getElementById("signup-password").value)
-                const confirmPasswordInput = $.trim(document.getElementById("signup-confirmpassword").value)
-                if (passwordInput.length > 0 && confirmPasswordInput.length > 0 && passwordInput !== confirmPasswordInput) { // passwords must be equal
-                    document.getElementById("signup-password").style.borderColor = "#e54b72"
-                    document.getElementById("signup-password-incomplete").innerText = ".Passwords do not match"
-                    document.getElementById("signup-confirmpassword").style.borderColor = "#e54b72"
-                    document.getElementById("signup-confirmpassword-incomplete").innerText = ".Passwords do not match"
-                    fail = true
-                } else if (passwordInput.length < 8) { // password should have to be at least 8 characters
-                    document.getElementById("signup-password").style.borderColor = "#e54b72"
-                    document.getElementById("signup-password-incomplete").innerText = ".Password must be at least 8 characters long"
-                    document.getElementById("signup-confirmpassword").style.borderColor = "#e54b72"
-                    document.getElementById("signup-confirmpassword-incomplete").innerText = ".Password must be at least 8 characters long"
-                    fail = true
-                }
-                if (!fail) { // Data has been validated, sign up the user
-                    const formData = {
-                        "type": "signup",
-                        "role": document.getElementById("teacher-button").classList.contains("active"),
-                        "firstname": document.getElementById("signup-firstname").value,
-                        "lastname": document.getElementById("signup-lastname").value,
-                        "username": document.getElementById("signup-username").value,
-                        "email": document.getElementById("signup-email").value,
-                        "password": document.getElementById("signup-password").value
-                    }
-                    $.ajax({
-                        type: 'POST',
-                        url: "{{url_for('home')}}",
-                        contentType: "application/json",
-                        data: JSON.stringify(formData)
-                    });
-                    $('#signUpModal').modal('hide') // close sign up modal
-                    $('#loginModal').modal('show') // open login modal
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        })();
-        return false // cancel the form as the data is being managed by ajax
+    function setValue(colourId, colour, textId, text, fail) {
+        document.getElementById(colourId).style.borderColor = colour
+        document.getElementById(textId).innerText = text
+        return fail
     }
 
     function clearValue(inputValues) { // Function for clearing the value of elements by their id
@@ -299,7 +165,7 @@
 
     function clearColour(inputColour) { // Function for clearing the border colour
         for (const colour of inputColour) {
-            document.getElementById(colour).style.borderColor = "#000";
+            document.getElementById(colour).style.borderColor = "#000"
         }
     }
 
@@ -315,6 +181,152 @@
         if (studentButton.classList.contains("active")) {
             studentButton.classList.remove("active")
         }
+    }
+
+    const failedTextColour = "#e54b72"
+    const firstnameMaxLength = 64
+    const lastnameMaxLength = 64
+    const usernameMaxLength = 32
+    const emailMaxLength = 64
+    const emailMinLength = 4
+    const passwordMinLength = 8
+
+
+    function ValidateLoginForm() {
+        (async () => { // Use an async to get whether the username & email are already used in the database
+            try { // use try catch just in case
+                const emailUsernameInput = $.trim(document.getElementById("login-username").value) // $.trim is used to clear the whitespace at start/end of string (same as .strip() in python)
+                const passwordInput = $.trim(document.getElementById("login-password").value)
+                const data = {emailusername: emailUsernameInput, password: passwordInput}
+                const response = await fetch('/getlogininformation', { // fetch /getlogininformation from app.py
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(data) // parse through the data (email and username input)
+                })
+                const responseText = await response.json() // wait for the response
+                alert(responseText.validLogin)
+                clearText(["login-incorrect", "login-username-incomplete", "login-password-incomplete"])
+                clearColour(["login-username", "login-password"])
+                let fail = false
+                // Don't notify the user of the email/username/password constraints (security reasons)
+                if (emailUsernameInput.length === 0) {
+                    fail = setValue("login-username", failedTextColour, "login-username-incomplete", ".Email or Username is required", true)
+                }
+                if (passwordInput.length === 0) {
+                    fail = setValue("login-password", failedTextColour, "login-password-incomplete", ".Password is required", true)
+                }
+                if (emailUsernameInput.length > 0 && passwordInput.length > 0 && !responseText.validLogin) {
+                    document.getElementById("login-incorrect").innerText = "Incorrect email/username or password"
+                }
+            } catch (error) {
+                console.error(error)
+            }
+        })()
+        return false
+    }
+
+    function ValidateSignUpForm() { // Function for validating the sign-up form
+        (async () => { // Use an async to get whether the username & email are already used in the database
+            try { // use try catch just in case
+                const usernameInput = $.trim(document.getElementById("signup-username").value)
+                const emailInput = $.trim(document.getElementById("signup-email").value)
+                const data = {email: emailInput, username: usernameInput}
+                const response = await fetch('/getsignupinformation', { // fetch /getlogininformation from app.py
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(data) // parse through the data (email and username input)
+                })
+                const responseText = await response.json() // wait for the response
+                let usernameInUse = responseText.usernameUsed
+                let emailInUse = responseText.emailUsed
+                // clear the text and colour from previous errors
+                clearText(["signup-button-incomplete", "signup-firstname-incomplete", "signup-lastname-incomplete", "signup-username-incomplete", "signup-email-incomplete", "signup-password-incomplete", "signup-confirmpassword-incomplete"])
+                clearColour(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
+                let fail = false // variable used throughout the check if the data the user inputted is valid
+                const teacherButton = document.getElementById("teacher-button").classList.contains("active")
+                const studentButton = document.getElementById("student-button").classList.contains("active")
+                if (!studentButton && !teacherButton) { // If a button isn't selected, highlight this as an error
+                    document.getElementById("teacher-button").style.borderColor = failedTextColour
+                    fail = setValue("student-button", failedTextColour, "signup-button-incomplete", ".Selecting student or teacher is required", true)
+                }
+                // Iterate over fields to check if they have any input, if they don't notify their respected error message
+                const elementsToCheck = ["signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"]
+                const elementMessages = {
+                    "signup-firstname": ".First name is required",
+                    "signup-lastname": ".Last name is required",
+                    "signup-username": ".Username is required",
+                    "signup-email": ".Email is required",
+                    "signup-password": ".Password is required",
+                    "signup-confirmpassword": ".Password confirmation is required"
+                }
+                for (const x in elementsToCheck) {
+                    const elementId = elementsToCheck[x]
+                    const element = document.getElementById(elementId).value
+                    if (element.trim().length === 0) {
+                        fail = setValue(elementId, failedTextColour, `${elementId}-incomplete`, elementMessages[elementId], true)
+                    }
+                }
+                const firstNameInput = $.trim(document.getElementById("signup-firstname").value)
+                if (firstNameInput.length > firstnameMaxLength) { // Limit first name input to 64 characters
+                    fail = setValue("signup-firstname", failedTextColour, "signup-firstname-incomplete", ".First name must be no more than 64 characters", true)
+                }
+                const lastNameInput = $.trim(document.getElementById("signup-lastname").value)
+                if (lastNameInput.length > lastnameMaxLength) { // Limit last name input to 64 characters
+                    fail = setValue("signup-lastname", failedTextColour, "signup-lastname-incomplete", ".Last name must be no more than 64 characters", true)
+                }
+                if (usernameInput.length > usernameMaxLength) { // Limit username name input to 64 characters
+                    fail = setValue("signup-username", failedTextColour, "signup-username-incomplete", ".Username must be no more than 32 characters", true)
+                } else if (usernameInUse) { // Disallow duplicate usernames
+                    fail = setValue("signup-username", failedTextColour, "signup-username-incomplete", ".This username is already in use", true)
+                }
+                if (emailInput.length > 0) { // Ensure that the email input is at least one character long
+                    if (emailInput.length > emailMaxLength || emailInput.length < emailMinLength) { // Limit email address to be between 4-64 characters
+                        fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".Email must be between 4-64 characters", true)
+                    } else if (!(emailInput.includes('@') && emailInput.split('@')[emailInput.split('@').length - 1].includes('.'))) { // "very.(),:;<>[]\".VERY.\"very@\\ \"very\".unusual"@strange.example.com <- this email address is valid, so this should accept that
+                        fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".Email must include '@' and '.' afterwards", true)
+                    } else if (emailInUse) { // Disallow duplicate email addresses
+                        fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".This email address is already in use", true)
+                    }
+                }
+                const passwordInput = $.trim(document.getElementById("signup-password").value)
+                const confirmPasswordInput = $.trim(document.getElementById("signup-confirmpassword").value)
+                if (passwordInput.length > 0 || confirmPasswordInput.length > 0) { // Ensure that the password input or confirm password input is at least one character long
+                    if (passwordInput.length > 0 && passwordInput !== confirmPasswordInput) { // passwords must be equal
+                        fail = setValue("signup-password", failedTextColour, "signup-password-incomplete", ".Passwords do not match", true)
+                        setValue("signup-confirmpassword", failedTextColour, "signup-confirmpassword-incomplete", ".Passwords do not match", true)
+                    } else if (passwordInput.length < passwordMinLength) { // password should have to be at least 8 characters
+                        fail = setValue("signup-password", failedTextColour, "signup-password-incomplete", ".Password must be at least 8 characters long", true)
+                        setValue("signup-confirmpassword", failedTextColour, "signup-confirmpassword-incomplete", ".Password must be at least 8 characters long", true)
+                    }
+                }
+                if (!fail) { // Data has been validated, sign up the user
+                    const formData = {
+                        "type": "signup",
+                        "role": document.getElementById("teacher-button").classList.contains("active"),
+                        "firstname": document.getElementById("signup-firstname").value,
+                        "lastname": document.getElementById("signup-lastname").value,
+                        "username": document.getElementById("signup-username").value,
+                        "email": document.getElementById("signup-email").value,
+                        "password": document.getElementById("signup-password").value
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{url_for('home')}}",
+                        contentType: "application/json",
+                        data: JSON.stringify(formData)
+                    })
+                    $('#signUpModal').modal('hide') // close sign up modal
+                    $('#loginModal').modal('show') // open login modal
+                }
+            } catch (error) {
+                console.error(error)
+            }
+        })()
+        return false // cancel the form as the data is being managed by ajax
     }
 
     $('#student-button').click(function() { // Manage the click event of the student button
@@ -351,11 +363,11 @@
     })
 
     $('#closeLoginModal').click(function() { // On clicking login modal close button, close modal
-        $('#loginModal').modal('hide');
-    });
+        $('#loginModal').modal('hide')
+    })
 
     $('#closeSignUpModal').click(function() { // On clicking sign up modal close button, close modal
-        $('#signUpModal').modal('hide');
+        $('#signUpModal').modal('hide')
     })
 </script>
 </html>
