@@ -18,14 +18,11 @@
     <div class="header">
         <div class="navbar-brand">Māori Dictionary</div>
         <div class="navbar-links">
-            <a href="/">home</a>
-            <a href="/categories">categories</a>
-            {% if logged_in %}
-            <a href="/logout">logout</a>
-            <a href="/admin">admin</a>
-            {% else %}
-            <a data-target="#loginModal" role="button" data-toggle="modal">login</a>
-            {% endif %}
+            <a id="home" href="/">home</a>
+            <a id="categories" href="/categories">categories</a>
+            <a id="logout" href="/logout">logout</a>
+            <a id="admin" href="/admin">admin</a>
+            <a id="login" data-target="#loginModal" role="button" data-toggle="modal">login</a>
         </div>
     </div>
 </nav>
@@ -145,6 +142,25 @@
 </div>
 
 <script>
+    function checkLogin(logged_in) {
+        const loginElement = document.getElementById("login")
+        const logoutElement = document.getElementById("logout")
+        const adminElement = document.getElementById("admin")
+        if (logged_in) {
+            loginElement.classList.add("hidden")
+            logoutElement.classList.remove("hidden")
+            adminElement.classList.remove("hidden")
+        } else {
+            loginElement.classList.remove("hidden")
+            logoutElement.classList.add("hidden")
+            adminElement.classList.add("hidden")
+        }
+    }
+
+    requestAnimationFrame(function() {
+        checkLogin({{ logged_in }})
+    })
+
     function setValue(colourId, colour, textId, text, fail) {
         document.getElementById(colourId).style.borderColor = colour
         document.getElementById(textId).innerText = text
@@ -195,8 +211,8 @@
     function ValidateLoginForm() {
         (async () => { // Use an async to get whether the username & email are already used in the database
             try { // use try catch just in case
-                const emailUsernameInput = $.trim(document.getElementById("login-username").value) // $.trim is used to clear the whitespace at start/end of string (same as .strip() in python)
-                const passwordInput = $.trim(document.getElementById("login-password").value)
+                const emailUsernameInput = document.getElementById("login-username").value.trim() // .trim() is used to clear the whitespace at start/end of string (same as .strip() in python)
+                const passwordInput = document.getElementById("login-password").value.trim()
                 const data = {emailusername: emailUsernameInput, password: passwordInput}
                 const response = await fetch('/getlogininformation', { // fetch /getlogininformation from app.py
                   method: 'POST',
@@ -206,7 +222,6 @@
                   body: JSON.stringify(data) // parse through the data (email and username input)
                 })
                 const responseText = await response.json() // wait for the response
-                alert(responseText.validLogin)
                 clearText(["login-incorrect", "login-username-incomplete", "login-password-incomplete"])
                 clearColour(["login-username", "login-password"])
                 let fail = false
@@ -219,6 +234,23 @@
                 }
                 if (emailUsernameInput.length > 0 && passwordInput.length > 0 && !responseText.validLogin) {
                     document.getElementById("login-incorrect").innerText = "Incorrect email/username or password"
+                    document.getElementById("login-username").style.borderColor = failedTextColour
+                    document.getElementById("login-password").style.borderColor = failedTextColour
+                    fail = true
+                }
+                if (!fail) {
+                    checkLogin(true)
+                    const formData = {
+                        "type": "login",
+                        "userid": responseText.userId
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{url_for('home')}}",
+                        contentType: "application/json",
+                        data: JSON.stringify(formData)
+                    })
+                    $('#loginModal').modal('hide') // close login up modal
                 }
             } catch (error) {
                 console.error(error)
@@ -230,8 +262,8 @@
     function ValidateSignUpForm() { // Function for validating the sign-up form
         (async () => { // Use an async to get whether the username & email are already used in the database
             try { // use try catch just in case
-                const usernameInput = $.trim(document.getElementById("signup-username").value)
-                const emailInput = $.trim(document.getElementById("signup-email").value)
+                const usernameInput = document.getElementById("signup-username").value.trim()
+                const emailInput = document.getElementById("signup-email").value.trim()
                 const data = {email: emailInput, username: usernameInput}
                 const response = await fetch('/getsignupinformation', { // fetch /getlogininformation from app.py
                   method: 'POST',
@@ -270,11 +302,11 @@
                         fail = setValue(elementId, failedTextColour, `${elementId}-incomplete`, elementMessages[elementId], true)
                     }
                 }
-                const firstNameInput = $.trim(document.getElementById("signup-firstname").value)
+                const firstNameInput = document.getElementById("signup-firstname").value.trim()
                 if (firstNameInput.length > firstnameMaxLength) { // Limit first name input to 64 characters
                     fail = setValue("signup-firstname", failedTextColour, "signup-firstname-incomplete", ".First name must be no more than 64 characters", true)
                 }
-                const lastNameInput = $.trim(document.getElementById("signup-lastname").value)
+                const lastNameInput = document.getElementById("signup-lastname").value.trim()
                 if (lastNameInput.length > lastnameMaxLength) { // Limit last name input to 64 characters
                     fail = setValue("signup-lastname", failedTextColour, "signup-lastname-incomplete", ".Last name must be no more than 64 characters", true)
                 }
@@ -292,8 +324,8 @@
                         fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".This email address is already in use", true)
                     }
                 }
-                const passwordInput = $.trim(document.getElementById("signup-password").value)
-                const confirmPasswordInput = $.trim(document.getElementById("signup-confirmpassword").value)
+                const passwordInput = document.getElementById("signup-password").value.trim()
+                const confirmPasswordInput = document.getElementById("signup-confirmpassword").value.trim()
                 if (passwordInput.length > 0 || confirmPasswordInput.length > 0) { // Ensure that the password input or confirm password input is at least one character long
                     if (passwordInput.length > 0 && passwordInput !== confirmPasswordInput) { // passwords must be equal
                         fail = setValue("signup-password", failedTextColour, "signup-password-incomplete", ".Passwords do not match", true)

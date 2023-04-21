@@ -65,6 +65,11 @@
     color: white;
 }
 
+
+.hidden {
+  display: none !important;
+}
+
 /* Login */
 #login-incorrect {
     height: 2rem;

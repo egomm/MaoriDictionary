@@ -43,6 +43,10 @@ def create_connection(db_file):
     return None
 
 
+def is_logged_in():
+    return session.get("id") is not None
+
+
 def signup(teacher, firstnamevalue, lastnamevalue, usernamevalue, emailvalue, passwordvalue):
     con = open_database(DATABASE)
     query = "INSERT INTO users (username, email, password, administrator, firstName, lastName) " \
@@ -58,7 +62,9 @@ def inject_data():  # Used for getting the data when there
     # is a ajax post
     if request.method == "POST":
         json_data = request.get_json()
-        if json_data["type"] == "signup":  # check where the data came from, proceed accordingly
+        if json_data["type"] == "login":
+            session['id'] = json_data["userid"]
+        elif json_data["type"] == "signup":  # check where the data came from, proceed accordingly
             signup(json_data["role"], json_data["firstname"], json_data["lastname"],
                    json_data["username"], json_data["email"], bcrypt.generate_password_hash(json_data["password"]))
     return {}
@@ -92,6 +98,7 @@ def login_data_manager():
     matches = False
     hasemail = checkhasemail(emailusername)
     hasusername = checkhasusername(emailusername)
+    emailusernameId = -1
     if hasemail or hasusername:
         con = open_database(DATABASE)
         cur = con.cursor()
@@ -107,7 +114,7 @@ def login_data_manager():
         hashedpassword = cur.fetchone()[0]
         if bcrypt.check_password_hash(hashedpassword, password):
             matches = True
-    return jsonify({'validLogin': matches})
+    return jsonify({'validLogin': matches, 'email': hasemail, 'userId': emailusernameId})
 
 
 @app.route('/getsignupinformation', methods=['POST'])
@@ -119,25 +126,31 @@ def signup_data_manager():  # function for managing the data which comes through
     return jsonify({'usernameUsed': checkhasusername(username), 'emailUsed': checkhasemail(email)})
 
 
+@app.route('/logout')
+def logout():
+    [session.pop(key) for key in list(session.keys())]
+    return redirect('/')
+
+
 @app.route('/', methods=['POST', 'GET'])
 def home():  # put application's code here
-    return render_template('home.html')
+    return render_template('home.html', logged_in=json.dumps(is_logged_in()))
 
 
 @app.route('/categories', methods=['POST', 'GET'])
 def categories():
-    return render_template('categories.html')
+    return render_template('categories.html', logged_in=json.dumps(is_logged_in()))
 
 
 # make the request go under a custom thing
 @app.route('/contact', methods=['POST', 'GET'])
 def contact():
-    return render_template('contact.html')
+    return render_template('contact.html', logged_in=json.dumps(is_logged_in()))
 
 
 @app.route('/translate', methods=['POST', 'GET'])
 def translate():
-    return render_template('translate.html', text=request.form.get("text"))
+    return render_template('translate.html', text=request.form.get("text"), logged_in=json.dumps(is_logged_in()))
 
 
 if __name__ == '__main__':
