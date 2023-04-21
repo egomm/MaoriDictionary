@@ -67,6 +67,13 @@ def inject_data():  # Used for getting the data when there
         elif json_data["type"] == "signup":  # check where the data came from, proceed accordingly
             signup(json_data["role"], json_data["firstname"], json_data["lastname"],
                    json_data["username"], json_data["email"], bcrypt.generate_password_hash(json_data["password"]))
+        elif json_data["type"] == "resetpassword":
+            con = create_connection(DATABASE)
+            cur = con.cursor()
+            query = "UPDATE users SET password=? WHERE username=?"
+            cur.execute(query, (bcrypt.generate_password_hash(json_data["newpassword"]), json_data["username"]))
+            con.commit()
+            con.close()
     return {}
 
 
@@ -98,7 +105,7 @@ def login_data_manager():
     matches = False
     hasemail = checkhasemail(emailusername)
     hasusername = checkhasusername(emailusername)
-    emailusernameId = -1
+    emailusernameid = -1
     if hasemail or hasusername:
         con = open_database(DATABASE)
         cur = con.cursor()
@@ -108,13 +115,36 @@ def login_data_manager():
         elif hasusername:
             query = "SELECT user_id FROM users WHERE username = ?"
             cur.execute(query, (emailusername,))
-        emailusernameId = cur.fetchone()[0]
+        emailusernameid = cur.fetchone()[0]
         query = "SELECT password FROM users WHERE user_id = ?"
-        cur.execute(query, (emailusernameId,))
+        cur.execute(query, (emailusernameid,))
         hashedpassword = cur.fetchone()[0]
+        con.close()
         if bcrypt.check_password_hash(hashedpassword, password):
             matches = True
-    return jsonify({'validLogin': matches, 'email': hasemail, 'userId': emailusernameId})
+    return jsonify({'validLogin': matches, 'email': hasemail, 'userId': emailusernameid})
+
+
+@app.route('/getchangepasswordinformation', methods=['POST'])
+def changepassword_data_manager():
+    data = request.get_json()
+    firstname = data['firstname']
+    lastname = data['lastname']
+    username = data['username']
+    email = data['email']
+    matches = False
+    hasusername = checkhasusername(username)
+    if hasusername:
+        con = open_database(DATABASE)
+        cur = con.cursor()
+        query = "SELECT * FROM users WHERE username = ?"
+        cur.execute(query, (username,))
+        user_information = cur.fetchall()[0]
+        con.close()
+        if email == user_information[2] and firstname == user_information[5] and lastname == user_information[6]:
+            matches = True
+    # Base the check off the inserted username, all the data needs to be validated to allow password reset
+    return jsonify({"validInformation": matches})
 
 
 @app.route('/getsignupinformation', methods=['POST'])

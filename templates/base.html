@@ -50,7 +50,7 @@
                 <div class="modal-body">
                     <form class="loginform" method="POST" onsubmit="return ValidateLoginForm()">
                         <input type="hidden" name="loginform" value=""/>
-                        <div id="login-incorrect"></div>
+                        <div id="login-incorrect" class="incorrect"></div>
                         <div class="form-login-email">
                             <div class="form-label">Email or Username</div>
                             <input type="text" name="login-username" id="login-username" class="form-element"/>
@@ -65,16 +65,64 @@
                             <input type="submit" value="Login" class="form-submit" id="login-submit">
                         </div>
                         <div class="forgot-password">
-                            <p><a href="/forgotpassword">Forgot Password?</a></p>
+                            <p><a data-target="#forgotPasswordModal" role="button" data-toggle="modal" class="closeLoginModal">Forgot Password?</a></p>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <p>Don't have an account yet? <a data-target="#signUpModal" role="button" data-toggle="modal" id="closeLoginModal">Sign Up</a>.</p>
+                    <p>Don't have an account yet? <a data-target="#signUpModal" role="button" data-toggle="modal" class="closeLoginModal">Sign Up</a>.</p>
                 </div>
            </div>
       </div>
  </div>
+
+{# Forgot Password #}
+<div id="forgotPasswordModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                 <button type="button" class="close" data-dismiss="modal">×</button>
+                 <h4 class="modal-title">Forgot your Password?</h4>
+            </div>
+            <div class="modal-body">
+                <form class="forgotpasswordform" id="forgotpasswordform" method="POST" onsubmit="return ValidateForgotPasswordForm()">
+                    <div id="forgotpassword-incorrect" class="incorrect"></div>
+                    {# First name field #}
+                    <div class="form-label">First Name</div>
+                    <input type="text" name="forgotpassword-firstname" id="forgotpassword-firstname" class="form-element"/>
+                    <div class="field-incomplete" id="forgotpassword-firstname-incomplete"></div>
+                    {# Last name field #}
+                    <div class="form-label">Last Name</div>
+                    <input type="text" name="forgotpassword-lastname" id="forgotpassword-lastname" class="form-element"/>
+                    <div class="field-incomplete" id="forgotpassword-lastname-incomplete"></div>
+                    {# Username field #}
+                    <div class="form-label">Username</div>
+                    <input type="text" name="forgotpassword-username" id="forgotpassword-username" class="form-element"/>
+                    <div class="field-incomplete" id="forgotpassword-username-incomplete"></div>
+                    {# Email field #}
+                    <div class="form-label">Email</div>
+                    <input type="text" name="forgotpassword-email" id="forgotpassword-email" class="form-element"/>
+                    <div class="field-incomplete" id="forgotpassword-email-incomplete"></div>
+                    {# Password field #}
+                    <div class="form-label">Password</div>
+                    <input type="password" name="forgotpassword-password" id="forgotpassword-password" class="form-element"/>
+                    <div class="field-incomplete" id="forgotpassword-password-incomplete"></div>
+                    {# Confirm password field #}
+                    <div class="form-label">Confirm Password</div>
+                    <input type="password" name="forgotpassword-confirmpassword" id="forgotpassword-confirmpassword" class="form-element"/>
+                    <div class="field-incomplete" id="forgotpassword-confirmpassword-incomplete"></div>
+                    {# Submit #}
+                    <div id="form-forgotpassword-submit">
+                        <input type="submit" value="Reset Password" class="form-submit" id="forgotpassword-submit">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <p>Already have an account? <a data-target="#loginModal" role="button" data-toggle="modal" id="closeForgotPasswordModal">Login</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 {# Sign Up Modal #}
 <div id="signUpModal" class="modal fade">
@@ -129,18 +177,6 @@
         </div>
     </div>
 </div>
-
-<div id="forgotPasswordModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                 <button type="button" class="close" data-dismiss="modal">×</button>
-                 <h4 class="modal-title">Sign Up</h4>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
     function checkLogin(logged_in) {
         const loginElement = document.getElementById("login")
@@ -208,7 +244,7 @@
     const passwordMinLength = 8
 
 
-    function ValidateLoginForm() {
+    function ValidateLoginForm() { // Function for validating the login form
         (async () => { // Use an async to get whether the username & email are already used in the database
             try { // use try catch just in case
                 const emailUsernameInput = document.getElementById("login-username").value.trim() // .trim() is used to clear the whitespace at start/end of string (same as .strip() in python)
@@ -259,13 +295,89 @@
         return false
     }
 
+    function ValidateForgotPasswordForm() { // Function for validating the forgot password form
+        (async () => { // Use an async to get whether this data exists in the database for the password reset
+            try { // use try catch just in case
+                const firstNameInput = document.getElementById("forgotpassword-firstname").value.trim()
+                const lastNameInput = document.getElementById("forgotpassword-lastname").value.trim()
+                const usernameInput = document.getElementById("forgotpassword-username").value.trim()
+                const emailInput = document.getElementById("forgotpassword-email").value.trim()
+                const passwordInput = document.getElementById("forgotpassword-password").value.trim()
+                const confirmPasswordInput = document.getElementById("forgotpassword-confirmpassword").value.trim()
+                const data = {firstname: firstNameInput, lastname: lastNameInput, username: usernameInput, email: emailInput}
+                const response = await fetch('/getchangepasswordinformation', { // fetch /getchangepasswordinformation from app.py
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(data) // parse through the data (email and username input)
+                })
+                const responseText = await response.json() // wait for the response
+                document.getElementById("forgotpassword-incorrect").classList.remove("successful")
+                clearText(["forgotpassword-incorrect", "forgotpassword-firstname-incomplete", "forgotpassword-lastname-incomplete", "forgotpassword-username-incomplete", "forgotpassword-email-incomplete", "forgotpassword-password-incomplete", "forgotpassword-confirmpassword-incomplete"])
+                clearColour(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
+                let fail = false // variable used throughout to check if the data is valid
+                // Iterate over fields to check if they have any input, if they don't notify their respected error message
+                const elementsToCheck = ["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"]
+                const elementMessages = {
+                    "forgotpassword-firstname": ".First name is required",
+                    "forgotpassword-lastname": ".Last name is required",
+                    "forgotpassword-username": ".Username is required",
+                    "forgotpassword-email": ".Email is required",
+                    "forgotpassword-password": ".Password is required",
+                    "forgotpassword-confirmpassword": ".Password confirmation is required"
+                }
+                for (const x in elementsToCheck) {
+                    const elementId = elementsToCheck[x]
+                    const element = document.getElementById(elementId).value.trim()
+                    if (element.length === 0) {
+                        fail = setValue(elementId, failedTextColour, `${elementId}-incomplete`, elementMessages[elementId], true)
+                    }
+                }
+                if (firstNameInput.length > 0 && lastNameInput.length > 0 && usernameInput.length > 0 && emailInput.length > 0 && (passwordInput.length > 0 || confirmPasswordInput.length > 0)) {
+                    if (passwordInput !== confirmPasswordInput) {
+                        fail = setValue("forgotpassword-password", failedTextColour, "forgotpassword-password-incomplete", ".Passwords do not match", true)
+                        setValue("forgotpassword-confirmpassword", failedTextColour, "forgotpassword-confirmpassword-incomplete", ".Passwords do not match", true)
+                    } else if (passwordInput.length < passwordMinLength) {
+                        fail = setValue("forgotpassword-password", failedTextColour, "forgotpassword-password-incomplete", ".Password must be at least 8 characters long", true)
+                        setValue("forgotpassword-confirmpassword", failedTextColour, "forgotpassword-confirmpassword-incomplete", ".Password must be at least 8 characters long", true)
+                    } else if (!responseText.validInformation) {
+                        fail = true
+                        document.getElementById("forgotpassword-incorrect").innerText = "Unable to reset password - Invalid Credentials"
+                        for (const x in elementsToCheck) {
+                            document.getElementById(elementsToCheck[x]).style.borderColor = failedTextColour
+                        }
+                    }
+                }
+                if (!fail) { // Allow user to change password
+                    const formData = {
+                        "type": "resetpassword",
+                        "username": usernameInput,
+                        "newpassword": passwordInput
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{url_for('home')}}",
+                        contentType: "application/json",
+                        data: JSON.stringify(formData)
+                    })
+                    document.getElementById("forgotpassword-incorrect").classList.add("successful")
+                    document.getElementById("forgotpassword-incorrect").innerText = "Successfully Reset Password"
+                }
+            } catch (error) {
+            console.log(error)
+            }
+        })()
+        return false
+    }
+
     function ValidateSignUpForm() { // Function for validating the sign-up form
         (async () => { // Use an async to get whether the username & email are already used in the database
             try { // use try catch just in case
                 const usernameInput = document.getElementById("signup-username").value.trim()
                 const emailInput = document.getElementById("signup-email").value.trim()
                 const data = {email: emailInput, username: usernameInput}
-                const response = await fetch('/getsignupinformation', { // fetch /getlogininformation from app.py
+                const response = await fetch('/getsignupinformation', { // fetch /getsignupinformation from app.py
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
@@ -297,8 +409,8 @@
                 }
                 for (const x in elementsToCheck) {
                     const elementId = elementsToCheck[x]
-                    const element = document.getElementById(elementId).value
-                    if (element.trim().length === 0) {
+                    const element = document.getElementById(elementId).value.trim()
+                    if (element.length === 0) {
                         fail = setValue(elementId, failedTextColour, `${elementId}-incomplete`, elementMessages[elementId], true)
                     }
                 }
@@ -361,7 +473,7 @@
         return false // cancel the form as the data is being managed by ajax
     }
 
-    $('#student-button').click(function() { // Manage the click event of the student button
+    $('#student-button').click(function() { // Manage the click event of the student button (in sign up)
         if (!document.getElementById("student-button").classList.contains("active")) {
             document.getElementById("student-button").classList.add("active")
             removeTeacherButtonInput()
@@ -370,7 +482,7 @@
         }
     })
 
-    $('#teacher-button').click(function() { // Manage the click event of the teacher button
+    $('#teacher-button').click(function() { // Manage the click event of the teacher button (in sign up)
         if (!document.getElementById("teacher-button").classList.contains("active")) {
             document.getElementById("teacher-button").classList.add("active")
             removeStudentButtonInput()
@@ -385,8 +497,14 @@
         clearColour(["login-username", "login-password"])
     })
 
+    $('#forgotPasswordModal').on('hidden.bs.modal', function() { // Forgot password modal close event
+        document.getElementById("forgotpassword-incorrect").classList.remove("successful")
+        clearValue(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
+        clearText(["forgotpassword-incorrect", "forgotpassword-firstname-incomplete", "forgotpassword-lastname-incomplete", "forgotpassword-username-incomplete", "forgotpassword-email-incomplete", "forgotpassword-password-incomplete", "forgotpassword-confirmpassword-incomplete"])
+        clearColour(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
+    })
+
     $('#signUpModal').on('hidden.bs.modal', function() { // Sign up modal close event
-        document.close()
         removeTeacherButtonInput()
         removeStudentButtonInput()
         clearValue(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
@@ -394,8 +512,12 @@
         clearColour(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
     })
 
-    $('#closeLoginModal').click(function() { // On clicking login modal close button, close modal
+    $('.closeLoginModal').click(function() { // On clicking login modal close button, close modal (this is a class as it is called multiple times)
         $('#loginModal').modal('hide')
+    })
+
+        $('#closeForgotPasswordModal').click(function() { // On clicking forgot password modal close button, close modal
+        $('#forgotPasswordModal').modal('hide')
     })
 
     $('#closeSignUpModal').click(function() { // On clicking sign up modal close button, close modal

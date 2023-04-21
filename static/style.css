@@ -65,13 +65,22 @@
     color: white;
 }
 
+#form-forgotpassword-submit { /* Used for submit button on sign up */
+    padding-top: 1.5rem;
+    margin-left: 5%;
+    color: white;
+}
+/* Forgot Password */
+
+
+
+/* Login */
 
 .hidden {
   display: none !important;
 }
 
-/* Login */
-#login-incorrect {
+.incorrect {
     height: 2rem;
     margin-left: 5%;
     width: 90%;
@@ -79,6 +88,10 @@
     font-size: 1.5rem;
     font-weight: bold;
     color: red;
+}
+
+.successful {
+    color: limegreen !important;
 }
 
 .form-login-email {
@@ -336,6 +349,10 @@ nav a:hover {
 
 #loginModal .modal-body {
     height: 34.5vh;
+}
+
+#forgotPasswordModal .modal-body {
+    height: 64vh;
 }
 
 #signUpModal .modal-body {
