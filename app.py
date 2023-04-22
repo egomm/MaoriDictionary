@@ -43,41 +43,43 @@ def create_connection(db_file):
     return None
 
 
-def is_logged_in():
+def is_logged_in():  # Returns if the user is logged in based on the session id (from user_id)
     return session.get("id") is not None
 
 
-def signup(teacher, firstnamevalue, lastnamevalue, usernamevalue, emailvalue, passwordvalue):
-    con = open_database(DATABASE)
-    query = "INSERT INTO users (username, email, password, administrator, firstName, lastName) " \
-            "VALUES (?, ?, ?, ?, ?, ?)"
-    cur = con.cursor()
-    cur.execute(query, (usernamevalue, emailvalue, passwordvalue, teacher, firstnamevalue, lastnamevalue))
-    con.commit()
-    con.close()
-
-
+# Context processor allows injection into the template as it runs before the template is rendered
 @app.context_processor
 def inject_data():  # Used for getting the data when there
     # is a ajax post
     if request.method == "POST":
-        json_data = request.get_json()
-        if json_data["type"] == "login":
-            session['id'] = json_data["userid"]
-        elif json_data["type"] == "signup":  # check where the data came from, proceed accordingly
-            signup(json_data["role"], json_data["firstname"], json_data["lastname"],
-                   json_data["username"], json_data["email"], bcrypt.generate_password_hash(json_data["password"]))
-        elif json_data["type"] == "resetpassword":
+        json_data = request.get_json()  # check where the data came from, proceed accordingly
+        if json_data["type"] == "login":  # Login post
+            session['id'] = json_data["userid"]  # Set the session id to the userid
+        elif json_data["type"] == "signup":  # Signup post
+            con = open_database(DATABASE)
+            query = "INSERT INTO users (firstName, lastName, username, email, password, administrator) " \
+                    "VALUES (?, ?, ?, ?, ?, ?)"  # Insert sign up information into the users database
+            cur = con.cursor()
+            cur.execute(query, (json_data["firstname"], json_data["lastname"], json_data["username"], json_data["email"]
+                                , bcrypt.generate_password_hash(json_data["password"]), json_data["role"]))
+            con.commit()
+            con.close()
+        elif json_data["type"] == "resetpassword":  # Reset password post
             con = create_connection(DATABASE)
             cur = con.cursor()
-            query = "UPDATE users SET password=? WHERE username=?"
+            query = "UPDATE users SET password=? WHERE username=?"  # Update the users database with the new bcrypt password
             cur.execute(query, (bcrypt.generate_password_hash(json_data["newpassword"]), json_data["username"]))
             con.commit()
             con.close()
-    return {}
+    return {}  # Nothing needs to be returned as this is on the context processor
 
 
 def checkhasusername(username):
+    """
+    Function for checking if a username exists in the users database
+    :param username: username which will be checked
+    :return: whether the users database contains the given username
+    """
     con = create_connection(DATABASE)
     cur = con.cursor()
     query = "SELECT username FROM users"
@@ -88,6 +90,11 @@ def checkhasusername(username):
 
 
 def checkhasemail(email):
+    """
+    Function for checking if an email exists in the users database
+    :param email: email which will be checked
+    :return: whether the users databse contains the given email
+    """
     con = create_connection(DATABASE)
     cur = con.cursor()
     query = "SELECT email FROM users"
@@ -141,7 +148,7 @@ def changepassword_data_manager():
         cur.execute(query, (username,))
         user_information = cur.fetchall()[0]
         con.close()
-        if email == user_information[2] and firstname == user_information[5] and lastname == user_information[6]:
+        if firstname == user_information[1] and lastname == user_information[2] and email == user_information[4]:
             matches = True
     # Base the check off the inserted username, all the data needs to be validated to allow password reset
     return jsonify({"validInformation": matches})

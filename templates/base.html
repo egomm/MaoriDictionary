@@ -242,6 +242,7 @@
     const emailMaxLength = 64
     const emailMinLength = 4
     const passwordMinLength = 8
+    const passwordMaxLength = 128
 
 
     function ValidateLoginForm() { // Function for validating the login form
@@ -338,9 +339,9 @@
                     if (passwordInput !== confirmPasswordInput) {
                         fail = setValue("forgotpassword-password", failedTextColour, "forgotpassword-password-incomplete", ".Passwords do not match", true)
                         setValue("forgotpassword-confirmpassword", failedTextColour, "forgotpassword-confirmpassword-incomplete", ".Passwords do not match", true)
-                    } else if (passwordInput.length < passwordMinLength) {
-                        fail = setValue("forgotpassword-password", failedTextColour, "forgotpassword-password-incomplete", ".Password must be at least 8 characters long", true)
-                        setValue("forgotpassword-confirmpassword", failedTextColour, "forgotpassword-confirmpassword-incomplete", ".Password must be at least 8 characters long", true)
+                    } else if (passwordInput.length < passwordMinLength || passwordInput.length > passwordMaxLength) {
+                        fail = setValue("forgotpassword-password", failedTextColour, "forgotpassword-password-incomplete", ".Password must be between 8-128 characters", true)
+                        setValue("forgotpassword-confirmpassword", failedTextColour, "forgotpassword-confirmpassword-incomplete", ".Password must be between 8-128 characters", true)
                     } else if (!responseText.validInformation) {
                         fail = true
                         document.getElementById("forgotpassword-incorrect").innerText = "Unable to reset password - Invalid Credentials"
@@ -442,9 +443,9 @@
                     if (passwordInput.length > 0 && passwordInput !== confirmPasswordInput) { // passwords must be equal
                         fail = setValue("signup-password", failedTextColour, "signup-password-incomplete", ".Passwords do not match", true)
                         setValue("signup-confirmpassword", failedTextColour, "signup-confirmpassword-incomplete", ".Passwords do not match", true)
-                    } else if (passwordInput.length < passwordMinLength) { // password should have to be at least 8 characters
-                        fail = setValue("signup-password", failedTextColour, "signup-password-incomplete", ".Password must be at least 8 characters long", true)
-                        setValue("signup-confirmpassword", failedTextColour, "signup-confirmpassword-incomplete", ".Password must be at least 8 characters long", true)
+                    } else if (passwordInput.length < passwordMinLength || passwordInput.length > passwordMaxLength) { // password should have to be 8-128 characters
+                        fail = setValue("signup-password", failedTextColour, "signup-password-incomplete", ".Password must be between 8-128 characters", true)
+                        setValue("signup-confirmpassword", failedTextColour, "signup-confirmpassword-incomplete", ".Password must be between 8-128 characters", true)
                     }
                 }
                 if (!fail) { // Data has been validated, sign up the user
