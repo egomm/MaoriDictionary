@@ -347,8 +347,18 @@ nav a:hover {
     font-weight: bold;
 }
 
+#login-show-password {
+  vertical-align: middle;
+  position: relative;
+  bottom: 0.4rem;
+}
+
+.show-password {
+    margin-left: 5%;
+}
+
 #loginModal .modal-body {
-    height: 34.5vh;
+    height: 40vh;
 }
 
 #forgotPasswordModal .modal-body {
