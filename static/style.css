@@ -354,19 +354,20 @@ nav a:hover {
 }
 
 .show-password {
+    font-size: 15px; /* Make this based on rem */
     margin-left: 5%;
 }
 
 #loginModal .modal-body {
-    height: 40vh;
+    height: 38vh;
 }
 
 #forgotPasswordModal .modal-body {
-    height: 64vh;
+    height: 67vh;
 }
 
 #signUpModal .modal-body {
-    height: 70vh;
+    height: 73vh;
 }
 
 .modal-footer {

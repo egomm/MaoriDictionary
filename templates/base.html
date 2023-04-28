@@ -62,7 +62,7 @@
                         </div>
                         <div class="field-incomplete" id="login-password-incomplete"></div>
                         <div class="show-password">
-                            <input type="checkbox" id="login-show-password" value=true>
+                            <input type="checkbox" id="login-show-password" onclick="return showLoginPassword()">
                             Show Password
                         </div>
                         <div class="form-login-submit">
@@ -115,6 +115,11 @@
                     <div class="form-label">Confirm Password</div>
                     <input type="password" name="forgotpassword-confirmpassword" id="forgotpassword-confirmpassword" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-confirmpassword-incomplete"></div>
+                    {# Show password #}
+                    <div class="show-password">
+                        <input type="checkbox" id="forgotpassword-show-password" onclick="return showForgotPasswordPassword()">
+                        Show Password
+                    </div>
                     {# Submit #}
                     <div id="form-forgotpassword-submit">
                         <input type="submit" value="Reset Password" class="form-submit" id="forgotpassword-submit">
@@ -169,6 +174,11 @@
                     <div class="form-label">Confirm Password</div>
                     <input type="password" name="signup-confirmpassword" id="signup-confirmpassword" class="form-element"/>
                     <div class="field-incomplete" id="signup-confirmpassword-incomplete"></div>
+                    {# Show password #}
+                    <div class="show-password">
+                        <input type="checkbox" id="signup-show-password" onclick="return showSignUpPassword()">
+                        Show Password
+                    </div>
                     {# Submit #}
                     <div id="form-signup-submit">
                         <input type="submit" value="Sign Up" class="form-submit" id="signup-submit">
@@ -182,6 +192,35 @@
     </div>
 </div>
 <script>
+    function showLoginPassword() {
+        const showPassword = document.getElementById("login-password")
+        showPassword.type === "password" ? showPassword.type = "text" : showPassword.type = "password"
+    }
+
+    function showForgotPasswordPassword() {
+        const showPassword = document.getElementById("forgotpassword-password")
+        const showConfirmPassword = document.getElementById("forgotpassword-confirmpassword")
+        if (showPassword.type === "password") {
+            showPassword.type = "text"
+            showConfirmPassword.type = "text"
+        } else {
+            showPassword.type = "password"
+            showConfirmPassword.type = "password"
+        }
+    }
+
+    function showSignUpPassword() {
+        const showPassword = document.getElementById("signup-password")
+        const showConfirmPassword = document.getElementById("signup-confirmpassword")
+        if (showPassword.type === "password") {
+            showPassword.type = "text"
+            showConfirmPassword.type = "text"
+        } else {
+            showPassword.type = "password"
+            showConfirmPassword.type = "password"
+        }
+    }
+
     function checkLogin(logged_in) {
         const loginElement = document.getElementById("login")
         const logoutElement = document.getElementById("logout")
@@ -243,7 +282,7 @@
     const firstnameMaxLength = 64
     const lastnameMaxLength = 64
     const usernameMaxLength = 32
-    const emailMaxLength = 64
+    const emailMaxLength = 256
     const emailMinLength = 4
     const passwordMinLength = 8
     const passwordMaxLength = 128
@@ -433,8 +472,8 @@
                     fail = setValue("signup-username", failedTextColour, "signup-username-incomplete", ".This username is already in use", true)
                 }
                 if (emailInput.length > 0) { // Ensure that the email input is at least one character long
-                    if (emailInput.length > emailMaxLength || emailInput.length < emailMinLength) { // Limit email address to be between 4-64 characters
-                        fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".Email must be between 4-64 characters", true)
+                    if (emailInput.length > emailMaxLength || emailInput.length < emailMinLength) { // Limit email address to be between 4-256 characters
+                        fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".Email must be between 4-256 characters", true)
                     } else if (!(emailInput.includes('@') && emailInput.split('@')[emailInput.split('@').length - 1].includes('.'))) { // "very.(),:;<>[]\".VERY.\"very@\\ \"very\".unusual"@strange.example.com <- this email address is valid, so this should accept that
                         fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".Email must include '@' and '.' afterwards", true)
                     } else if (emailInUse) { // Disallow duplicate email addresses
@@ -497,12 +536,14 @@
     })
 
     $('#loginModal').on('hidden.bs.modal', function() { // Login modal close event
+        document.getElementById("login-show-password").checked = false // Set the checked value to false
         clearValue(["login-username", "login-password"])
         clearText(["login-incorrect", "login-username-incomplete", "login-password-incomplete"])
         clearColour(["login-username", "login-password"])
     })
 
     $('#forgotPasswordModal').on('hidden.bs.modal', function() { // Forgot password modal close event
+        document.getElementById("forgotpassword-show-password").checked = false // Set the checked value to false
         document.getElementById("forgotpassword-incorrect").classList.remove("successful")
         clearValue(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
         clearText(["forgotpassword-incorrect", "forgotpassword-firstname-incomplete", "forgotpassword-lastname-incomplete", "forgotpassword-username-incomplete", "forgotpassword-email-incomplete", "forgotpassword-password-incomplete", "forgotpassword-confirmpassword-incomplete"])
@@ -510,6 +551,7 @@
     })
 
     $('#signUpModal').on('hidden.bs.modal', function() { // Sign up modal close event
+        document.getElementById("signup-show-password").checked = false // Set the checked value to false
         removeTeacherButtonInput()
         removeStudentButtonInput()
         clearValue(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
