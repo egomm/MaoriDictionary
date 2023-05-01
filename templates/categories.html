@@ -1,13 +1,25 @@
 {% extends 'base.html' %}
 
-{% block header %}
-Categories
-{% endblock %}
-
 {% block title %}
     Māori Dictionary | categories
 {% endblock %}
 
 {% block container %}
-    container
+    categories
+{% endblock %}
+
+{% block header %}
+    Categories
+{% endblock %}
+
+{% block main %}
+    <div id="categorylist">
+        <table>
+            {% for category in category_list %}
+            <tr>
+                <td>{{ category }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 {% endblock %}

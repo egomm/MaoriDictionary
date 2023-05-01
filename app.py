@@ -176,7 +176,8 @@ def home():  # put application's code here
 
 @app.route('/categories', methods=['POST', 'GET'])
 def categories():
-    return render_template('categories.html', logged_in=json.dumps(is_logged_in()))
+    category_list = ["Actions", "Animals", "Culture / Religion"]
+    return render_template('categories.html', logged_in=json.dumps(is_logged_in()), category_list=category_list)
 
 
 # make the request go under a custom thing

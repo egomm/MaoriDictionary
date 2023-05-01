@@ -176,6 +176,31 @@
     color: #454545;
 }
 
+.categories {
+
+}
+
+.categories h1 {
+    text-align: center;
+}
+
+.categories main {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.categories #categorylist {
+    width: 15vw;
+}
+
+.categories td { /* Need to work on this */
+    font-size: 2rem;
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    text-align: center;
+}
+
 .container {
     width: 100%;
     padding: 5%;
