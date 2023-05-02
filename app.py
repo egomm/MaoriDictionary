@@ -176,7 +176,12 @@ def home():  # put application's code here
 
 @app.route('/categories', methods=['POST', 'GET'])
 def categories():
-    category_list = ["Actions", "Animals", "Culture / Religion"]
+    con = open_database(DATABASE)
+    cur = con.cursor()
+    query = "SELECT category_name FROM categories"
+    cur.execute(query)
+    category_list = [x[0] for x in cur.fetchall()]
+    con.close()
     return render_template('categories.html', logged_in=json.dumps(is_logged_in()), category_list=category_list)
 
 

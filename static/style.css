@@ -182,11 +182,34 @@
 
 .categories h1 {
     text-align: center;
+    height: 5vh;
+}
+
+.category-divider-elements {
+    height: 5vh;
+      display: flex;
+  justify-content: center;
 }
 
 .categories main {
     margin-left: 5%;
     margin-right: 5%;
+}
+
+.categories #wrapper {
+    display: flex;
+}
+
+.categories #category-divider {
+    margin-left: 2%;
+    height: 5vh;
+    width: 100%;
+    background-color: rgb(230, 230, 230);
+    border: thin solid black;
+}
+
+.categories #bottom-category {
+    height: 10vh;
 }
 
 .categories #categorylist {

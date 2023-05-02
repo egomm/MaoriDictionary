@@ -13,25 +13,32 @@
 {% endblock %}
 
 {% block main %}
-    <div id="categorylist">
-        <table>
-            {% for i in range(category_list|length) %}
-                {% if i == 0 %}
-                    <tr>
-                        <td><button class="category-button" id="category-button-header">{{ category_list[i] }}</button></td>
-                    </tr>
-                {% elif i < (category_list|length - 1) %}
-                    <tr>
-                        <td><button class="category-button category-button-body">{{ category_list[i] }}</button></td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td><button class="category-button category-button-body" id="category-button-footer">{{ category_list[i] }}</button></td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </table>
+    <div id="wrapper">
+        <div id="categorylist">
+            <table>
+                <tr>
+                    <td><button class="category-button" id="category-button-header">All Categories</button></td>
+                </tr>
+                {% for i in range(category_list|length) %}
+                    {% if i < (category_list|length - 1) %}
+                        <tr>
+                            <td><button class="category-button category-button-body">{{ category_list[i] }}</button></td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td><button class="category-button category-button-body" id="category-button-footer">{{ category_list[i] }}</button></td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+        <div id="category-divider">
+            <div class="category-divider-elements">
+                test
+            </div>
+        </div>
     </div>
+    <div id="bottom-category"></div>
 {% endblock %}
 
 <script>
