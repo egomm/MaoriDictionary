@@ -15,11 +15,29 @@
 {% block main %}
     <div id="categorylist">
         <table>
-            {% for category in category_list %}
-            <tr>
-                <td>{{ category }}</td>
-            </tr>
+            {% for i in range(category_list|length) %}
+                {% if i == 0 %}
+                    <tr>
+                        <td><button class="category-button" id="category-button-header">{{ category_list[i] }}</button></td>
+                    </tr>
+                {% elif i < (category_list|length - 1) %}
+                    <tr>
+                        <td><button class="category-button category-button-body">{{ category_list[i] }}</button></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td><button class="category-button category-button-body" id="category-button-footer">{{ category_list[i] }}</button></td>
+                    </tr>
+                {% endif %}
             {% endfor %}
         </table>
     </div>
 {% endblock %}
+
+<script>
+    $(document).ready(function(){
+        $('.category-button').click(function(){
+            alert("CLICKED!");
+        });
+    });
+</script>
