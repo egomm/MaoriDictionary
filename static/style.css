@@ -219,6 +219,7 @@
 }
 
 .category-search {
+    border: solid thin black;
     display: inline;
     position: relative;
     margin-left: 1%;
@@ -258,6 +259,7 @@
     width: 15vw;
     height: 5vh;
     font-size: 2rem;
+    border-width: thin;
     padding: 0;
 }
 
