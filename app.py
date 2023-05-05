@@ -5,6 +5,7 @@ from flask_bcrypt import Bcrypt
 
 import os
 import json
+import re
 
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 
@@ -174,15 +175,25 @@ def home():  # put application's code here
     return render_template('home.html', logged_in=json.dumps(is_logged_in()))
 
 
-@app.route('/categories', methods=['POST', 'GET'])
-def categories():
+@app.route('/categories/<category>', methods=['POST', 'GET'])
+def categories(category):
     con = open_database(DATABASE)
     cur = con.cursor()
     query = "SELECT category_name FROM categories"
     cur.execute(query)
     category_list = [x[0] for x in cur.fetchall()]
     con.close()
-    return render_template('categories.html', logged_in=json.dumps(is_logged_in()), category_list=category_list)
+    current_category = 0
+    print(category)
+    sanitised_category_list = [x.replace("/", "").lower() for x in category_list]
+    sanitised_category_list = [re.sub(r'\s+', '-', x) for x in sanitised_category_list]
+    for i in range(len(category_list)):
+        if sanitised_category_list[i] == category:
+            current_category = i + 1
+            break
+    print(current_category)
+    return render_template('categories.html', logged_in=json.dumps(is_logged_in()), category_list=category_list,
+                           sanitised_category_list=sanitised_category_list, current_category=current_category)
 
 
 # make the request go under a custom thing

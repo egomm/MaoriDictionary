@@ -275,12 +275,17 @@
 }
 
 .category-button {
+    color: black;
     background-color: white;
     width: 15vw;
     height: 5vh;
     font-size: 2rem;
     border-width: thin;
     padding: 0;
+}
+
+.active-category {
+    background-color: rgb(103, 169, 220);
 }
 
 #category-button-header {

@@ -19,7 +19,7 @@
         <div class="navbar-brand">Māori Dictionary</div>
         <div class="navbar-links">
             <a id="home" href="/">home</a>
-            <a id="categories" href="/categories">categories</a>
+            <a id="categories" href="/categories/all-categories">categories</a>
             <a id="logout" href="/logout">logout</a>
             <a id="admin" href="/admin">admin</a>
             <a id="login" data-target="#loginModal" role="button" data-toggle="modal">login</a>
@@ -573,20 +573,34 @@
 
 
     // For the categories.html
-    $('.category-button').click(function(){
-        alert("CLICKED!");
-    });
-
     $('#switch-language').click(function() {
         // Change between English-Māori and Māori-English
         const language = document.getElementById("category-language-background");
-        if (language.classList.contains("maori")) {
-            language.classList.remove("maori")
-            language.innerText = "English-Māori";
-        } else {
-            language.classList.add("maori")
+        if (sessionStorage.test) {
+            if (sessionStorage["test"] === "maori") { // Set to english
+                sessionStorage.setItem("test", "english");
+                language.innerText = "English-Māori";
+            } else { // Set to maori
+                sessionStorage.setItem("test", "maori");
+                language.innerText = "Māori-English";
+            }
+        } else { // Called for the first time
+            sessionStorage.setItem("test", "maori");
             language.innerText = "Māori-English";
         }
     })
+
+    requestAnimationFrame(function() {
+        const language = document.getElementById("category-language-background");
+        if (sessionStorage.test) {
+            if (sessionStorage["test"] === "maori") { // Maori-English
+                language.innerText = "Māori-English";
+            } else { // English-Maori
+                language.innerText = "English-Māori";
+            }
+        } else {
+            language.innerText = "English-Māori";
+        }
+    });
 </script>
 </html>

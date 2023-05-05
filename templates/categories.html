@@ -16,18 +16,36 @@
     <div id="wrapper">
         <div id="categorylist">
             <table>
-                <tr>
-                    <td><button class="category-button" id="category-button-header">All Categories</button></td>
-                </tr>
+                {% if current_category > 0 %}
+                    <tr>
+                        <td><a href="/categories/all-categories"><button class="category-button" id="category-button-header">All Categories</button></a></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td><a href="/categories/all-categories"><button class="category-button active-category" id="category-button-header">All Categories</button></a></td>
+                    </tr>
+                {% endif %}
                 {% for i in range(category_list|length) %}
-                    {% if i < (category_list|length - 1) %}
-                        <tr>
-                            <td><button class="category-button category-button-body">{{ category_list[i] }}</button></td>
-                        </tr>
+                    {% if i + 1 != current_category %}
+                        {% if i < (category_list|length - 1) %}
+                            <tr>
+                                <td><a href="/categories/{{ sanitised_category_list[i] }}"><button class="category-button category-button-body">{{ category_list[i] }}</button></a></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td><a href="/categories/{{ sanitised_category_list[i] }}"><button class="category-button category-button-body" id="category-button-footer">{{ category_list[i] }}</button></a></td>
+                            </tr>
+                        {% endif %}
                     {% else %}
-                        <tr>
-                            <td><button class="category-button category-button-body" id="category-button-footer">{{ category_list[i] }}</button></td>
-                        </tr>
+                        {% if i < (category_list|length - 1) %}
+                            <tr>
+                                <td><a href="/categories/{{ sanitised_category_list[i] }}"><button class="category-button category-button-body active-category">{{ category_list[i] }}</button></a></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td><a href="/categories/{{ sanitised_category_list[i] }}"><button class="category-button category-button-body active-category" id="category-button-footer">{{ category_list[i] }}</button></a></td>
+                            </tr>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             </table>
