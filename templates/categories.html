@@ -39,16 +39,13 @@
                     <input id="category-search-bar" type="text" placeholder="Search in English or Māori...">
                     <button id="category-search-submit" type="submit"><img src="/static/images/search.png"></button>
                 </div>
+                <div id="category-language-title">LANGUAGE</div>
+                <div id="category-language-background">
+                    English-Māori
+                </div>
+                <button id="switch-language">⇆</button>
             </div>
         </div>
     </div>
     <div id="bottom-category"></div>
 {% endblock %}
-
-<script>
-    $(document).ready(function(){
-        $('.category-button').click(function(){
-            alert("CLICKED!");
-        });
-    });
-</script>

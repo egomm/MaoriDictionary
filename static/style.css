@@ -229,6 +229,26 @@
     height: 60%;
 }
 
+#category-language-title {
+    margin-left: 20%;
+}
+
+#category-language-background {
+    border: solid thin black;
+    margin-left: 1%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 8%;
+    height: 60%;
+    background-color: white;
+}
+
+#switch-language {
+    border: none;
+    background: none;
+}
+
 .categories main {
     margin-left: 5%;
     margin-right: 5%;

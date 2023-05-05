@@ -570,5 +570,23 @@
     $('#closeSignUpModal').click(function() { // On clicking sign up modal close button, close modal
         $('#signUpModal').modal('hide')
     })
+
+
+    // For the categories.html
+    $('.category-button').click(function(){
+        alert("CLICKED!");
+    });
+
+    $('#switch-language').click(function() {
+        // Change between English-Māori and Māori-English
+        const language = document.getElementById("category-language-background");
+        if (language.classList.contains("maori")) {
+            language.classList.remove("maori")
+            language.innerText = "English-Māori";
+        } else {
+            language.classList.add("maori")
+            language.innerText = "Māori-English";
+        }
+    })
 </script>
 </html>
