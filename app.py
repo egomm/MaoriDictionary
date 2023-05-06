@@ -50,28 +50,29 @@ def is_logged_in():  # Returns if the user is logged in based on the session id 
 
 # Context processor allows injection into the template as it runs before the template is rendered
 @app.context_processor
-def inject_data():  # Used for getting the data when there
-    # is a ajax post
+def inject_data():  # Used for getting the data when there is an ajax post
     if request.method == "POST":
         json_data = request.get_json()  # check where the data came from, proceed accordingly
-        if json_data["type"] == "login":  # Login post
-            session['id'] = json_data["userid"]  # Set the session id to the userid
-        elif json_data["type"] == "signup":  # Signup post
-            con = open_database(DATABASE)
-            query = "INSERT INTO users (firstName, lastName, username, email, password, administrator) " \
-                    "VALUES (?, ?, ?, ?, ?, ?)"  # Insert sign up information into the users database
-            cur = con.cursor()
-            cur.execute(query, (json_data["firstname"], json_data["lastname"], json_data["username"], json_data["email"]
-                                , bcrypt.generate_password_hash(json_data["password"]), json_data["role"]))
-            con.commit()
-            con.close()
-        elif json_data["type"] == "resetpassword":  # Reset password post
-            con = create_connection(DATABASE)
-            cur = con.cursor()
-            query = "UPDATE users SET password=? WHERE username=?"  # Update the users database with the new bcrypt password
-            cur.execute(query, (bcrypt.generate_password_hash(json_data["newpassword"]), json_data["username"]))
-            con.commit()
-            con.close()
+        if "type" in json_data:
+            if json_data["type"] == "login":  # Login post
+                session['id'] = json_data["userid"]  # Set the session id to the userid
+            elif json_data["type"] == "signup":  # Signup post
+                con = open_database(DATABASE)
+                query = "INSERT INTO users (firstName, lastName, username, email, password, administrator) " \
+                        "VALUES (?, ?, ?, ?, ?, ?)"  # Insert sign up information into the users database
+                cur = con.cursor()
+                cur.execute(query,
+                            (json_data["firstname"], json_data["lastname"], json_data["username"], json_data["email"]
+                             , bcrypt.generate_password_hash(json_data["password"]), json_data["role"]))
+                con.commit()
+                con.close()
+            elif json_data["type"] == "resetpassword":  # Reset password post
+                con = create_connection(DATABASE)
+                cur = con.cursor()
+                query = "UPDATE users SET password=? WHERE username=?"  # Update the users database with the new bcrypt password
+                cur.execute(query, (bcrypt.generate_password_hash(json_data["newpassword"]), json_data["username"]))
+                con.commit()
+                con.close()
     return {}  # Nothing needs to be returned as this is on the context processor
 
 
@@ -172,11 +173,28 @@ def logout():
 
 @app.route('/', methods=['POST', 'GET'])
 def home():  # put application's code here
+    print("home?")
     return render_template('home.html', logged_in=json.dumps(is_logged_in()))
 
 
 @app.route('/categories/<category>', methods=['POST', 'GET'])
 def categories(category):
+    print(request.method)
+    if session.get("selected-language") is None:
+        session["selected-language"] = "English-Māori"  # This is the 'origin language'
+    if session.get("selected-sorting-method") is None:
+        session["selected-sorting-method"] = "A-Z"  # A-Z
+    if session.get("selected-words-per-page") is None:
+        session["selected-words-per-page"] = "12"  # store as a string as this can be All
+    if request.method == "POST":
+        json_data = request.get_json()
+        if "type" in json_data:  # failsafe
+            if json_data["type"] == "category-language":
+                session["selected-language"] = json_data["language"]
+            if json_data["type"] == "sorting-methods":
+                session["selected-sorting-method"] = json_data["selectedvalue"]
+            if json_data["type"] == "words-per-page":
+                session["selected-words-per-page"] = json_data["selectedvalue"]
     con = open_database(DATABASE)
     cur = con.cursor()
     query = "SELECT category_name FROM categories"
@@ -192,13 +210,42 @@ def categories(category):
             current_category = i + 1
             break
     print(current_category)
+    selected_language = session["selected-language"]
+    print(selected_language)
+    sorting_method = session["selected-sorting-method"]
+    print(sorting_method)
+    words_per_page = session["selected-words-per-page"]
+    print(words_per_page)
+    # Need to render the words dependent on all of these constraints
+    # consider using a foreign key here?
+    if current_category > 0:
+        con = open_database(DATABASE)
+        cur = con.cursor()
+        query = "SELECT maoriword, englishword, definition, level FROM words WHERE cat_id = ?"
+        cur.execute(query, (current_category,))
+        word_list = cur.fetchall()
+        con.close()
+    else:  # current category is 0 (or error has occurred so just display all)
+        con = open_database(DATABASE)
+        cur = con.cursor()
+        query = "SELECT maoriword, englishword, definition, level FROM words"
+        cur.execute(query)
+        word_list = cur.fetchall()
+        con.close()
+    # [0] is maoriword, [1] is english word, [2] is definition, [3] is level
+    print(word_list)
+    print(word_list[0])
     return render_template('categories.html', logged_in=json.dumps(is_logged_in()), category_list=category_list,
-                           sanitised_category_list=sanitised_category_list, current_category=current_category)
+                           sanitised_category_list=sanitised_category_list, current_category=current_category,
+                           sorting_method=sorting_method, selected_language=selected_language,
+                           words_per_page=words_per_page)
 
 
 # make the request go under a custom thing
 @app.route('/contact', methods=['POST', 'GET'])
 def contact():
+    if True:
+        return redirect("/?idk")
     return render_template('contact.html', logged_in=json.dumps(is_logged_in()))
 
 

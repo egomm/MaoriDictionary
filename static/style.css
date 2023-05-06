@@ -230,7 +230,7 @@
 }
 
 #category-language-title {
-    margin-left: 20%;
+    margin-left: 29.5%;
 }
 
 #category-language-background {
@@ -244,7 +244,26 @@
     background-color: white;
 }
 
+#sorting-methods {
+    margin-left: 1%;
+    height: 60%;
+}
+
+#sorting-methods:focus-visible {
+    outline: none;
+}
+
+#words-per-page {
+    margin-left: 1%;
+    height: 60%;
+}
+
+#words-per-page:focus-visible {
+    outline: none;
+}
+
 #switch-language {
+    font-size: 2rem;
     border: none;
     background: none;
 }
@@ -282,6 +301,14 @@
     font-size: 2rem;
     border-width: thin;
     padding: 0;
+}
+
+.category-header-divider {
+    background-color: rgb(128, 128, 128);
+    width: 0.01%;
+    height: 60%;
+    margin-left: 1.5%;
+    margin-right: 1.5%;
 }
 
 .active-category {

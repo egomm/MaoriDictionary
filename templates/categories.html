@@ -58,10 +58,23 @@
                     <button id="category-search-submit" type="submit"><img src="/static/images/search.png"></button>
                 </div>
                 <div id="category-language-title">LANGUAGE</div>
-                <div id="category-language-background">
-                    English-Māori
-                </div>
-                <button id="switch-language">⇆</button>
+                <div id="category-language-background" data-selected-language="{{ selected_language }}">{{ selected_language }}</div> {# edit the data here? #}
+                <button id="switch-language">⇆</button>  {# data is for creating custom attributes #}
+                <div class="category-header-divider"></div>
+                <div id="category-sort-title">SORT BY</div>
+                {# Allow the user to sort by category if this is in the 'All Categories' #}
+                <select id="sorting-methods" onchange="handleSortChange()" data-sorting-method="{{ sorting_method }}">
+                    <option value="A-Z">A-Z</option>
+                    <option value="LEVEL">LEVEL</option>
+                </select>
+                <div class="category-header-divider"></div>
+                <div id="category-words-per-page">WORDS PER PAGE</div>
+                <select id="words-per-page" onchange="handleWordsPerPage()" data-words-per-page="{{ words_per_page }}">
+                    <option value="6">6</option>
+                    <option value="12">12</option>
+                    <option value="24">24</option>
+                    <option value="All">All</option>
+                </select>
             </div>
         </div>
     </div>
