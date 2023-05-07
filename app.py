@@ -249,18 +249,18 @@ def categories(category):
     if current_category > 0:
         con = open_database(DATABASE)
         cur = con.cursor()
-        query = "SELECT maoriword, englishword, definition, level FROM words WHERE cat_id = ?"
+        query = "SELECT maoriword, englishword, definition, level, image FROM words WHERE cat_id = ?"
         cur.execute(query, (current_category,))
         word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
         con.close()
     else:  # current category is 0 (or error has occurred so just display all)
         con = open_database(DATABASE)
         cur = con.cursor()
-        query = "SELECT maoriword, englishword, definition, level FROM words"
+        query = "SELECT maoriword, englishword, definition, level, image FROM words"
         cur.execute(query)
         word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
         con.close()
-    # [0] is maoriword, [1] is english word, [2] is definition, [3] is level
+    # [0] is maoriword, [1] is english word, [2] is definition, [3] is level, [4] is image
     if current_category > 0:
         category_name = sanitised_category_list[current_category-1]
     else:

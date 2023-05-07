@@ -309,7 +309,7 @@
 }
 
 #word-table-main {
-    height: 20vh;
+    height: 25vh;
 }
 
 #word-table-space {
@@ -320,13 +320,18 @@
     width: 1%;
 }
 
+#word-table-placeholder {
+    height: 100%;
+    width: 49.5%;
+}
+
 #word-table td {
     padding: 1% 2%;
 }
 
 #word-table-text {
     height: 100%;
-    width: 65%;
+    width: 60%;
     float: left;
 }
 
@@ -338,13 +343,24 @@
 }
 
 .text {
-    width: 65%;
+      display: flex;
+  flex-direction: column;
+    margin-right: 5%;
   align-self: flex-start;
   /*flex-grow: 1;*/
 }
 
+#word-testing {
+    width: 60%;
+    height: 100%;
+  display: flex;
+    align-self: flex-start;
+  flex-direction: column;
+}
+
 .word-table-image-container {
     height: 100%; /* This may cause issues? */
+    margin-left: 5%;
     width: 35%;
     display: flex;
     align-items: center;
@@ -366,12 +382,17 @@
     width: 100%;
 }
 
+#word-table-word {
+    height: 10vh;
+}
+
 #word-table-title {
     font-size: 3rem;
     color: rgb(12,118,181);
 }
 
 #word-table-definition {
+    min-height: 8vh;
     width: 100%;
     margin-top: 5%;
     font-size: 1.75rem;
@@ -389,6 +410,12 @@
     border: 1px solid black;
     background-color: rgb(230, 230, 230);
     width: 49.5%;
+}
+
+#word-table-level {
+    margin-top: auto;
+    text-align: left;
+    display: flex;
 }
 
 .category-button {

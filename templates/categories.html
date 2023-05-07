@@ -81,31 +81,46 @@
             </div>
             <div id="word-table">
                 <table>
-                    {% for i in range(0, words_per_page, 2) %}
+                    {% for i in range(0, word_list[0]|length, 2) %}
                         <tr id="word-table-main">
-{#                            <td class="word-table-column">#}
-{#                                <div id="word-table-text">#}
-{#                                    <div id="word-table-title">test</div>#}
-{#                                    <div id="word-table-translation">testing</div>#}
-{#                                    <div id="word-table-definition">procedure intended to establish the quality, performance, or reliability of something</div>#}
-{#                                </div>#}
-{#                                <div id="word-table-image">#}
-{#                                    <img src="/static/images/noimage.png">#}
-{#                                </div>#}
+                            {% set column_range = i + 2 %}
+                            {% if word_list[0]|length == i + 1 %}
+                                {% set column_range = i + 1 %}
+                            {% endif %}
+                            {% for j in range(i, column_range) %}
                             <td class="word-table-column">
                                 <div class="container-test">
-                                  <div class="text">
-                                    <div id="word-table-title">test</div>
-                                    <div id="word-table-translation">testing</div>
-                                    <div id="word-table-definition">procedure intended to establish the quality, performance, or reliability of something</div>
-                                  </div>
+                                    <div id="word-testing">
+                                        <div class="text">
+                                            <div id="word-table-word">
+                                                {% if selected_language == "English-Māori" %}
+                                                    <div id="word-table-title">{{ word_list[0][j][1] }}</div>
+                                                    <div id="word-table-translation">{{ word_list[0][j][0] }}</div>
+                                                {% else %}
+                                                    <div id="word-table-title">{{ word_list[0][j][0] }}</div>
+                                                    <div id="word-table-translation">{{ word_list[0][j][1] }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div id="word-table-definition">{{ word_list[0][j][2] }}</div>
+                                        </div>
+                                    <div id="word-table-level">Level: {{ word_list[0][j][3] }}</div>
+                                    </div>
                                   <div class="word-table-image-container">
-                                    <img class="word-table-image" src="/static/images/noimage.png"> {# need to fix when possible - sometimes a bit buggy#}
+                                      {% if word_list[0][j][4] is none %}
+                                          <img class="word-table-image" src="/static/images/noimage.png"> {# need to fix when possible - sometimes a bit buggy#}
+                                      {% else %}
+                                            <img class="word-table-image" src="/static/images/{{ word_list[0][j][4] }}">
+                                      {% endif %}
                                   </div>
                                 </div>
-                            </td> {# {{ word_list[0][i] }} #}
-                            <td id="word-table-space-column"></td>
-                            <td class="word-table-column"></td>
+                            </td>
+                                {% if j % 2 == 0 %}
+                                    <td id="word-table-space-column"></td>
+                                {% endif %}
+                            {% endfor %}
+                            {% if word_list[0]|length % 2 != 0 %}
+                                <td id="word-table-placeholder"></td>
+                            {% endif %}
                         </tr>
                         <tr id="word-table-space"></tr>
                     {% endfor %}

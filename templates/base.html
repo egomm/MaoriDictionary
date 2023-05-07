@@ -630,16 +630,21 @@
       };*/
 
     function setImgSize() { // Set the image size
-        const imgs = document.getElementsByClassName("word-table-image");
-        const containers = document.getElementsByClassName("word-table-image-container");
-        for (let i = 0; i < imgs.length; i++) {
-            const containerWidth = containers[i].clientWidth;
-            const imgWidth = imgs[i].naturalWidth;
-            const imgHeight = imgs[i].naturalHeight;
+        const images = document.getElementsByClassName("word-table-image");
+        const textContainers = document.getElementsByClassName("text");
+        const imageContainers = document.getElementsByClassName("word-table-image-container");
+        for (let i = 0; i < images.length; i++) {
+            const containerWidth = imageContainers[i].clientWidth;
+            const imgWidth = images[i].naturalWidth;
+            const imgHeight = images[i].naturalHeight;
             const aspectRatio = imgWidth / imgHeight;
-            const newHeight = containerWidth / aspectRatio;
-            imgs[i].style.width = containerWidth + "px";
-            imgs[i].style.height = newHeight + "px";
+            let newHeight = containerWidth / aspectRatio;
+            let maxHeight = textContainers[i].clientHeight
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight
+            }
+            images[i].style.width = containerWidth + "px";
+            images[i].style.height = newHeight + "px";
         }
     }
 
