@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 import os
 import json
 import re
+import math
 
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 
@@ -46,6 +47,33 @@ def create_connection(db_file):
 
 def is_logged_in():  # Returns if the user is logged in based on the session id (from user_id)
     return session.get("id") is not None
+
+
+def sort_words(words, selected_language, sorting_method):
+    """
+    Sort words using a lambda function that takes an element of the tuple as its parameter
+    :param words:
+    words[0] = maoriword
+    words[1] = englishword
+    words[2] = definition
+    words[3] = level
+    :param selected_language: The selected language for sorting (English-Māori or Māori-English)
+    :param sorting_method: The sorting method (A-Z or LEVEL)
+    :param words_per_page: How many words to display per page (6, 12, 24, or All)
+    :return: The sorted list
+    """
+    word_list = []
+    if sorting_method == "LEVEL":  # sort by level then alphabetically if there are multiple instances of the same level
+        if selected_language == "English-Māori":  # LEVEL with english-maori
+            word_list = sorted(words, key=lambda x: (x[3], x[1]))
+        elif selected_language == "Māori-English":  # LEVEL with maori-english
+            word_list = sorted(words, key=lambda x: (x[3], x[0]))
+    elif sorting_method == "A-Z":  # sort by A-Z
+        if selected_language == "English-Māori":  # A-Z with english-maori
+            word_list = sorted(words, key=lambda x: x[1])
+        elif selected_language == "Māori-English":  # A-Z with maori-english
+            word_list = sorted(words, key=lambda x: x[0])
+    return word_list
 
 
 # Context processor allows injection into the template as it runs before the template is rendered
@@ -223,22 +251,39 @@ def categories(category):
         cur = con.cursor()
         query = "SELECT maoriword, englishword, definition, level FROM words WHERE cat_id = ?"
         cur.execute(query, (current_category,))
-        word_list = cur.fetchall()
+        word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
         con.close()
     else:  # current category is 0 (or error has occurred so just display all)
         con = open_database(DATABASE)
         cur = con.cursor()
         query = "SELECT maoriword, englishword, definition, level FROM words"
         cur.execute(query)
-        word_list = cur.fetchall()
+        word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
         con.close()
     # [0] is maoriword, [1] is english word, [2] is definition, [3] is level
+    if current_category > 0:
+        category_name = sanitised_category_list[current_category-1]
+    else:
+        category_name = "all-categories"
     print(word_list)
     print(word_list[0])
+    sorted_word_list = []
+    if words_per_page != "All":
+        words_per_page = int(words_per_page)
+        page_count = math.ceil(len(word_list) / words_per_page)
+        for i in range(0, len(word_list), words_per_page):
+            sorted_word_list.append(list(word_list[i:i+words_per_page]))
+    else:  # Display all words
+        page_count = 1
+        sorted_word_list = word_list
+    print(sorted_word_list)
+    print(sorted_word_list[0])
+    print(page_count)
     return render_template('categories.html', logged_in=json.dumps(is_logged_in()), category_list=category_list,
                            sanitised_category_list=sanitised_category_list, current_category=current_category,
-                           sorting_method=sorting_method, selected_language=selected_language,
-                           words_per_page=words_per_page)
+                           category_name=category_name, sorting_method=sorting_method,
+                           selected_language=selected_language, words_per_page=words_per_page,
+                           word_list=sorted_word_list, page_count=page_count)
 
 
 # make the request go under a custom thing

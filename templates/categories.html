@@ -16,6 +16,7 @@
     <div id="wrapper">
         <div id="categorylist">
             <table>
+                {# Display all of the categories #}
                 {% if current_category > 0 %}
                     <tr>
                         <td><a href="/categories/all-categories"><button class="category-button" id="category-button-header">All Categories</button></a></td>
@@ -50,31 +51,65 @@
                 {% endfor %}
             </table>
         </div>
-        <div id="category-divider">
-            <div class="category-divider-elements">
-                <div id="category-search-text">SEARCH</div>
-                <div class="category-search">
-                    <input id="category-search-bar" type="text" placeholder="Search in English or Māori...">
-                    <button id="category-search-submit" type="submit"><img src="/static/images/search.png"></button>
+        <div id="category-main">
+            <div id="category-divider">
+                <div class="category-divider-elements">
+                    <div id="category-search-text">SEARCH</div>
+                    <div class="category-search">
+                        <input id="category-search-bar" type="text" placeholder="Search in English or Māori...">
+                        <button id="category-search-submit" type="submit"><img src="/static/images/search.png"></button>
+                    </div>
+                    <div id="category-language-title">LANGUAGE</div>
+                    <div id="category-language-background" data-selected-language="{{ selected_language }}">{{ selected_language }}</div> {# edit the data here? #}
+                    <button id="switch-language">⇆</button>  {# data is for creating custom attributes #}
+                    <div class="category-header-divider"></div>
+                    <div id="category-sort-title">SORT BY</div>
+                    {# Allow the user to sort by category if this is in the 'All Categories' #}
+                    <select id="sorting-methods" onchange="handleSortChange()" data-sorting-method="{{ sorting_method }}">
+                        <option value="A-Z">A-Z</option>
+                        <option value="LEVEL">LEVEL</option>
+                    </select>
+                    <div class="category-header-divider"></div>
+                    <div id="category-words-per-page">WORDS PER PAGE</div>
+                    <select id="words-per-page" onchange="handleWordsPerPage()" data-words-per-page="{{ words_per_page }}">
+                        <option value="6">6</option>
+                        <option value="12">12</option>
+                        <option value="24">24</option>
+                        <option value="All">All</option>
+                    </select>
                 </div>
-                <div id="category-language-title">LANGUAGE</div>
-                <div id="category-language-background" data-selected-language="{{ selected_language }}">{{ selected_language }}</div> {# edit the data here? #}
-                <button id="switch-language">⇆</button>  {# data is for creating custom attributes #}
-                <div class="category-header-divider"></div>
-                <div id="category-sort-title">SORT BY</div>
-                {# Allow the user to sort by category if this is in the 'All Categories' #}
-                <select id="sorting-methods" onchange="handleSortChange()" data-sorting-method="{{ sorting_method }}">
-                    <option value="A-Z">A-Z</option>
-                    <option value="LEVEL">LEVEL</option>
-                </select>
-                <div class="category-header-divider"></div>
-                <div id="category-words-per-page">WORDS PER PAGE</div>
-                <select id="words-per-page" onchange="handleWordsPerPage()" data-words-per-page="{{ words_per_page }}">
-                    <option value="6">6</option>
-                    <option value="12">12</option>
-                    <option value="24">24</option>
-                    <option value="All">All</option>
-                </select>
+            </div>
+            <div id="word-table">
+                <table>
+                    {% for i in range(0, words_per_page, 2) %}
+                        <tr id="word-table-main">
+{#                            <td class="word-table-column">#}
+{#                                <div id="word-table-text">#}
+{#                                    <div id="word-table-title">test</div>#}
+{#                                    <div id="word-table-translation">testing</div>#}
+{#                                    <div id="word-table-definition">procedure intended to establish the quality, performance, or reliability of something</div>#}
+{#                                </div>#}
+{#                                <div id="word-table-image">#}
+{#                                    <img src="/static/images/noimage.png">#}
+{#                                </div>#}
+                            <td class="word-table-column">
+                                <div class="container-test">
+                                  <div class="text">
+                                    <div id="word-table-title">test</div>
+                                    <div id="word-table-translation">testing</div>
+                                    <div id="word-table-definition">procedure intended to establish the quality, performance, or reliability of something</div>
+                                  </div>
+                                  <div class="word-table-image-container">
+                                    <img class="word-table-image" src="/static/images/noimage.png"> {# need to fix when possible - sometimes a bit buggy#}
+                                  </div>
+                                </div>
+                            </td> {# {{ word_list[0][i] }} #}
+                            <td id="word-table-space-column"></td>
+                            <td class="word-table-column"></td>
+                        </tr>
+                        <tr id="word-table-space"></tr>
+                    {% endfor %}
+                </table>
             </div>
         </div>
     </div>

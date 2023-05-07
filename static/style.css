@@ -273,14 +273,17 @@
     margin-right: 5%;
 }
 
-.categories #wrapper {
+#wrapper {
     display: flex;
 }
 
-.categories #category-divider {
+#category-main {
     margin-left: 2%;
-    height: 5vh;
     width: 100%;
+}
+
+.categories #category-divider {
+    height: 5vh;
     background-color: rgb(230, 230, 230);
     border: thin solid black;
 }
@@ -291,6 +294,101 @@
 
 .categories #categorylist {
     width: 15vw;
+}
+
+#word-table {
+    margin-top: 5vh;
+    display: table;
+    width: 100%;
+}
+
+#word-table table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+}
+
+#word-table-main {
+    height: 20vh;
+}
+
+#word-table-space {
+    height: 2vh;
+}
+
+#word-table-space-column {
+    width: 1%;
+}
+
+#word-table td {
+    padding: 1% 2%;
+}
+
+#word-table-text {
+    height: 100%;
+    width: 65%;
+    float: left;
+}
+
+
+.container-test {
+    align-items: center;
+    height: 100%;
+    display: flex;
+}
+
+.text {
+    width: 65%;
+  align-self: flex-start;
+  /*flex-grow: 1;*/
+}
+
+.word-table-image-container {
+    height: 100%; /* This may cause issues? */
+    width: 35%;
+    display: flex;
+    align-items: center;
+}
+
+.word-table-image { /* Custom sizing is managed in javascript in the setImgSize() function */
+    height: 150px;
+    width: 225px;
+}
+
+
+#word-table-image {
+    width: 30%;
+    float: right;
+    height: 100%;
+}
+
+#word-table-image img {
+    width: 100%;
+}
+
+#word-table-title {
+    font-size: 3rem;
+    color: rgb(12,118,181);
+}
+
+#word-table-definition {
+    width: 100%;
+    margin-top: 5%;
+    font-size: 1.75rem;
+}
+
+#word-table-translation {
+    font-size: 3rem;
+}
+
+.word-table-column {
+    align-items: center;
+    height: 100%;
+    vertical-align: top;
+    text-align: left;
+    border: 1px solid black;
+    background-color: rgb(230, 230, 230);
+    width: 49.5%;
 }
 
 .category-button {
@@ -329,7 +427,7 @@
     border-bottom-right-radius: 4px;
 }
 
-.categories td { /* Need to work on this */
+.categories #categorylist td { /* Need to work on this */
     font-size: 2rem;
     /*border: 1px solid #dddddd;*/
     text-align: center;

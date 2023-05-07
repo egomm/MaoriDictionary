@@ -605,10 +605,44 @@
     })
 
     requestAnimationFrame(function() {
+        setImgSize();
         const sorting = document.getElementById("sorting-methods")
         sorting.value = sorting.dataset.sortingMethod
         const wordsPerPage = document.getElementById("words-per-page")
         wordsPerPage.value = wordsPerPage.dataset.wordsPerPage
     });
+
+      /*function preventFlicker() {
+        var imageContainer = document.getElementById('image');
+        var image = document.getElementById('image-test');
+        image.onload = function() {
+          imageContainer.style.visibility = 'visible';
+        }
+        image.src = image.getAttribute('src');
+      }
+
+      window.onload = preventFlicker;*/
+      // Create a new Image object
+      /*var img = new Image();
+      img.src = "/static/images/noimage.png";
+      img.onload = function() {
+        document.getElementById("image-test").src = this.src;
+      };*/
+
+    function setImgSize() { // Set the image size
+        const imgs = document.getElementsByClassName("word-table-image");
+        const containers = document.getElementsByClassName("word-table-image-container");
+        for (let i = 0; i < imgs.length; i++) {
+            const containerWidth = containers[i].clientWidth;
+            const imgWidth = imgs[i].naturalWidth;
+            const imgHeight = imgs[i].naturalHeight;
+            const aspectRatio = imgWidth / imgHeight;
+            const newHeight = containerWidth / aspectRatio;
+            imgs[i].style.width = containerWidth + "px";
+            imgs[i].style.height = newHeight + "px";
+        }
+    }
+
+    window.addEventListener("resize", setImgSize);
 </script>
 </html>
