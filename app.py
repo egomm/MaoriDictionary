@@ -289,7 +289,7 @@ def categories(category):
                            category_name=category_name, sorting_method=sorting_method,
                            selected_language=selected_language, words_per_page=words_per_page,
                            word_list=sorted_word_list, page_count=page_count, total_words=total_words,
-                           current_page=0, minimum_value=minimum_value, maximum_value=maximum_value)
+                           current_page=2, minimum_value=minimum_value, maximum_value=maximum_value)
 
 
 # make the request go under a custom thing

@@ -52,6 +52,11 @@
     box-shadow: 0 0 0 0.1rem currentColor;
 }
 
+.active-page {
+    background-color: #007bff !important;
+    color: white !important;
+}
+
 .field-incomplete { /* Used for error message on incomplete fields */
     height: 1.5rem;
     direction: rtl;
@@ -280,6 +285,11 @@
 #category-main {
     margin-left: 2%;
     width: 100%;
+}
+
+#category-page {
+    width: 100%;
+    text-align: center;
 }
 
 .categories #category-divider {

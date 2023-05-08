@@ -128,6 +128,24 @@
                     {% endfor %}
                 </table>
             </div>
+            <div id="category-page">
+                 {# use hidden if there isnt a prev page #}
+                 {# add the 'active' class #}
+                 <ul class="pagination pagination-lg">
+                    <li class="page-item"><a class="page-link" href="#"><</a></li>
+                     {% if current_page > 0 %}
+                        <li class="page-item"><a class="page-link" href="#">1</a></li> {# first page #}
+                         {% if current_page > 1 %}
+                             <li class="page-item"><a class="page-link" href="#">{{ current_page }}</a></li> {# previous page #}
+                         {% endif %}
+                     {% endif %}
+                    <li class="page-item"><a class="page-link active-page" href="#">{{ current_page + 1 }}</a></li>  {# active page #}
+                    {# next page #}
+                 <li class="page-item"><a class="page-link" href="#">{{ current_page + 2 }}</a></li>
+                    <li class="page-item"><a class="page-link" href="#">{{ page_count }}</a></li>
+                    <li class="page-item"><a class="page-link" href="#">></a></li>
+                </ul>
+            </div>
         </div>
     </div>
     <div id="bottom-category"></div>
