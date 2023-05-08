@@ -296,8 +296,12 @@
     width: 15vw;
 }
 
+#word-display-tracker {
+    height: 5vh;
+    padding-top: 1vh;
+}
+
 #word-table {
-    margin-top: 5vh;
     display: table;
     width: 100%;
 }

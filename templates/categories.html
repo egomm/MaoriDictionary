@@ -79,6 +79,8 @@
                     </select>
                 </div>
             </div>
+            {# Make this dependent on the page #}
+            <div id="word-display-tracker">Displaying {{ minimum_value }} - {{ maximum_value }} of {{ total_words }} words</div> {# If displaying 1, change words to word #}
             <div id="word-table">
                 <table>
                     {% for i in range(0, word_list[0]|length, 2) %}

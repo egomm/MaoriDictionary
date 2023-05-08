@@ -267,6 +267,7 @@ def categories(category):
         category_name = "all-categories"
     print(word_list)
     print(word_list[0])
+    total_words = len(word_list)
     sorted_word_list = []
     if words_per_page != "All":
         words_per_page = int(words_per_page)
@@ -275,15 +276,20 @@ def categories(category):
             sorted_word_list.append(list(word_list[i:i+words_per_page]))
     else:  # Display all words
         page_count = 1
-        sorted_word_list = word_list
+        sorted_word_list = [word_list]
     print(sorted_word_list)
     print(sorted_word_list[0])
+    print(len(sorted_word_list[0]))
     print(page_count)
+    current_page = 0
+    minimum_value = (current_page * words_per_page) + 1
+    maximum_value = min((current_page + 1) * words_per_page, (current_page * words_per_page) + len(sorted_word_list[0]))
     return render_template('categories.html', logged_in=json.dumps(is_logged_in()), category_list=category_list,
                            sanitised_category_list=sanitised_category_list, current_category=current_category,
                            category_name=category_name, sorting_method=sorting_method,
                            selected_language=selected_language, words_per_page=words_per_page,
-                           word_list=sorted_word_list, page_count=page_count)
+                           word_list=sorted_word_list, page_count=page_count, total_words=total_words,
+                           current_page=0, minimum_value=minimum_value, maximum_value=maximum_value)
 
 
 # make the request go under a custom thing
@@ -301,5 +307,5 @@ def translate():
 
 if __name__ == '__main__':
     app.run()
-    # app.run(host='0.0.0.0', debug=True)
+    #app.run(host='0.0.0.0', debug=True)
     # runs website locally
