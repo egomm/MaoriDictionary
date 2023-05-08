@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, session, url_for, j
 import sqlite3
 from sqlite3 import Error
 from flask_bcrypt import Bcrypt
+from werkzeug.exceptions import BadRequest
 
 import os
 import json
@@ -205,8 +206,8 @@ def home():  # put application's code here
     return render_template('home.html', logged_in=json.dumps(is_logged_in()))
 
 
-@app.route('/categories/<category>', methods=['POST', 'GET'])
-def categories(category):
+@app.route('/categories/<category>/<page>', methods=['POST', 'GET'])
+def categories(category, page):
     print(request.method)
     if session.get("selected-language") is None:
         session["selected-language"] = "English-Māori"  # This is the 'origin language'
@@ -269,34 +270,35 @@ def categories(category):
     print(word_list[0])
     total_words = len(word_list)
     sorted_word_list = []
+    page = int(page)
+    current_page = page - 1
     if words_per_page != "All":
         words_per_page = int(words_per_page)
+        actual_words_per_page = words_per_page
         page_count = math.ceil(len(word_list) / words_per_page)
         for i in range(0, len(word_list), words_per_page):
             sorted_word_list.append(list(word_list[i:i+words_per_page]))
     else:  # Display all words
         page_count = 1
         sorted_word_list = [word_list]
-    print(sorted_word_list)
-    print(sorted_word_list[0])
-    print(len(sorted_word_list[0]))
-    print(page_count)
-    current_page = 0
-    minimum_value = (current_page * words_per_page) + 1
-    maximum_value = min((current_page + 1) * words_per_page, (current_page * words_per_page) + len(sorted_word_list[0]))
+        actual_words_per_page = len(sorted_word_list[current_page])
+    print(len(sorted_word_list[current_page]))
+    minimum_value = (current_page * actual_words_per_page) + 1
+    maximum_value = min((current_page + 1) * actual_words_per_page,
+                        (current_page * actual_words_per_page) + len(sorted_word_list[current_page]))
+    # There is an issue when the user changes the amount of words per page -> index out of range
     return render_template('categories.html', logged_in=json.dumps(is_logged_in()), category_list=category_list,
                            sanitised_category_list=sanitised_category_list, current_category=current_category,
                            category_name=category_name, sorting_method=sorting_method,
                            selected_language=selected_language, words_per_page=words_per_page,
                            word_list=sorted_word_list, page_count=page_count, total_words=total_words,
-                           current_page=2, minimum_value=minimum_value, maximum_value=maximum_value)
+                           current_page=current_page, display_page=page, minimum_value=minimum_value,
+                           maximum_value=maximum_value)
 
 
 # make the request go under a custom thing
 @app.route('/contact', methods=['POST', 'GET'])
 def contact():
-    if True:
-        return redirect("/?idk")
     return render_template('contact.html', logged_in=json.dumps(is_logged_in()))
 
 

@@ -19,32 +19,32 @@
                 {# Display all of the categories #}
                 {% if current_category > 0 %}
                     <tr>
-                        <td><a href="/categories/all-categories"><button class="category-button" id="category-button-header">All Categories</button></a></td>
+                        <td><a href="/categories/all-categories/1"><button class="category-button" id="category-button-header">All Categories</button></a></td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td><a href="/categories/all-categories"><button class="category-button active-category" id="category-button-header">All Categories</button></a></td>
+                        <td><a href="/categories/all-categories/1"><button class="category-button active-category" id="category-button-header">All Categories</button></a></td>
                     </tr>
                 {% endif %}
                 {% for i in range(category_list|length) %}
                     {% if i + 1 != current_category %}
                         {% if i < (category_list|length - 1) %}
                             <tr>
-                                <td><a href="/categories/{{ sanitised_category_list[i] }}"><button class="category-button category-button-body">{{ category_list[i] }}</button></a></td>
+                                <td><a href="/categories/{{ sanitised_category_list[i] }}/1"><button class="category-button category-button-body">{{ category_list[i] }}</button></a></td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td><a href="/categories/{{ sanitised_category_list[i] }}"><button class="category-button category-button-body" id="category-button-footer">{{ category_list[i] }}</button></a></td>
+                                <td><a href="/categories/{{ sanitised_category_list[i] }}/1"><button class="category-button category-button-body" id="category-button-footer">{{ category_list[i] }}</button></a></td>
                             </tr>
                         {% endif %}
                     {% else %}
                         {% if i < (category_list|length - 1) %}
                             <tr>
-                                <td><a href="/categories/{{ sanitised_category_list[i] }}"><button class="category-button category-button-body active-category">{{ category_list[i] }}</button></a></td>
+                                <td><a href="/categories/{{ sanitised_category_list[i] }}/1"><button class="category-button category-button-body active-category">{{ category_list[i] }}</button></a></td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td><a href="/categories/{{ sanitised_category_list[i] }}"><button class="category-button category-button-body active-category" id="category-button-footer">{{ category_list[i] }}</button></a></td>
+                                <td><a href="/categories/{{ sanitised_category_list[i] }}/1"><button class="category-button category-button-body active-category" id="category-button-footer">{{ category_list[i] }}</button></a></td>
                             </tr>
                         {% endif %}
                     {% endif %}
@@ -71,7 +71,7 @@
                     </select>
                     <div class="category-header-divider"></div>
                     <div id="category-words-per-page">WORDS PER PAGE</div>
-                    <select id="words-per-page" onchange="handleWordsPerPage()" data-words-per-page="{{ words_per_page }}">
+                    <select id="words-per-page" onchange="handleWordsPerPage()" data-words-per-page="{{ words_per_page }}" data-category="{{ category_name }}" data-old-page="{{ display_page }}" data-previous-value="{{ words_per_page }}">
                         <option value="6">6</option>
                         <option value="12">12</option>
                         <option value="24">24</option>
@@ -83,10 +83,10 @@
             <div id="word-display-tracker">Displaying {{ minimum_value }} - {{ maximum_value }} of {{ total_words }} {{ 'words' if maximum_value != 1 else 'word' }}</div>
             <div id="word-table">
                 <table>
-                    {% for i in range(0, word_list[0]|length, 2) %}
+                    {% for i in range(0, word_list[current_page]|length, 2) %}
                         <tr id="word-table-main">
                             {% set column_range = i + 2 %}
-                            {% if word_list[0]|length == i + 1 %}
+                            {% if word_list[current_page]|length == i + 1 %}
                                 {% set column_range = i + 1 %}
                             {% endif %}
                             {% for j in range(i, column_range) %}
@@ -96,22 +96,22 @@
                                         <div class="text">
                                             <div id="word-table-word">
                                                 {% if selected_language == "English-Māori" %}
-                                                    <div id="word-table-title">{{ word_list[0][j][1] }}</div>
-                                                    <div id="word-table-translation">{{ word_list[0][j][0] }}</div>
+                                                    <div id="word-table-title">{{ word_list[current_page][j][1] }}</div>
+                                                    <div id="word-table-translation">{{ word_list[current_page][j][0] }}</div>
                                                 {% else %}
-                                                    <div id="word-table-title">{{ word_list[0][j][0] }}</div>
-                                                    <div id="word-table-translation">{{ word_list[0][j][1] }}</div>
+                                                    <div id="word-table-title">{{ word_list[current_page][j][0] }}</div>
+                                                    <div id="word-table-translation">{{ word_list[current_page][j][1] }}</div>
                                                 {% endif %}
                                             </div>
-                                            <div id="word-table-definition">{{ word_list[0][j][2] }}</div>
+                                            <div id="word-table-definition">{{ word_list[current_page][j][2] }}</div>
                                         </div>
-                                    <div id="word-table-level">Level: {{ word_list[0][j][3] }}</div>
+                                    <div id="word-table-level">Level: {{ word_list[current_page][j][3] }}</div>
                                     </div>
                                   <div class="word-table-image-container">
-                                      {% if word_list[0][j][4] is none %}
+                                      {% if word_list[current_page][j][4] is none %}
                                           <img class="word-table-image" src="/static/images/noimage.png"> {# need to fix when possible - sometimes a bit buggy#}
                                       {% else %}
-                                            <img class="word-table-image" src="/static/images/{{ word_list[0][j][4] }}">
+                                            <img class="word-table-image" src="/static/images/{{ word_list[current_page][j][4] }}">
                                       {% endif %}
                                   </div>
                                 </div>
@@ -120,7 +120,7 @@
                                     <td id="word-table-space-column"></td>
                                 {% endif %}
                             {% endfor %}
-                            {% if word_list[0]|length % 2 != 0 %}
+                            {% if word_list[current_page]|length % 2 != 0 %}
                                 <td id="word-table-placeholder"></td>
                             {% endif %}
                         </tr>
@@ -132,18 +132,26 @@
                  {# use hidden if there isnt a prev page #}
                  {# add the 'active' class #}
                  <ul class="pagination pagination-lg">
-                    <li class="page-item"><a class="page-link" href="#"><</a></li>
-                     {% if current_page > 0 %}
-                        <li class="page-item"><a class="page-link" href="#">1</a></li> {# first page #}
-                         {% if current_page > 1 %}
-                             <li class="page-item"><a class="page-link" href="#">{{ current_page }}</a></li> {# previous page #}
+                     {% if display_page > 1 %}
+                         <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page - 1 }}"><</a></li> {# previous page #}
+                         <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/1">1</a></li> {# first page #}
+                         {% if display_page > 2 %}
+                             <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page - 1 }}">{{ display_page - 1 }}</a></li> {# previous page #}
                          {% endif %}
+                     {% else %}
+                         <li class="page-item"><a class="page-link" href=""><</a></li>
                      {% endif %}
-                    <li class="page-item"><a class="page-link active-page" href="#">{{ current_page + 1 }}</a></li>  {# active page #}
+                     <li class="page-item"><a class="page-link active-page" href="/categories/{{ category_name }}/{{ display_page }}">{{ display_page }}</a></li>  {# active page #}
                     {# next page #}
-                 <li class="page-item"><a class="page-link" href="#">{{ current_page + 2 }}</a></li>
-                    <li class="page-item"><a class="page-link" href="#">{{ page_count }}</a></li>
-                    <li class="page-item"><a class="page-link" href="#">></a></li>
+                    {% if display_page < page_count %} {# not last page #}
+                        <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page + 1 }}">{{ display_page + 1 }}</a></li> {# next page #}
+                        {% if display_page + 1 < page_count %} {# not second to last page #}
+                            <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ page_count }}">{{ page_count }}</a></li>
+                        {% endif %}
+                        <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page + 1 }}">></a></li> {# next page #}
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="">></a></li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

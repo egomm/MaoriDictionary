@@ -19,7 +19,7 @@
         <div class="navbar-brand">Māori Dictionary</div>
         <div class="navbar-links">
             <a id="home" href="/">home</a>
-            <a id="categories" href="/categories/all-categories">categories</a>
+            <a id="categories" href="/categories/all-categories/1">categories</a>
             <a id="logout" href="/logout">logout</a>
             <a id="admin" href="/admin">admin</a>
             <a id="login" data-target="#loginModal" role="button" data-toggle="modal">login</a>
@@ -192,7 +192,7 @@
     </div>
 </div>
 <script>
-    function postAjax(directedUrl, formData, reload) {
+    function postAjax(directedUrl, formData, reload, redirect, url) {
         $.ajax({
             type: 'POST',
             url: directedUrl,
@@ -201,6 +201,8 @@
             success: function() {
                 if (reload) { // reload the page after the data has been posted
                     location.reload()
+                } else if (redirect) {
+                    location.href = url
                 }
             }
         })
@@ -338,7 +340,7 @@
                         "type": "login",
                         "userid": responseText.userId
                     }
-                    postAjax("{{url_for('home')}}", formData, false)
+                    postAjax("{{url_for('home')}}", formData, false, false, "")
                     $('#loginModal').modal('hide') // close login up modal
                 }
             } catch (error) {
@@ -408,7 +410,7 @@
                         "username": usernameInput,
                         "newpassword": passwordInput
                     }
-                    postAjax("{{url_for('home')}}", formData, false)
+                    postAjax("{{url_for('home')}}", formData, false, false, "")
                     document.getElementById("forgotpassword-incorrect").classList.add("successful")
                     document.getElementById("forgotpassword-incorrect").innerText = "Successfully Reset Password"
                 }
@@ -505,7 +507,7 @@
                         "email": document.getElementById("signup-email").value,
                         "password": document.getElementById("signup-password").value
                     }
-                    postAjax("{{url_for('home')}}", formData, false)
+                    postAjax("{{url_for('home')}}", formData, false, false, "")
                     $('#signUpModal').modal('hide') // close sign up modal
                     $('#loginModal').modal('show') // open login modal
                 }
@@ -578,7 +580,7 @@
             "type": "sorting-methods",
             "selectedvalue": selectedValue
         }
-        postAjax("{{url_for('categories', category=0)}}", formData, true) // category=0 may need to be changed?
+        postAjax("{{url_for('categories', category=0, page=1)}}", formData, true, false, "") // category=0 may need to be changed?
     }
 
     function handleWordsPerPage() {
@@ -587,7 +589,15 @@
             "type": "words-per-page",
             "selectedvalue": selectedValue
         }
-        postAjax("{{url_for('categories', category=0)}}", formData, true) // category=0 may need to be changed?
+        const wordsSelector = $("#words-per-page")
+        const previousValue = wordsSelector.data("previous-value")
+        const currentCategory = wordsSelector.data("category")
+        const oldPage = wordsSelector.data("old-page")
+        let newPage = 1;
+        if (selectedValue !== "All" && previousValue !== "All") {
+            newPage = Math.floor((previousValue / selectedValue) * (oldPage - 1)) + 1
+        }
+        postAjax("{{url_for('categories', category=0, page=1)}}", formData, false, true, `/categories/${currentCategory}/${newPage}`)
     }
 
     $('#switch-language').click(function() {
@@ -601,7 +611,7 @@
             "type": "category-language",
             "language": newLanguage
         }
-        postAjax("{{url_for('categories', category=0)}}", formData, true)
+        postAjax("{{url_for('categories', category=0, page=1)}}", formData, true, false, "")
     })
 
     requestAnimationFrame(function() {
