@@ -50,6 +50,47 @@
                     {% endif %}
                 {% endfor %}
             </table>
+            <button type="button" id="level-filters-collapsible">
+                <div id="level-filters">Level Filters</div>
+                <div id="expand-level-filters">+</div>
+            </button>
+            <div class="content">
+                <table>
+                    <tr>
+                        <td class="level-filter-checkbox level-filter-checkbox-header">
+                            <button class="button-level-filter">
+                                {% if all_levels_selected %}
+                                    <input type="checkbox" class="level-filter-check" id="level-filter-all" checked>
+                                {% else %}
+                                    <input type="checkbox" class="level-filter-check" id="level-filter-all">
+                                {% endif %}
+                                <span class="level-checkbox"> All Levels</span>
+                            </button>
+                        </td>
+                    </tr>
+                    {% for level in levels %}
+                        <tr>
+                            <td class="level-filter-checkbox">
+                                <button class="button-level-filter">
+                                    {% if level in selected_levels and not all_levels_selected %}
+                                        <input type="checkbox" class="level-filter-check" id="level-filter-{{ level }}" checked>
+                                    {% else %}
+                                        <input type="checkbox" class="level-filter-check" id="level-filter-{{ level }}">
+                                    {% endif %}
+                                    <span class="level-checkbox"> Level: {{ level }}</span>
+                                </button>
+                            </td> {# make it so that if this is clicked on, set the check box #}
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td class="level-filter-checkbox">
+                            <button id="button-level-submit" type="submit" data-category="{{ category_name }}">
+                                <span class="level-checkbox">Apply Filter</span>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
         <div id="category-main">
             <div id="category-divider">
@@ -128,32 +169,34 @@
                     {% endfor %}
                 </table>
             </div>
-            <div id="category-page">
-                 {# use hidden if there isnt a prev page #}
-                 {# add the 'active' class #}
-                 <ul class="pagination pagination-lg">
-                     {% if display_page > 1 %}
-                         <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page - 1 }}"><</a></li> {# previous page #}
-                         <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/1">1</a></li> {# first page #}
-                         {% if display_page > 2 %}
-                             <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page - 1 }}">{{ display_page - 1 }}</a></li> {# previous page #}
+            {% if page_count > 1 %}
+                <div id="category-page">
+                     {# use hidden if there isnt a prev page #}
+                     {# add the 'active' class #}
+                     <ul class="pagination pagination-lg">
+                         {% if display_page > 1 %}
+                             <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page - 1 }}"><</a></li> {# previous page #}
+                             <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/1">1</a></li> {# first page #}
+                             {% if display_page > 2 %}
+                                 <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page - 1 }}">{{ display_page - 1 }}</a></li> {# previous page #}
+                             {% endif %}
+                         {% else %}
+                             <li class="page-item"><a class="page-link" href=""><</a></li>
                          {% endif %}
-                     {% else %}
-                         <li class="page-item"><a class="page-link" href=""><</a></li>
-                     {% endif %}
-                     <li class="page-item"><a class="page-link active-page" href="/categories/{{ category_name }}/{{ display_page }}">{{ display_page }}</a></li>  {# active page #}
-                    {# next page #}
-                    {% if display_page < page_count %} {# not last page #}
-                        <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page + 1 }}">{{ display_page + 1 }}</a></li> {# next page #}
-                        {% if display_page + 1 < page_count %} {# not second to last page #}
-                            <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ page_count }}">{{ page_count }}</a></li>
+                         <li class="page-item"><a class="page-link active-page" href="/categories/{{ category_name }}/{{ display_page }}">{{ display_page }}</a></li>  {# active page #}
+                        {# next page #}
+                        {% if display_page < page_count %} {# not last page #}
+                            <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page + 1 }}">{{ display_page + 1 }}</a></li> {# next page #}
+                            {% if display_page + 1 < page_count %} {# not second to last page #}
+                                <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ page_count }}">{{ page_count }}</a></li>
+                            {% endif %}
+                            <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page + 1 }}">></a></li> {# next page #}
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="">></a></li>
                         {% endif %}
-                        <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page + 1 }}">></a></li> {# next page #}
-                    {% else %}
-                        <li class="page-item"><a class="page-link" href="">></a></li>
-                    {% endif %}
-                </ul>
-            </div>
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     </div>
     <div id="bottom-category"></div>

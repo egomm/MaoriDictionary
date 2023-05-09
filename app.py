@@ -209,6 +209,25 @@ def home():  # put application's code here
 @app.route('/categories/<category>/<page>', methods=['POST', 'GET'])
 def categories(category, page):
     print(request.method)
+    con = open_database(DATABASE)
+    cur = con.cursor()
+    query = "SELECT level from levels"
+    cur.execute(query)
+    levels = [level[0] for level in cur.fetchall()]
+    con.close()
+    print("start")
+    print(levels)
+    if session.get("selected-values") is None:
+        session["selected-values"] = levels
+    print(session["selected-values"])
+    all_levels_selected = "all" in session["selected-values"]  # CHANGE
+    if all_levels_selected:
+        selected_levels = levels
+    else:
+        selected_levels = [int(x) for x in session["selected-values"]]
+    print("SELECTED")
+    print(selected_levels)
+    print("end")
     if session.get("selected-language") is None:
         session["selected-language"] = "English-Māori"  # This is the 'origin language'
     if session.get("selected-sorting-method") is None:
@@ -224,6 +243,10 @@ def categories(category, page):
                 session["selected-sorting-method"] = json_data["selectedvalue"]
             if json_data["type"] == "words-per-page":
                 session["selected-words-per-page"] = json_data["selectedvalue"]
+            if json_data["type"] == "level-filter":
+                session["selected-values"] = json_data["checkboxes"]
+            print(session["selected-values"])
+            print("abc")
     con = open_database(DATABASE)
     cur = con.cursor()
     query = "SELECT category_name FROM categories"
@@ -247,18 +270,19 @@ def categories(category, page):
     print(words_per_page)
     # Need to render the words dependent on all of these constraints
     # consider using a foreign key here?
+    question_marks = "{}".format(','.join(['?'] * len(selected_levels)))
     if current_category > 0:
         con = open_database(DATABASE)
         cur = con.cursor()
-        query = "SELECT maoriword, englishword, definition, level, image FROM words WHERE cat_id = ?"
-        cur.execute(query, (current_category,))
+        query = f"SELECT maoriword, englishword, definition, level, image FROM words WHERE cat_id = ? and level IN ({question_marks})"
+        cur.execute(query, (current_category, *tuple(selected_levels)))
         word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
         con.close()
     else:  # current category is 0 (or error has occurred so just display all)
         con = open_database(DATABASE)
         cur = con.cursor()
-        query = "SELECT maoriword, englishword, definition, level, image FROM words"
-        cur.execute(query)
+        query = f"SELECT maoriword, englishword, definition, level, image FROM words WHERE level IN ({question_marks})"
+        cur.execute(query, (*tuple(selected_levels),))
         word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
         con.close()
     # [0] is maoriword, [1] is english word, [2] is definition, [3] is level, [4] is image
@@ -267,7 +291,6 @@ def categories(category, page):
     else:
         category_name = "all-categories"
     print(word_list)
-    print(word_list[0])
     total_words = len(word_list)
     sorted_word_list = []
     page = int(page)
@@ -282,10 +305,16 @@ def categories(category, page):
         page_count = 1
         sorted_word_list = [word_list]
         actual_words_per_page = len(sorted_word_list[current_page])
-    print(len(sorted_word_list[current_page]))
-    minimum_value = (current_page * actual_words_per_page) + 1
-    maximum_value = min((current_page + 1) * actual_words_per_page,
-                        (current_page * actual_words_per_page) + len(sorted_word_list[current_page]))
+    print(all_levels_selected)
+    print(selected_levels)
+    print(levels)
+    if len(sorted_word_list) > 0:
+        minimum_value = (current_page * actual_words_per_page) + 1
+        maximum_value = min((current_page + 1) * actual_words_per_page,
+                            (current_page * actual_words_per_page) + len(sorted_word_list[current_page]))
+    else:
+        minimum_value = 0
+        maximum_value = 0
     # There is an issue when the user changes the amount of words per page -> index out of range
     return render_template('categories.html', logged_in=json.dumps(is_logged_in()), category_list=category_list,
                            sanitised_category_list=sanitised_category_list, current_category=current_category,
@@ -293,7 +322,8 @@ def categories(category, page):
                            selected_language=selected_language, words_per_page=words_per_page,
                            word_list=sorted_word_list, page_count=page_count, total_words=total_words,
                            current_page=current_page, display_page=page, minimum_value=minimum_value,
-                           maximum_value=maximum_value)
+                           maximum_value=maximum_value, levels=levels, all_levels_selected=all_levels_selected,
+                           selected_levels=selected_levels)
 
 
 # make the request go under a custom thing

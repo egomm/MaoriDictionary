@@ -3,6 +3,10 @@
     box-sizing: border-box;
 }
 
+body {
+    overflow: auto;
+}
+
 .logincontainer {
     overflow: hidden;
     width: 100%;
@@ -349,6 +353,85 @@
     float: left;
 }
 
+.category-button:not(.active-category):hover {
+    background-color: rgb(204, 204, 204);
+}
+
+/* Style the button that is used to open and close the collapsible content */
+#level-filters-collapsible {
+    background-color: white;
+    margin-top: 14%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer; /* Treat it like a button */
+    width: 100%;
+    border: thin solid black;
+    height: 5vh;
+}
+
+#level-filters {
+    color: black;
+    font-weight: 600; /* Slightly bolder, but not an eye sore */
+    font-size: 2rem;
+}
+
+#expand-level-filters {
+    float: right;
+    color: black;
+    font-size: 3rem;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active-level-filter, #level-filters-collapsible:hover {
+    outline: none;
+    background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.content {
+  display: none;
+  overflow: hidden;
+  background-color: white;
+}
+
+.level-filter-checkbox-header {
+    border-top: none !important;
+}
+
+.level-filter-checkbox {
+    font-weight: normal;
+    border: thin solid black;
+    width: 15vw;
+}
+
+.level-checkbox {
+    font-weight: normal;
+}
+
+.button-level-filter {
+    margin: auto;
+    text-align: left !important;
+    border: none;
+    background: none;
+    width: 100%;
+}
+
+#button-level-submit {
+    margin: auto;
+    border: none;
+    background: none;
+    width: 100%;
+}
+
+.button-level-filter:hover, .button-level-submit:hover {
+    outline: none;
+    background-color: #ccc;
+}
+
+.level-filter-check:hover, .level-filter-check:focus, .level-filter-check {
+    cursor: pointer;
+}
 
 .container-test {
     align-items: center;
