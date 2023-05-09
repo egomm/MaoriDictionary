@@ -16,8 +16,12 @@
         <div class="title">
             <img src="/static/images/Kia_Ora_Title.png">
         </div>
-        <form action="/translate" method="POST" class="search-bar" onsubmit="return validateForm()">
-            <input type="text" placeholder="Search in English or Māori" name="text" id="text">
+{#        <form action="/" method="POST" class="search-bar"> {# onsubmit="return validateForm()" #}
+{#            <input type="text" placeholder="Search in English or Māori" name="text" id="text">#}
+{#            <button type="submit"><img src="/static/images/search.png"></button>#}
+{#        </form>#}
+        <form action="/" method="POST" class="search-bar">
+            <input type="text" placeholder="Search..." name="text" id="text">
             <button type="submit"><img src="/static/images/search.png"></button>
         </form>
 

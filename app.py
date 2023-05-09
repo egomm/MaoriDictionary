@@ -203,7 +203,11 @@ def logout():
 @app.route('/', methods=['POST', 'GET'])
 def home():  # put application's code here
     print("home?")
-    return render_template('home.html', logged_in=json.dumps(is_logged_in()))
+    if request.method == "POST":
+        print(request.form["text"])
+        return redirect('/contact')
+    else:
+        return render_template('home.html', logged_in=json.dumps(is_logged_in()))
 
 
 @app.route('/categories/<category>/<page>', methods=['POST', 'GET'])
@@ -329,7 +333,14 @@ def categories(category, page):
 # make the request go under a custom thing
 @app.route('/contact', methods=['POST', 'GET'])
 def contact():
-    return render_template('contact.html', logged_in=json.dumps(is_logged_in()))
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        message = request.form.get('message')
+        # Do something with the form data (e.g., store it in a database)
+        return redirect(url_for('contact'))
+    else:
+        return render_template('contact.html', logged_in=json.dumps(is_logged_in()))
 
 
 @app.route('/translate', methods=['POST', 'GET'])

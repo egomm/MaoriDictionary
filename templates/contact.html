@@ -1,13 +1,35 @@
-{% extends 'base.html' %}
+{#{% extends 'base.html' %}#}
+{##}
+{#{% block header %}#}
+{#contact#}
+{#{% endblock %}#}
+{##}
+{#{% block title %}#}
+{#    Māori Dictionary | contact#}
+{#{% endblock %}#}
+{##}
+{#{% block container %}#}
+{#    container#}
+{#{% endblock %}#}
 
-{% block header %}
-contact
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My Page</title>
+</head>
+<body>
+	<h1>Contact Form</h1>
+	<form method="POST" action="/contact">
+		<label for="name">Name:</label>
+		<input type="text" id="name" name="name"><br>
 
-{% block title %}
-    Māori Dictionary | contact
-{% endblock %}
+		<label for="email">Email:</label>
+		<input type="email" id="email" name="email"><br>
 
-{% block container %}
-    container
-{% endblock %}
+		<label for="message">Message:</label><br>
+		<textarea id="message" name="message"></textarea><br>
+
+		<input type="submit" value="Submit">
+	</form>
+</body>
+</html>
