@@ -455,13 +455,63 @@ body {
     margin-left: 12.5vw;
 }
 
+#translate-word {
+    display: flex;
+    width: 100%;
+    padding-left: 2%;
+    padding-right: 2%;
+    margin-top: 3%;
+}
+
 #translate-word-information {
-    font-size: 6rem;
-    margin-top: 2%;
-    margin-left: 2%;
+    width: 47.5%;
+}
+
+#translate-image {
+    width: 47.5%;
+}
+
+#translate-break {
+    width: 5%;
+}
+
+.translate-word-image {
+    width: 100%;
 }
 
 #translate-header-word {
+    line-height: 4vw;
+    width: 50%;
+    font-size: 4vw;
+    font-weight: 600;
+}
+
+#translate-subheader {
+    color: rgb(12, 118, 181);
+}
+
+/* This is used to avoid overlapping highlight boxes (which look terrible) */
+#translate-header-word::selection, #translate-subheader::selection, #translate-header-break::selection {
+    color: rgb(51,144,255); /* This will highlight the text */
+    background: none;
+}
+
+#translate-definition {
+    margin-top: 10%;
+    font-size: 2vw;
+}
+
+#translate-level {
+    margin-top: 15%;
+    font-size: 1vw;
+}
+
+#translate-added-by {
+    font-size: 1vw;
+}
+
+#translate-word-display-main {
+    height: 100%;
 }
 
 .button-level-filter:hover, .button-level-submit:hover {

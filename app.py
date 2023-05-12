@@ -2,12 +2,13 @@ from flask import Flask, render_template, request, redirect, session, url_for, j
 import sqlite3
 from sqlite3 import Error
 from flask_bcrypt import Bcrypt
-from werkzeug.exceptions import BadRequest
 
 import os
 import json
 import re
 import math
+import datetime
+import time
 
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 
@@ -47,6 +48,7 @@ def create_connection(db_file):
 
 
 def is_logged_in():  # Returns if the user is logged in based on the session id (from user_id)
+    print("LOGGED IN", session.get("id") is not None)
     return session.get("id") is not None
 
 
@@ -60,7 +62,6 @@ def sort_words(words, selected_language, sorting_method):
     words[3] = level
     :param selected_language: The selected language for sorting (English-Māori or Māori-English)
     :param sorting_method: The sorting method (A-Z or LEVEL)
-    :param words_per_page: How many words to display per page (6, 12, 24, or All)
     :return: The sorted list
     """
     word_list = []
@@ -80,25 +81,29 @@ def sort_words(words, selected_language, sorting_method):
 # Context processor allows injection into the template as it runs before the template is rendered
 @app.context_processor
 def inject_data():  # Used for getting the data when there is an ajax post
+    print("hi?")
+    print(request.method)
     if request.method == "POST":
         json_data = request.get_json()  # check where the data came from, proceed accordingly
         if "type" in json_data:
             if json_data["type"] == "login":  # Login post
                 session['id'] = json_data["userid"]  # Set the session id to the userid
             elif json_data["type"] == "signup":  # Signup post
+                print("SIGN UP")
                 con = open_database(DATABASE)
                 query = "INSERT INTO users (firstName, lastName, username, email, password, administrator) " \
                         "VALUES (?, ?, ?, ?, ?, ?)"  # Insert sign up information into the users database
                 cur = con.cursor()
                 cur.execute(query,
-                            (json_data["firstname"], json_data["lastname"], json_data["username"], json_data["email"]
-                             , bcrypt.generate_password_hash(json_data["password"]), json_data["role"]))
+                            (json_data["firstname"], json_data["lastname"], json_data["username"], json_data["email"],
+                             bcrypt.generate_password_hash(json_data["password"]), json_data["role"]))
                 con.commit()
                 con.close()
             elif json_data["type"] == "resetpassword":  # Reset password post
                 con = create_connection(DATABASE)
                 cur = con.cursor()
-                query = "UPDATE users SET password=? WHERE username=?"  # Update the users database with the new bcrypt password
+                # Update the users database with the new bcrypt password
+                query = "UPDATE users SET password=? WHERE username=?"
                 cur.execute(query, (bcrypt.generate_password_hash(json_data["newpassword"]), json_data["username"]))
                 con.commit()
                 con.close()
@@ -202,16 +207,12 @@ def logout():
 
 @app.route('/', methods=['POST', 'GET'])
 def home():  # put application's code here
-    print("home?")
-    if request.method == "POST":
-        print(request.form["text"])
-        return redirect('/contact')
-    else:
-        return render_template('home.html', logged_in=json.dumps(is_logged_in()))
+    return render_template('home.html', logged_in=json.dumps(is_logged_in()))
 
 
 @app.route('/categories/<category>/<page>', methods=['POST', 'GET'])
 def categories(category, page):
+    # VALIDATE IT IF THE USER PUT IN A NON EXISTENT PAGE/CATEGORY
     print(request.method)
     con = open_database(DATABASE)
     cur = con.cursor()
@@ -276,23 +277,23 @@ def categories(category, page):
     if current_category > 0:
         con = open_database(DATABASE)
         cur = con.cursor()
-        query = f"SELECT maoriword, englishword, definition, level, image FROM words WHERE cat_id = ? and level IN " \
-                f"({question_marks})"
+        query = f"SELECT maoriword, englishword, definition, level, image FROM words WHERE cat_id = ? and" \
+                f" level IN ({question_marks})"
         cur.execute(query, (current_category, *tuple(selected_levels)))
         word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
         con.close()
     else:  # current category is 0 (or error has occurred so just display all)
         con = open_database(DATABASE)
         cur = con.cursor()
-        query = f"SELECT maoriword, englishword, definition, level, image, word_id FROM words WHERE level" \
+        query = f"SELECT maoriword, englishword, definition, level, image FROM words WHERE level" \
                 f" IN ({question_marks})"
         cur.execute(query, (*tuple(selected_levels),))
         word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
         con.close()
-    # [0] is maoriword, [1] is english word, [2] is definition, [3] is level, [4] is image, [5] is word id (change)
+    # [0] is maoriword, [1] is english word, [2] is definition, [3] is level, [4] is image
     # NEED TO MAKE SURE THAT THE WORD ID WORKS WHEN THE CATEGORY ISN'T all-categories
     if current_category > 0:
-        category_name = sanitised_category_list[current_category-1]
+        category_name = sanitised_category_list[current_category - 1]
     else:
         category_name = "all-categories"
     print(word_list)
@@ -305,7 +306,7 @@ def categories(category, page):
         actual_words_per_page = words_per_page
         page_count = math.ceil(len(word_list) / words_per_page)
         for i in range(0, len(word_list), words_per_page):
-            sorted_word_list.append(list(word_list[i:i+words_per_page]))
+            sorted_word_list.append(list(word_list[i:i + words_per_page]))
     else:  # Display all words
         page_count = 1
         sorted_word_list = [word_list]
@@ -335,29 +336,64 @@ def categories(category, page):
 @app.route('/contact', methods=['POST', 'GET'])
 def contact():
     if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        message = request.form.get('message')
+        # name = request.form.get('name')
+        # email = request.form.get('email')
+        # message = request.form.get('message')
         # Do something with the form data (e.g., store it in a database)
         return redirect(url_for('contact'))
     else:
         return render_template('contact.html', logged_in=json.dumps(is_logged_in()))
 
 
-@app.route('/translate/<word_id>', methods=['POST', 'GET'])
-def translate(word_id):
+@app.route('/translate/<word>', methods=['POST', 'GET'])
+def translate(word):  # Using the word and not the word id as its more readable to the user
     translated_word = "test"
-    word = "testing"
     print(session["selected-language"])
     # if English-Māori make sure that the english word is first, then the māori word is second and vice versa
     con = open_database(DATABASE)
     cur = con.cursor()
-
-    return render_template('translate.html', word=word, translated_word=translated_word,
-                           logged_in=json.dumps(is_logged_in()))
+    query = "SELECT englishword FROM words WHERE englishword = ?"
+    cur.execute(query, (word,))
+    has_word = False
+    if cur.fetchone() is not None:
+        print("English word")
+        has_word = True
+        query = "SELECT maoriword, definition, level, image, added_by, time_added FROM words WHERE englishword = ?"
+    else:
+        query = "SELECT maoriword FROM words WHERE maoriword = ?"
+        cur.execute(query, (word,))
+        if cur.fetchone() is not None:
+            print("Maori Word")
+            has_word = True
+            query = "SELECT englishword, definition, level, image, added_by, time_added FROM words WHERE maoriword = ?"
+    if has_word:
+        cur.execute(query, (word,))
+        word_information = cur.fetchone()
+        # [0] = translated word, [1] = definition, [2] = level, [3] = image
+        print(word_information)
+        current_word = word  # The word which the user clicked on
+        translated_word = word_information[0]
+        definition = word_information[1]
+        level = word_information[2]
+        image = word_information[3]
+        added_by = word_information[4]
+        query = "SELECT username FROM users WHERE user_id = ?"
+        cur.execute(query, (added_by,))
+        user_added = cur.fetchone()[0]  # user who added the word
+        time_added = int(word_information[5] / 1000)  # time added (in seconds -> as 1s = 1000ms)
+        datetime_object = datetime.datetime.fromtimestamp(time_added)
+        data_date = datetime_object.strftime("%d/%m/%Y")
+        data_time = datetime_object.strftime("%H:%M")
+        data_time = datetime.datetime.strptime(data_time, "%H:%M").strftime("%I:%M%p").lower()
+        con.close()
+        return render_template('translate.html', current_word=current_word, translated_word=translated_word,
+                               definition=definition, level=level, image=image, user_added=user_added, time=data_time,
+                               date=data_date, logged_in=json.dumps(is_logged_in()))
+    else:
+        return redirect("/categories/all-categories/1")
 
 
 if __name__ == '__main__':
     app.run()
-    #app.run(host='0.0.0.0', debug=True)
+    # app.run(host='0.0.0.0', debug=True)
     # runs website locally

@@ -340,7 +340,7 @@
                         "type": "login",
                         "userid": responseText.userId
                     }
-                    postAjax("{{url_for('home')}}", formData, false, false, "")
+                    postAjax("{{url_for('home')}}", formData, false, false, "") // Why isnt this working?
                     $('#loginModal').modal('hide') // close login up modal
                 }
             } catch (error) {
