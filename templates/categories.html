@@ -79,7 +79,7 @@
                                     {% endif %}
                                     <span class="level-checkbox"> Level: {{ level }}</span>
                                 </button>
-                            </td> {# make it so that if this is clicked on, set the check box #}
+                            </td>
                         </tr>
                     {% endfor %}
                     <tr>
@@ -137,10 +137,10 @@
                                         <div class="text">
                                             <div id="word-table-word">
                                                 {% if selected_language == "English-Māori" %}
-                                                    <div id="word-table-title">{{ word_list[current_page][j][1] }}</div>
+                                                    <div id="word-table-title"><a href="/translate/{{ word_list[current_page][j][5] }}">{{ word_list[current_page][j][1] }}</a></div>
                                                     <div id="word-table-translation">{{ word_list[current_page][j][0] }}</div>
                                                 {% else %}
-                                                    <div id="word-table-title">{{ word_list[current_page][j][0] }}</div>
+                                                    <div id="word-table-title"><a href="/translate/{{ word_list[current_page][j][5] }}">{{ word_list[current_page][j][0] }}</a></div>
                                                     <div id="word-table-translation">{{ word_list[current_page][j][1] }}</div>
                                                 {% endif %}
                                             </div>

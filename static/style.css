@@ -155,6 +155,32 @@ body {
     box-shadow: 0 0 0.25rem currentColor;
 }
 
+.translate-search-bar {
+    margin-top: 5%;
+    width: 100%;
+    border: thin solid black;
+    background: rgba(255, 255, 255, 1.0);
+    display: flex;
+    align-items: center;
+    border-radius: 60px;
+    padding: 5px 10px;
+}
+
+.translate-search-bar input {
+    background: transparent;
+    border: none;
+    flex: 1;
+    outline: none;
+    padding: 24px 20px;
+    font-size: 24px;
+}
+
+.translate-search-bar button {
+    border: none;
+    background: none;
+    filter: grayscale(1) invert(1);
+}
+
 .search-bar {
     margin-top: 5%;
     width: 80%;
@@ -422,6 +448,20 @@ body {
     border: none;
     background: none;
     width: 100%;
+}
+
+#translate-content {
+    width: 75vw;
+    margin-left: 12.5vw;
+}
+
+#translate-word-information {
+    font-size: 6rem;
+    margin-top: 2%;
+    margin-left: 2%;
+}
+
+#translate-header-word {
 }
 
 .button-level-filter:hover, .button-level-submit:hover {

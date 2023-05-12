@@ -223,8 +223,7 @@ def categories(category, page):
     print(levels)
     if session.get("selected-values") is None:
         session["selected-values"] = levels
-    print(session["selected-values"])
-    all_levels_selected = "all" in session["selected-values"]  # CHANGE
+    all_levels_selected = "all" in session["selected-values"]
     if all_levels_selected:
         selected_levels = levels
     else:
@@ -273,23 +272,25 @@ def categories(category, page):
     words_per_page = session["selected-words-per-page"]
     print(words_per_page)
     # Need to render the words dependent on all of these constraints
-    # consider using a foreign key here?
     question_marks = "{}".format(','.join(['?'] * len(selected_levels)))
     if current_category > 0:
         con = open_database(DATABASE)
         cur = con.cursor()
-        query = f"SELECT maoriword, englishword, definition, level, image FROM words WHERE cat_id = ? and level IN ({question_marks})"
+        query = f"SELECT maoriword, englishword, definition, level, image FROM words WHERE cat_id = ? and level IN " \
+                f"({question_marks})"
         cur.execute(query, (current_category, *tuple(selected_levels)))
         word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
         con.close()
     else:  # current category is 0 (or error has occurred so just display all)
         con = open_database(DATABASE)
         cur = con.cursor()
-        query = f"SELECT maoriword, englishword, definition, level, image FROM words WHERE level IN ({question_marks})"
+        query = f"SELECT maoriword, englishword, definition, level, image, word_id FROM words WHERE level" \
+                f" IN ({question_marks})"
         cur.execute(query, (*tuple(selected_levels),))
         word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
         con.close()
-    # [0] is maoriword, [1] is english word, [2] is definition, [3] is level, [4] is image
+    # [0] is maoriword, [1] is english word, [2] is definition, [3] is level, [4] is image, [5] is word id (change)
+    # NEED TO MAKE SURE THAT THE WORD ID WORKS WHEN THE CATEGORY ISN'T all-categories
     if current_category > 0:
         category_name = sanitised_category_list[current_category-1]
     else:
@@ -309,6 +310,7 @@ def categories(category, page):
         page_count = 1
         sorted_word_list = [word_list]
         actual_words_per_page = len(sorted_word_list[current_page])
+
     print(all_levels_selected)
     print(selected_levels)
     print(levels)
@@ -319,7 +321,6 @@ def categories(category, page):
     else:
         minimum_value = 0
         maximum_value = 0
-    # There is an issue when the user changes the amount of words per page -> index out of range
     return render_template('categories.html', logged_in=json.dumps(is_logged_in()), category_list=category_list,
                            sanitised_category_list=sanitised_category_list, current_category=current_category,
                            category_name=category_name, sorting_method=sorting_method,
@@ -343,9 +344,17 @@ def contact():
         return render_template('contact.html', logged_in=json.dumps(is_logged_in()))
 
 
-@app.route('/translate', methods=['POST', 'GET'])
-def translate():
-    return render_template('translate.html', text=request.form.get("text"), logged_in=json.dumps(is_logged_in()))
+@app.route('/translate/<word_id>', methods=['POST', 'GET'])
+def translate(word_id):
+    translated_word = "test"
+    word = "testing"
+    print(session["selected-language"])
+    # if English-Māori make sure that the english word is first, then the māori word is second and vice versa
+    con = open_database(DATABASE)
+    cur = con.cursor()
+
+    return render_template('translate.html', word=word, translated_word=translated_word,
+                           logged_in=json.dumps(is_logged_in()))
 
 
 if __name__ == '__main__':

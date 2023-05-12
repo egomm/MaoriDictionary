@@ -537,12 +537,12 @@
     })
 
     $('#login').click(function() {
-        document.body.style.overflow = "hidden";
-    });
+        document.body.style.overflow = "hidden"
+    })
 
     function checkModalVisibility() { // Ensures that the overflow (whether the scroll bar is valid or not) is only set to auto if all the modals are hidden
         if (!$('#loginModal').is(':visible') && !$('#forgotPasswordModal').is(':visible') && !$('#signUpModal').is(':visible')) {
-            document.body.style.overflow = "auto";
+            document.body.style.overflow = "auto"
         }
     }
 
@@ -606,7 +606,7 @@
         const previousValue = wordsSelector.data("previous-value")
         const currentCategory = wordsSelector.data("category")
         const oldPage = wordsSelector.data("old-page")
-        let newPage = 1;
+        let newPage = 1
         if (selectedValue !== "All" && previousValue !== "All") {
             newPage = Math.floor((previousValue / selectedValue) * (oldPage - 1)) + 1
         }
@@ -628,46 +628,29 @@
     })
 
     requestAnimationFrame(function() {
-        setImgSize();
+        setImgSize()
         const sorting = document.getElementById("sorting-methods")
         sorting.value = sorting.dataset.sortingMethod
         const wordsPerPage = document.getElementById("words-per-page")
         wordsPerPage.value = wordsPerPage.dataset.wordsPerPage
-    });
-
-      /*function preventFlicker() {
-        var imageContainer = document.getElementById('image');
-        var image = document.getElementById('image-test');
-        image.onload = function() {
-          imageContainer.style.visibility = 'visible';
-        }
-        image.src = image.getAttribute('src');
-      }
-
-      window.onload = preventFlicker;*/
-      // Create a new Image object
-      /*var img = new Image();
-      img.src = "/static/images/noimage.png";
-      img.onload = function() {
-        document.getElementById("image-test").src = this.src;
-      };*/
+    })
 
     function setImgSize() { // Set the image size
-        const images = document.getElementsByClassName("word-table-image");
-        const textContainers = document.getElementsByClassName("text");
-        const imageContainers = document.getElementsByClassName("word-table-image-container");
+        const images = document.getElementsByClassName("word-table-image")
+        const textContainers = document.getElementsByClassName("text")
+        const imageContainers = document.getElementsByClassName("word-table-image-container")
         for (let i = 0; i < images.length; i++) {
-            const containerWidth = imageContainers[i].clientWidth;
-            const imgWidth = images[i].naturalWidth;
-            const imgHeight = images[i].naturalHeight;
-            const aspectRatio = imgWidth / imgHeight;
-            let newHeight = containerWidth / aspectRatio;
+            const containerWidth = imageContainers[i].clientWidth
+            const imgWidth = images[i].naturalWidth
+            const imgHeight = images[i].naturalHeight
+            const aspectRatio = imgWidth / imgHeight
+            let newHeight = containerWidth / aspectRatio
             let maxHeight = textContainers[i].clientHeight
             if (newHeight > maxHeight) {
                 newHeight = maxHeight
             }
-            images[i].style.width = containerWidth + "px";
-            images[i].style.height = newHeight + "px";
+            images[i].style.width = containerWidth + "px"
+            images[i].style.height = newHeight + "px"
         }
     }
 
@@ -683,38 +666,38 @@
             expandedLevelFilters.innerText = "-"
             content.style.display = "block"
         }
-    });
+    })
 
     const previousCheckboxes = document.querySelectorAll('.level-filter-check');
-    const previousCheckboxStates = {};
+    const previousCheckboxStates = {}
     previousCheckboxes.forEach((checkbox) => {
-          previousCheckboxStates[checkbox.id] = checkbox.checked;
-    });
-    localStorage.setItem('storedCheckboxStates', JSON.stringify(previousCheckboxStates));
+          previousCheckboxStates[checkbox.id] = checkbox.checked
+    })
+    localStorage.setItem('storedCheckboxStates', JSON.stringify(previousCheckboxStates))
 
     function manageCheckboxes() {
-            const checkboxes = document.querySelectorAll('.level-filter-check');
-            const storedCheckboxStates = JSON.parse(localStorage.getItem('storedCheckboxStates'));
-            const checkboxStates = {};
+            const checkboxes = document.querySelectorAll('.level-filter-check')
+            const storedCheckboxStates = JSON.parse(localStorage.getItem('storedCheckboxStates'))
+            const checkboxStates = {}
             checkboxes.forEach((checkbox) => {
-                  checkboxStates[checkbox.id] = checkbox.checked;
-            });
+                  checkboxStates[checkbox.id] = checkbox.checked
+            })
             if (storedCheckboxStates["level-filter-all"] && checkboxStates["level-filter-all"]) { // Previous state was true and new state is true
                 // check if any other checkbox has been set to true
-                let anyTrueCheckbox = false;
+                let anyTrueCheckbox = false
                 for (const checkbox in checkboxStates) {
                     if (checkbox === "level-filter-all") {
                         continue; // Skip the level-filter-all checkbox
                     }
                     if (checkboxStates[checkbox]) {
-                        anyTrueCheckbox = true;
+                        anyTrueCheckbox = true
                         break;
                     }
                 }
                 if (anyTrueCheckbox) {
-                    const allCheckbox = document.getElementById("level-filter-all");
-                    allCheckbox.checked = false;
-                    checkboxStates["level-filter-all"] = false;
+                    const allCheckbox = document.getElementById("level-filter-all")
+                    allCheckbox.checked = false
+                    checkboxStates["level-filter-all"] = false
                 }
             } else if (!storedCheckboxStates["level-filter-all"] && checkboxStates["level-filter-all"]) { // Previous state was false and new state is true
                 // set all other checkboxes to false
@@ -727,7 +710,7 @@
                     checkboxStates[checkbox] = false
                 }
             } else if (storedCheckboxStates["level-filter-all"] && !checkboxStates["level-filter-all"]) { // Previous state was true and new state is false
-                const anyTrueCheckbox = Object.values(checkboxStates).some((checked) => checked);
+                const anyTrueCheckbox = Object.values(checkboxStates).some((checked) => checked)
                 if (!anyTrueCheckbox) {
                     const currentCheckbox = document.getElementById("level-filter-all")
                     currentCheckbox.checked = true
@@ -735,29 +718,30 @@
                 }
             } else { // Previous state was false and new state is false
                 // user cannot unselect
-                const anyTrueCheckbox = Object.values(checkboxStates).some((checked) => checked);
+                const anyTrueCheckbox = Object.values(checkboxStates).some((checked) => checked)
                 if (!anyTrueCheckbox) {
                     for (const checkbox in checkboxStates) {
                         if (checkboxStates[checkbox] !== storedCheckboxStates[checkbox]) {
                             const currentCheckbox = document.getElementById(checkbox)
                             currentCheckbox.checked = true
                             checkboxStates[checkbox] = true
+                            break;
                         }
                     }
                 }
             }
-            localStorage.setItem('storedCheckboxStates', JSON.stringify(checkboxStates));
+            localStorage.setItem('storedCheckboxStates', JSON.stringify(checkboxStates))
     }
 
     const levelCheckbox = document.querySelectorAll(".level-filter-check")
     levelCheckbox.forEach(levelCheckbox => {
         levelCheckbox.addEventListener('click', (event) => {
-            event.stopPropagation();
+            event.stopPropagation()
             manageCheckboxes()
         })
     })
 
-    const levelFilters = document.querySelectorAll(".button-level-filter");
+    const levelFilters = document.querySelectorAll(".button-level-filter")
     levelFilters.forEach(levelFilters => {
         levelFilters.addEventListener('click', () => {
             const checkbox = levelFilters.querySelector('input[type="checkbox"]')
@@ -783,6 +767,6 @@
         postAjax("{{url_for('categories', category=0, page=1)}}", formData, false, true, `/categories/${currentCategory}/1`) // redirect to first pay
     })
 
-    window.addEventListener("resize", setImgSize);
+    window.addEventListener("resize", setImgSize)
 </script>
 </html>

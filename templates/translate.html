@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
 
-{% block header %}
-{{ text }}
-{% endblock %}
-
 {% block title %}
     Māori Dictionary | {{ text }}
 {% endblock %}
 
-{% block container %}
-    container
+{% block main %}
+    <div id="translate-content">
+        <form action="/" method="POST" class="translate-search-bar">
+            <input type="text" placeholder="Search in English or Māori..." name="text" id="text">
+            <button type="submit"><img src="/static/images/search.png"></button>
+        </form>
+        <div id="translate-word-information">
+            <div id="translate-header-word">{{ word }}</div>
+            <div id="translate-subheader">{{ translated_word }}</div>
+        </div>
+    </div>
 {% endblock %}
