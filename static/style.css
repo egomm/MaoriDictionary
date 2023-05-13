@@ -130,8 +130,12 @@ body {
     border-color: rgba(66, 134, 245, 0.5);
 }
 
+.form-submit:focus {
+    outline: none;
+}
 
 .form-label {
+    font-weight: normal;
     font-size: 20px;
     margin-left: 5%;
 }
@@ -581,7 +585,6 @@ body {
 #word-table-definition {
     min-height: 8vh;
     width: 100%;
-    margin-top: 5%;
     font-size: 1.75rem;
 }
 
@@ -745,6 +748,85 @@ h3, h4 {
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
+}
+
+.admin header {
+    text-align: center;
+}
+
+.add-word {
+    width: 30%;
+    margin-left: 35%;
+}
+
+#word-definition {
+    vertical-align: top;
+    height: 9vh;
+    resize: none;
+}
+
+.admin-dropdown {
+    margin-left: 5%;
+    background-color: #E5E5E5;
+    font-size: 18px;
+}
+
+.admin-dropdown:focus {
+    outline: none;
+}
+
+option {
+    overflow-y: scroll;
+}
+
+#add-word-modal-image {
+    margin-left: 5%;
+}
+
+#add-word-modal-image img {
+    max-height: 20vh;
+    max-width: 100%;
+}
+
+#add-word-confirmation {
+    margin-top: 5%;
+    margin-left: 5%;
+    width: 90%;
+    color: white;
+}
+
+#add-word-modal-confirmation {
+    margin-left: 5%;
+    width: 90%;
+    color: white;
+}
+
+#add-word-modal-confirmation-cancel {
+    float: left;
+    background-color: rgb(128, 128, 128);
+    border-color: rgba(128, 128, 128, 0.5);
+    width: 47.5%;
+}
+
+#add-word-modal-confirmation-submit {
+    margin-left: 5%;
+    width: 47.5%;
+}
+
+#image-upload {
+    margin-left: 5%;
+}
+
+#image-upload:focus {
+    outline: none;
+}
+
+.modal-margin {
+    margin-bottom: 2%;
+}
+
+.add-word-footer {
+    height: 8vh !important;
 }
 
 nav {

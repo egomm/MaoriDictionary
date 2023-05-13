@@ -52,6 +52,19 @@ def is_logged_in():  # Returns if the user is logged in based on the session id 
     return session.get("id") is not None
 
 
+def is_administrator():
+    admin = False
+    if is_logged_in():
+        con = create_connection(DATABASE)
+        cur = con.cursor()
+        query = "SELECT administrator FROM users WHERE user_id = ?"
+        cur.execute(query, (session.get("id"),))
+        admin = cur.fetchone()[0]
+        con.close()
+    print("ADMIN", admin)
+    return admin
+
+
 def sort_words(words, selected_language, sorting_method):
     """
     Sort words using a lambda function that takes an element of the tuple as its parameter
@@ -145,6 +158,7 @@ def login_data_manager():
     data = request.get_json()
     emailusername = data['emailusername']
     password = data['password']
+    administrator = False
     matches = False
     hasemail = checkhasemail(emailusername)
     hasusername = checkhasusername(emailusername)
@@ -162,10 +176,15 @@ def login_data_manager():
         query = "SELECT password FROM users WHERE user_id = ?"
         cur.execute(query, (emailusernameid,))
         hashedpassword = cur.fetchone()[0]
-        con.close()
         if bcrypt.check_password_hash(hashedpassword, password):
+            query = "SELECT administrator FROM users WHERE user_id = ?"
+            cur.execute(query, (emailusernameid,))
+            administrator = cur.fetchone()[0]
             matches = True
-    return jsonify({'validLogin': matches, 'email': hasemail, 'userId': emailusernameid})
+        con.close()
+    # Use javascript conventions for the return
+    return jsonify({'validLogin': matches, 'email': hasemail, 'userId': emailusernameid,
+                    'administrator': administrator})
 
 
 @app.route('/getchangepasswordinformation', methods=['POST'])
@@ -199,6 +218,74 @@ def signup_data_manager():  # function for managing the data which comes through
     return jsonify({'usernameUsed': checkhasusername(username), 'emailUsed': checkhasemail(email)})
 
 
+@app.route('/getwordinformation', methods=['POST'])
+def word_manager():
+    data = request.get_json()
+    maori_word = data['maori']
+    english_word = data['english']
+    con = open_database(DATABASE)
+    cur = con.cursor()
+    query = "SELECT maoriword, englishword FROM words"  # Used for validation
+    cur.execute(query)
+    words = cur.fetchall()
+    maori_words = [x[0] for x in words]
+    has_maori_word = maori_word in maori_words
+    english_words = [x[1] for x in words]
+    has_english_word = english_word in english_words
+    return jsonify({'hasEnglishWord': has_english_word, 'hasMaoriWord': has_maori_word})
+
+
+@app.route('/addword', methods=['POST'])
+def add_word():
+    print("HI")
+    english_word = request.form["englishWord"]
+    maori_word = request.form["maoriWord"]
+    category = request.form["category"]
+    definition = request.form["definition"]
+    level = request.form["level"]
+    image_name = None
+    if "image" in request.files:
+        # PLACEHOLDER REMEMBER TO PUT THIS IN ADD WORD
+        image = request.files["image"]
+        print(image.filename)
+        image_name = image.filename
+        extension = "." + image_name.rsplit('.', 1)[-1].lower()  # Get the extension (png, jpeg, etc)
+        print(extension)
+        image_name_refined = english_word.strip() + extension
+        similar_images = []
+        directory = os.path.join(app.root_path, 'static', 'images')
+        for filename in os.listdir(directory):
+            if os.path.isfile(os.path.join(directory, filename)):
+                file_name = os.path.splitext(filename)
+                print(english_word.strip() + ", " + file_name[0])
+                if file_name[1] == extension and english_word.strip() in file_name[0]:
+                    similar_images.append(file_name)
+        print(len(similar_images))
+        if len(similar_images) > 0:
+            image_name_refined = english_word.strip() + str(len(similar_images)) + extension
+        print("REFINED", image_name_refined)
+        image_path = os.path.join(app.root_path, 'static', 'images', image_name_refined)
+        image_path = image_path.replace('\\', '/')  # Replace backslashes with forward slashes
+        image.save(image_path)
+    if is_administrator():
+        con = open_database(DATABASE)
+        query = "INSERT INTO words (maoriword, englishword, cat_id, definition, level, image, added_by, time_added) " \
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        cur = con.cursor()
+        cur.execute(query, (maori_word, english_word, category, definition, level, image_name_refined,
+                            session.get("id"), int(time.time() * 1000)))
+        con.commit()
+        con.close()
+        print(english_word)
+        print(maori_word)
+        print(definition)
+        print(category)
+        print(level)
+    else:
+        print("not admin/not logged in?")
+    return {}
+
+
 @app.route('/logout')
 def logout():
     [session.pop(key) for key in list(session.keys())]
@@ -207,7 +294,9 @@ def logout():
 
 @app.route('/', methods=['POST', 'GET'])
 def home():  # put application's code here
-    return render_template('home.html', logged_in=json.dumps(is_logged_in()))
+    print("LOGGED", json.dumps(is_logged_in()))
+    return render_template('home.html', logged_in=json.dumps(is_logged_in()),
+                           administrator=json.dumps(is_administrator()))
 
 
 @app.route('/categories/<category>/<page>', methods=['POST', 'GET'])
@@ -277,7 +366,7 @@ def categories(category, page):
     if current_category > 0:
         con = open_database(DATABASE)
         cur = con.cursor()
-        query = f"SELECT maoriword, englishword, definition, level, image FROM words WHERE cat_id = ? and" \
+        query = f"SELECT maoriword, englishword, definition, level, image, word_id FROM words WHERE cat_id = ? and" \
                 f" level IN ({question_marks})"
         cur.execute(query, (current_category, *tuple(selected_levels)))
         word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
@@ -285,12 +374,12 @@ def categories(category, page):
     else:  # current category is 0 (or error has occurred so just display all)
         con = open_database(DATABASE)
         cur = con.cursor()
-        query = f"SELECT maoriword, englishword, definition, level, image FROM words WHERE level" \
+        query = f"SELECT maoriword, englishword, definition, level, image, word_id FROM words WHERE level" \
                 f" IN ({question_marks})"
         cur.execute(query, (*tuple(selected_levels),))
         word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
         con.close()
-    # [0] is maoriword, [1] is english word, [2] is definition, [3] is level, [4] is image
+    # [0] is maoriword, [1] is english word, [2] is definition, [3] is level, [4] is image, [5] is word id
     # NEED TO MAKE SURE THAT THE WORD ID WORKS WHEN THE CATEGORY ISN'T all-categories
     if current_category > 0:
         category_name = sanitised_category_list[current_category - 1]
@@ -322,14 +411,14 @@ def categories(category, page):
     else:
         minimum_value = 0
         maximum_value = 0
-    return render_template('categories.html', logged_in=json.dumps(is_logged_in()), category_list=category_list,
-                           sanitised_category_list=sanitised_category_list, current_category=current_category,
-                           category_name=category_name, sorting_method=sorting_method,
-                           selected_language=selected_language, words_per_page=words_per_page,
-                           word_list=sorted_word_list, page_count=page_count, total_words=total_words,
-                           current_page=current_page, display_page=page, minimum_value=minimum_value,
-                           maximum_value=maximum_value, levels=levels, all_levels_selected=all_levels_selected,
-                           selected_levels=selected_levels)
+    return render_template('categories.html', logged_in=json.dumps(is_logged_in()), administrator=json.dumps(is_administrator()),
+                           category_list=category_list, sanitised_category_list=sanitised_category_list,
+                           current_category=current_category, category_name=category_name,
+                           sorting_method=sorting_method, selected_language=selected_language,
+                           words_per_page=words_per_page, word_list=sorted_word_list, page_count=page_count,
+                           total_words=total_words, current_page=current_page, display_page=page,
+                           minimum_value=minimum_value, maximum_value=maximum_value, levels=levels,
+                           all_levels_selected=all_levels_selected, selected_levels=selected_levels)
 
 
 # make the request go under a custom thing
@@ -342,11 +431,12 @@ def contact():
         # Do something with the form data (e.g., store it in a database)
         return redirect(url_for('contact'))
     else:
-        return render_template('contact.html', logged_in=json.dumps(is_logged_in()))
+        return render_template('contact.html', logged_in=json.dumps(is_logged_in()), administrator=json.dumps(is_administrator()))
 
 
-@app.route('/translate/<word>', methods=['POST', 'GET'])
-def translate(word):  # Using the word and not the word id as its more readable to the user
+@app.route('/translate/<word>', defaults={'word_id': None}, methods=['POST', 'GET'])
+@app.route('/translate/<word>/<word_id>', methods=['POST', 'GET'])
+def translate(word, word_id):  # Using the word and not the word id as its more readable to the user
     translated_word = "test"
     print(session["selected-language"])
     # if English-Māori make sure that the english word is first, then the māori word is second and vice versa
@@ -358,19 +448,30 @@ def translate(word):  # Using the word and not the word id as its more readable 
     if cur.fetchone() is not None:
         print("English word")
         has_word = True
-        query = "SELECT maoriword, definition, level, image, added_by, time_added FROM words WHERE englishword = ?"
+        if word_id is not None:
+            query = "SELECT maoriword, definition, level, image, added_by, time_added FROM words WHERE word_id = ?"
+        else:
+            query = "SELECT maoriword, definition, level, image, added_by, time_added FROM words WHERE englishword = ?"
     else:
         query = "SELECT maoriword FROM words WHERE maoriword = ?"
         cur.execute(query, (word,))
         if cur.fetchone() is not None:
             print("Maori Word")
             has_word = True
-            query = "SELECT englishword, definition, level, image, added_by, time_added FROM words WHERE maoriword = ?"
+            if word_id is not None:
+                query = "SELECT englishword, definition, level, image, added_by, time_added FROM words " \
+                        "WHERE word_id = ?"
+            else:
+                query = "SELECT englishword, definition, level, image, added_by, time_added FROM words " \
+                        "WHERE maoriword = ?"
     if has_word:
-        cur.execute(query, (word,))
+        if word_id is not None:
+            cur.execute(query, (word_id,))
+        else:
+            cur.execute(query, (word,))
         word_information = cur.fetchone()
         # [0] = translated word, [1] = definition, [2] = level, [3] = image
-        print(word_information)
+        print(word_information[4] * 1000)
         current_word = word  # The word which the user clicked on
         translated_word = word_information[0]
         definition = word_information[1]
@@ -388,9 +489,32 @@ def translate(word):  # Using the word and not the word id as its more readable 
         con.close()
         return render_template('translate.html', current_word=current_word, translated_word=translated_word,
                                definition=definition, level=level, image=image, user_added=user_added, time=data_time,
-                               date=data_date, logged_in=json.dumps(is_logged_in()))
+                               date=data_date, logged_in=json.dumps(is_logged_in()),
+                               administrator=json.dumps(is_administrator()), word_id=word_id)
     else:
         return redirect("/categories/all-categories/1")
+
+
+@app.route("/admin", methods=["POST", "GET"])
+def admin():
+    if is_administrator():
+        con = open_database(DATABASE)
+        cur = con.cursor()
+        query = "SELECT * FROM categories"
+        cur.execute(query)
+        category_information = cur.fetchall()
+        category_ids = [x[0] for x in category_information]
+        category_names = [x[1] for x in category_information]
+        query = "SELECT * FROM levels"
+        cur.execute(query)
+        levels = [x[0] for x in cur.fetchall()]
+        print(levels)
+        con.close()
+        return render_template("admin.html", logged_in=json.dumps(is_logged_in()),
+                               administrator=json.dumps(is_administrator()), category_ids=category_ids,
+                               category_names=category_names, levels=levels)
+    else:
+        return redirect("/")  # Return user to the home page if they aren't admin
 
 
 if __name__ == '__main__':

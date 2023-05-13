@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Māori Dictionary | admin
+{% endblock %}
+
+{% block container %}
+    admin
+{% endblock %}
+
+{% block header %}
+    Admin
+{% endblock %}
+
+{% block main %}
+<h3>Add a word</h3>
+<form class="add-word" id="add-word-form" method="post" action="/add_category">
+    <label for="english-word" class="form-label">English Word</label>
+    <input type="text" name="english-word" id="english-word" class="form-element"/>
+    <div class="field-incomplete" id="english-word-incomplete"></div>
+    <label for="maori-word" class="form-label">Māori Word</label>
+    <input type="text" name="maori-word" id="maori-word" class="form-element"/>
+    <div class="field-incomplete" id="maori-word-incomplete"></div>
+    <label for="word-definition" class="form-label">Definition</label>
+    <textarea type="text" name="word-definition" id="word-definition" class="form-element"></textarea>
+    <div class="field-incomplete" id="word-definition-incomplete"></div>
+    <label for="word-select-category" class="form-label">Category</label><br>
+    <select name="word-select-category" id="word-select-category" class="admin-dropdown">
+        {% for i in range(category_ids|length) %}
+            <option value="{{ category_ids[i] }}">{{ category_names[i] }}</option>
+        {% endfor %}
+    </select>
+    <div class="field-incomplete"></div>
+    <label for="level-select-category" class="form-label">Level</label><br>
+    <select name="level-select-category" id="level-select-category" class="admin-dropdown">
+        {% for level in levels %}
+            <option value="{{ level }}">{{ level }}</option>
+        {% endfor %}
+    </select>
+    <div class="field-incomplete"></div>
+    <label for="image-upload" class="form-label">Image</label>
+    <input type="file" id="image-upload" name="imageUpload">
+    <input type="button" value="Add Word" class="form-submit" id="add-word-confirmation" onclick="validateAddWord()">
+</form>
+
+{# Add word modal #}
+<div id="addWordModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                 <button type="button" class="close" data-dismiss="modal">×</button>
+                 <h4 class="modal-title">Confirm Add Word</h4>
+            </div>
+            <div class="modal-body">
+                <div id="add-word-modal-english-word" class="form-label modal-margin">English Word:</div>
+                <div id="add-word-modal-maori-word" class="form-label modal-margin">Māori Word:</div>
+                <div id="add-word-modal-definition" class="form-label modal-margin">Definition:</div>
+                <div id="add-word-modal-category" class="form-label modal-margin">Category:</div>
+                <div id="add-word-modal-level" class="form-label modal-margin">Level:</div>
+                <div id="add-word-modal-image" class="modal-margin"></div>
+            </div>
+            <div class="modal-footer add-word-footer">
+                <div id="add-word-modal-confirmation">
+                    <input type="button" value="Cancel" class="form-submit" id="add-word-modal-confirmation-cancel" onclick="closeAddWordModal()">
+                    <input type="button" value="Confirm" class="form-submit" id="add-word-modal-confirmation-submit" onclick="submitAddWordForm()">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<h4>Delete a category</h4>
+<form class="myform" method="post" action="/delete_category">
+    <div class="form-group">
+        <div class="form-label"><label for="name">Category Name:</label></div>
+        <div class="form-element">
+            <select id="cat_id" name="cat_id">
+                {% for category in categories %}
+                    <option value="{{ category[0] }}, {{ category[1] }}">{{ category[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-label"></div>
+        <div class="form-element"><input type="submit" value="Delete Category"></div>
+    </div>
+</form>
+
+<h3>Item Admin</h3>
+<h4>Add an Item</h4>
+    <h4>Add an Item</h4>
+    <h4>Add an Item</h4>
+    <h4>Add an Item</h4>
+    <h4>Add an Item</h4>
+    <h4>Add an Item</h4>
+{% endblock %}

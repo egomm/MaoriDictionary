@@ -14,7 +14,11 @@
             <div id="translate-word-information">
                 <div id="translate-header-word">
                     {{ current_word }}
-                    <br id="translate-header-break"><a id="translate-subheader" href="/translate/{{ translated_word }}">{{ translated_word }}</a>
+                    {% if word_id is not none %}
+                        <br id="translate-header-break"><a id="translate-subheader" href="/translate/{{ translated_word }}/{{ word_id }}">{{ translated_word }}</a>
+                    {% else %}
+                        <br id="translate-header-break"><a id="translate-subheader" href="/translate/{{ translated_word }}">{{ translated_word }}</a>
+                    {% endif %}
                 </div>
                 <div id="translate-definition">{{ definition }}</div>
                 <div id="translate-level">Level: {{ level }}</div>

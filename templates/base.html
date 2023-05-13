@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-nz">
 
 <head>
     <meta charset="utf-8">
@@ -8,8 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
@@ -18,6 +18,8 @@
     <div class="header">
         <div class="navbar-brand">Māori Dictionary</div>
         <div class="navbar-links">
+            <!-- Only works if I explicitly declare that is has to be true -->
+            <!-- This checks if an object points to the same memory address than another object -->
             <a id="home" href="/">home</a>
             <a id="categories" href="/categories/all-categories/1">categories</a>
             <a id="logout" href="/logout">logout</a>
@@ -52,19 +54,19 @@
                         <input type="hidden" name="loginform" value=""/>
                         <div id="login-incorrect" class="incorrect"></div>
                         <div class="form-login-email">
-                            <div class="form-label">Email or Username</div>
+                            <label for="login-username" class="form-label">Email or Username</label>
                             <input type="text" name="login-username" id="login-username" class="form-element"/>
                         </div>
                         <div class="field-incomplete" id="login-username-incomplete"></div>
                         <div class="form-login-password">
-                            <div class="form-label" id="login-password-text">Password</div>
+                            <label for="login-password" class="form-label" id="login-password-text">Password</label>
                             <input type="password" name="login-password" id="login-password" class="form-element">
                         </div>
                         <div class="field-incomplete" id="login-password-incomplete"></div>
-                        <div class="show-password">
+                        <label for="login-show-password" class="show-password form-label">
                             <input type="checkbox" id="login-show-password" onclick="return showLoginPassword()">
                             Show Password
-                        </div>
+                        </label>
                         <div class="form-login-submit">
                             <input type="submit" value="Login" class="form-submit" id="login-submit">
                         </div>
@@ -92,34 +94,34 @@
                 <form class="forgotpasswordform" id="forgotpasswordform" method="POST" onsubmit="return ValidateForgotPasswordForm()">
                     <div id="forgotpassword-incorrect" class="incorrect"></div>
                     {# First name field #}
-                    <div class="form-label">First Name</div>
+                    <label for="forgotpassword-firstname" class="form-label">First Name</label>
                     <input type="text" name="forgotpassword-firstname" id="forgotpassword-firstname" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-firstname-incomplete"></div>
                     {# Last name field #}
-                    <div class="form-label">Last Name</div>
+                    <label for="forgotpassword-lastname" class="form-label">Last Name</label>
                     <input type="text" name="forgotpassword-lastname" id="forgotpassword-lastname" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-lastname-incomplete"></div>
                     {# Username field #}
-                    <div class="form-label">Username</div>
+                    <label for="forgotpassword-username" class="form-label">Username</label>
                     <input type="text" name="forgotpassword-username" id="forgotpassword-username" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-username-incomplete"></div>
                     {# Email field #}
-                    <div class="form-label">Email</div>
+                    <label for="forgotpassword-email" class="form-label">Email</label>
                     <input type="text" name="forgotpassword-email" id="forgotpassword-email" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-email-incomplete"></div>
                     {# Password field #}
-                    <div class="form-label">Password</div>
+                    <label for="forgotpassword-password" class="form-label">Password</label>
                     <input type="password" name="forgotpassword-password" id="forgotpassword-password" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-password-incomplete"></div>
                     {# Confirm password field #}
-                    <div class="form-label">Confirm Password</div>
+                    <label for="forgotpassword-confirmpassword" class="form-label">Confirm Password</label>
                     <input type="password" name="forgotpassword-confirmpassword" id="forgotpassword-confirmpassword" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-confirmpassword-incomplete"></div>
                     {# Show password #}
-                    <div class="show-password">
+                    <label for="forgotpassword-show-password" class="show-password form-label">
                         <input type="checkbox" id="forgotpassword-show-password" onclick="return showForgotPasswordPassword()">
                         Show Password
-                    </div>
+                    </label>
                     {# Submit #}
                     <div id="form-forgotpassword-submit">
                         <input type="submit" value="Reset Password" class="form-submit" id="forgotpassword-submit">
@@ -151,34 +153,34 @@
                     <div class="field-incomplete" id="signup-button-incomplete"></div>
                     <input type="hidden" name="teacherButton" id="teacherButton" value="Student"/>
                     {# First name field #}
-                    <div class="form-label">First Name</div>
+                    <label for="signup-firstname" class="form-label">First Name</label>
                     <input type="text" name="signup-firstname" id="signup-firstname" class="form-element"/>
                     <div class="field-incomplete" id="signup-firstname-incomplete"></div>
                     {# Last name field #}
-                    <div class="form-label">Last Name</div>
+                    <label for="signup-lastname" class="form-label">Last Name</label>
                     <input type="text" name="signup-lastname" id="signup-lastname" class="form-element"/>
                     <div class="field-incomplete" id="signup-lastname-incomplete"></div>
                     {# Username field #}
-                    <div class="form-label">Username</div>
+                    <label for="signup-username" class="form-label">Username</label>
                     <input type="text" name="signup-username" id="signup-username" class="form-element"/>
                     <div class="field-incomplete" id="signup-username-incomplete"></div>
                     {# Email field #}
-                    <div class="form-label">Email</div>
+                    <label for="signup-email" class="form-label">Email</label>
                     <input type="text" name="signup-email" id="signup-email" class="form-element"/>
                     <div class="field-incomplete" id="signup-email-incomplete"></div>
                     {# Password field #}
-                    <div class="form-label">Password</div>
+                    <label for="signup-password" class="form-label">Password</label>
                     <input type="password" name="signup-password" id="signup-password" class="form-element"/>
                     <div class="field-incomplete" id="signup-password-incomplete"></div>
                     {# Confirm password field #}
-                    <div class="form-label">Confirm Password</div>
+                    <label for="signup-confirmpassword" class="form-label">Confirm Password</label>
                     <input type="password" name="signup-confirmpassword" id="signup-confirmpassword" class="form-element"/>
                     <div class="field-incomplete" id="signup-confirmpassword-incomplete"></div>
                     {# Show password #}
-                    <div class="show-password">
+                    <label for="signup-show-password" class="show-password form-label">
                         <input type="checkbox" id="signup-show-password" onclick="return showSignUpPassword()">
                         Show Password
-                    </div>
+                    </label>
                     {# Submit #}
                     <div id="form-signup-submit">
                         <input type="submit" value="Sign Up" class="form-submit" id="signup-submit">
@@ -205,6 +207,16 @@
                     location.href = url
                 }
             }
+        })
+    }
+
+    function postMultiPartAjax(directedUrl, formData) {
+        $.ajax({
+            type: 'POST',
+            url: directedUrl,
+            data: formData,
+            processData: false, // Prevents jQuery from automatically converting data to string
+            contentType: false // Tells jQuery not to set any content type header
         })
     }
 
@@ -237,14 +249,20 @@
         }
     }
 
-    function checkLogin(logged_in) {
+    function checkLogin(logged_in, admin) {
         const loginElement = document.getElementById("login")
         const logoutElement = document.getElementById("logout")
         const adminElement = document.getElementById("admin")
+        /* The .contains() function and the .add() functions use the exact same native code for searching
+        through the unique set to see if it contains the class. So it's unnecessary as the function will abort. */
         if (logged_in) {
             loginElement.classList.add("hidden")
             logoutElement.classList.remove("hidden")
-            adminElement.classList.remove("hidden")
+            if (admin) {
+                adminElement.classList.remove("hidden")
+            } else {
+                adminElement.classList.add("hidden")
+            }
         } else {
             loginElement.classList.remove("hidden")
             logoutElement.classList.add("hidden")
@@ -253,7 +271,9 @@
     }
 
     requestAnimationFrame(function() {
-        checkLogin({{ logged_in }})
+        /* This function is providing as a failsafe to make sure what is displayed in the navigation bar is correct
+        * This function is called when the window is animated */
+        checkLogin({{ logged_in }}, {{ administrator }})
     })
 
     function setValue(colourId, colour, textId, text, fail) {
@@ -303,6 +323,16 @@
     const passwordMinLength = 8
     const passwordMaxLength = 128
 
+    // For admin
+    const wordMaxLength = 72
+    const definitionMaxLength = 128
+    const maxImageLength = 128
+    const maxImageSize = 15728640 /* Max image size in bytes (15mb) */
+
+    const loginModal = $('#loginModal')
+    const forgotPasswordModal = $('#forgotPasswordModal')
+    const signUpModal = $('#signUpModal')
+    const addWordModal = $('#addWordModal')
 
     function ValidateLoginForm() { // Function for validating the login form
         (async () => { // Use an async to get whether the username & email are already used in the database
@@ -335,13 +365,13 @@
                     fail = true
                 }
                 if (!fail) {
-                    checkLogin(true)
+                    checkLogin(true, responseText.administrator)
                     const formData = {
                         "type": "login",
                         "userid": responseText.userId
                     }
                     postAjax("{{url_for('home')}}", formData, false, false, "") // Why isnt this working?
-                    $('#loginModal').modal('hide') // close login up modal
+                    loginModal.modal('hide') // close login up modal
                 }
             } catch (error) {
                 console.error(error)
@@ -508,8 +538,8 @@
                         "password": document.getElementById("signup-password").value
                     }
                     postAjax("{{url_for('home')}}", formData, false, false, "")
-                    $('#signUpModal').modal('hide') // close sign up modal
-                    $('#loginModal').modal('show') // open login modal
+                    signUpModal.modal('hide') // close sign up modal
+                    loginModal.modal('show') // open login modal
                 }
             } catch (error) {
                 console.error(error)
@@ -541,12 +571,12 @@
     })
 
     function checkModalVisibility() { // Ensures that the overflow (whether the scroll bar is valid or not) is only set to auto if all the modals are hidden
-        if (!$('#loginModal').is(':visible') && !$('#forgotPasswordModal').is(':visible') && !$('#signUpModal').is(':visible')) {
+        if (!loginModal.is(':visible') && !forgotPasswordModal.is(':visible') && !signUpModal.is(':visible')) {
             document.body.style.overflow = "auto"
         }
     }
 
-    $('#loginModal').on('hidden.bs.modal', function() { // Login modal close event
+    loginModal.on('hidden.bs.modal', function() { // Login modal close event
         checkModalVisibility()
         document.getElementById("login-show-password").checked = false // Set the checked value to false
         clearValue(["login-username", "login-password"])
@@ -554,7 +584,7 @@
         clearColour(["login-username", "login-password"])
     })
 
-    $('#forgotPasswordModal').on('hidden.bs.modal', function() { // Forgot password modal close event
+    forgotPasswordModal.on('hidden.bs.modal', function() { // Forgot password modal close event
         checkModalVisibility()
         document.getElementById("forgotpassword-show-password").checked = false // Set the checked value to false
         document.getElementById("forgotpassword-incorrect").classList.remove("successful")
@@ -563,7 +593,7 @@
         clearColour(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
     })
 
-    $('#signUpModal').on('hidden.bs.modal', function() { // Sign up modal close event
+    signUpModal.on('hidden.bs.modal', function() { // Sign up modal close event
         checkModalVisibility()
         document.getElementById("signup-show-password").checked = false // Set the checked value to false
         removeTeacherButtonInput()
@@ -574,15 +604,15 @@
     })
 
     $('.closeLoginModal').click(function() { // On clicking login modal close button, close modal (this is a class as it is called multiple times)
-        $('#loginModal').modal('hide')
+        loginModal.modal('hide')
     })
 
         $('#closeForgotPasswordModal').click(function() { // On clicking forgot password modal close button, close modal
-        $('#forgotPasswordModal').modal('hide')
+        forgotPasswordModal.modal('hide')
     })
 
     $('#closeSignUpModal').click(function() { // On clicking sign up modal close button, close modal
-        $('#signUpModal').modal('hide')
+        signUpModal.modal('hide')
     })
 
 
@@ -616,7 +646,7 @@
     $('#switch-language').click(function() {
         // Change between English-Māori and Māori-English
         const language = document.getElementById("category-language-background").innerText
-        var newLanguage = "English-Māori" // prevents any errors (eg. if it is for some reason another string)
+        let newLanguage = "English-Māori" // prevents any errors (e.g. if it is for some reason another string)
         if (language === "English-Māori") {
             newLanguage = "Māori-English"
         }
@@ -768,5 +798,132 @@
     })
 
     window.addEventListener("resize", setImgSize)
+
+    function validateAddWord() {
+        (async () => { // Use an async to get whether the word is already used in the database
+            try { // use try catch just in case
+                const englishWord = document.getElementById("english-word").value.trim()
+                const maoriWord = document.getElementById("maori-word").value.trim()
+                const definition = document.getElementById("word-definition").value.trim()
+                clearText(["word-definition-incomplete"])
+                clearColour(["word-definition"])
+                if (definition.length === 0) {
+                    setValue("word-definition", failedTextColour, "word-definition-incomplete", ".Word definition is required")
+                } else if (definition.length > definitionMaxLength) {
+                    setValue("word-definition", failedTextColour, "word-definition-incomplete", ".Word definition must be no longer than 128 characters")
+                }
+                /* Ensure that there are no special characters
+                * /: The starting delimiter of the regular expression.
+                * ^: Anchors the match to the beginning of the string.
+                * [a-z|āēīōū]: Character set that matches any lowercase letter (a-z) or the specific characters ā, ē, ī, ō, ū.
+                * \s: Matches any whitespace.
+                * +: Quantifier that matches one or more occurrences of the preceding pattern (the character set).
+                * $: Anchors the match to the end of the string.
+                * /: The ending delimiter of the regular expression.
+                */
+                let validEnglishWord = /^[a-z|āēīōū\s]+$/.test(englishWord.toLowerCase())
+                let validMaoriWord = /^[a-z|āēīōū\s]+$/.test(maoriWord.toLowerCase())
+                if (englishWord.length > 0 && maoriWord.length > 0 && englishWord.length <= wordMaxLength && maoriWord.length <= wordMaxLength && validEnglishWord && validMaoriWord) {
+                    const data = {english: englishWord, maori: maoriWord}
+                    const response = await fetch('/getwordinformation', { // fetch /getwordinformation from app.py
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data) // parse through the data (email and username input)
+                    })
+                    const responseText = await response.json() // wait for the response
+                    /* Words can translate into multiple different words in other languages,
+                    *only disallow repeated entries for both the word and the translated word */
+                    let englishInUse = responseText.hasEnglishWord
+                    let maoriInUse = responseText.hasMaoriWord
+                    if (englishInUse && maoriInUse) {
+                        setValue("english-word", failedTextColour, "english-word-incomplete", ".This word is already in use")
+                        setValue("maori-word", failedTextColour, "maori-word-incomplete", ".This word is already in use")
+                    } else {
+                        clearText(["english-word-incomplete", "maori-word-incomplete"])
+                        clearColour(["english-word", "maori-word"])
+                        if (definition.length > 0 && definition.length <= definitionMaxLength) {
+                            const category = document.getElementById("word-select-category")
+                            const level = document.getElementById("level-select-category")
+                            const image = document.getElementById("image-upload")
+                            // Display the modal
+                            addWordModal.modal('show')
+                            // Modify the elements on the modal
+                            document.getElementById("add-word-modal-english-word").innerText = "English Word: " + englishWord
+                            document.getElementById("add-word-modal-maori-word").innerText = "Māori Word: " + maoriWord
+                            document.getElementById("add-word-modal-maori-word").innerText = "Māori Word: " + maoriWord
+                            document.getElementById("add-word-modal-definition").innerText = "Definition: " + definition
+                            // Turn the category innerText into an array by splitting at each new line, then get the category name (category value starts at 1)
+                            document.getElementById("add-word-modal-category").innerText = "Category: " + category.innerText.split("\n")[category.value - 1]
+                            document.getElementById("add-word-modal-level").innerText = "Level: " + level.value
+                            const previewContainer = document.getElementById('add-word-modal-image');
+                            if (image.files.length > 0) { // User has attached an image
+                                let reader = new FileReader(); // Create a new FileReader() object
+                                reader.onload = function(e) {
+                                    let imageElement = document.createElement('img');
+                                    imageElement.src = e.target.result.toString();
+                                    // Append the image element to the preview container
+                                    previewContainer.innerHTML = "";
+                                    previewContainer.appendChild(imageElement);
+                                };
+                                reader.readAsDataURL(image.files[0]);
+                            } else {
+                                previewContainer.innerHTML = "";
+                            }
+                        }
+                    }
+                } else {
+                    clearText(["english-word-incomplete", "maori-word-incomplete"])
+                    clearColour(["english-word", "maori-word"])
+                    if (!validEnglishWord) {
+                        setValue("english-word", failedTextColour, "english-word-incomplete", ".Word can only contain alphabetical values")
+                    }
+                    if (!validMaoriWord) {
+                        setValue("maori-word", failedTextColour, "maori-word-incomplete", ".Word can only contain alphabetical values")
+                    }
+                    if (englishWord.length === 0) {
+                        setValue("english-word", failedTextColour, "english-word-incomplete", ".English word is required")
+                    }
+                    if (maoriWord.length === 0) {
+                        setValue("maori-word", failedTextColour, "maori-word-incomplete", ".Māori word is required")
+                    }
+                    if (englishWord.length > wordMaxLength) {
+                        setValue("english-word", failedTextColour, "english-word-incomplete", `.English word must be no longer than ${wordMaxLength} characters`)
+                    }
+                    if (maoriWord.length > wordMaxLength) {
+                        setValue("maori-word", failedTextColour, "maori-word-incomplete", `.Māori word must be no longer than ${wordMaxLength} characters`)
+                    }
+                }
+            } catch (error) {
+                console.error(error)
+            }
+        })()
+    }
+
+    function submitAddWordForm() {
+        let formData = new FormData();
+        const englishWord = document.getElementById("english-word").value.trim()
+        const maoriWord = document.getElementById("maori-word").value.trim()
+        const definition = document.getElementById("word-definition").value.trim()
+        const category = document.getElementById("word-select-category").value
+        const level = document.getElementById("level-select-category").value
+        const image = document.getElementById("image-upload")
+        formData.append("englishWord", englishWord)
+        formData.append("maoriWord", maoriWord)
+        formData.append("definition", definition)
+        formData.append("category", category)
+        formData.append("level", level)
+        if (image.files.length > 0) {
+            formData.append("image", image.files[0])
+        }
+        postMultiPartAjax("/addword", formData)
+        closeAddWordModal()
+    }
+
+    function closeAddWordModal() {
+        addWordModal.modal('hide')
+    }
+
 </script>
 </html>
