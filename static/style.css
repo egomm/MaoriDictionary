@@ -754,7 +754,8 @@ h3, h4 {
     text-align: center;
 }
 
-.add-word {
+.admin-form {
+    margin-bottom: 5%;
     width: 30%;
     margin-left: 35%;
 }
@@ -776,23 +777,16 @@ h3, h4 {
 }
 
 option {
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
 }
 
 #add-word-modal-image {
     margin-left: 5%;
 }
 
-#add-word-modal-image img {
+.admin-image img {
     max-height: 20vh;
     max-width: 100%;
-}
-
-#add-word-confirmation {
-    margin-top: 5%;
-    margin-left: 5%;
-    width: 90%;
-    color: white;
 }
 
 #add-word-modal-confirmation {
@@ -825,8 +819,19 @@ option {
     margin-bottom: 2%;
 }
 
+.admin-button {
+    margin-top: 5%;
+    margin-left: 5%;
+    width: 90%;
+    color: white;
+}
+
 .add-word-footer {
     height: 8vh !important;
+}
+
+#delete-word-modal-image {
+    margin-left: 5%;
 }
 
 nav {

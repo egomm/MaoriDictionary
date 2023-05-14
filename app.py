@@ -235,6 +235,43 @@ def word_manager():
     return jsonify({'hasEnglishWord': has_english_word, 'hasMaoriWord': has_maori_word})
 
 
+@app.route('/getwordfromid', methods=['POST'])
+def word_from_id():
+    data = request.get_json()
+    word_id = data["id"]
+    con = open_database(DATABASE)
+    cur = con.cursor()
+    query = "SELECT maoriword, englishword, cat_id, definition, level, image FROM words WHERE word_id = ?"
+    cur.execute(query, (word_id,))
+    word_information = cur.fetchall()[0]
+    maori_word = word_information[0]
+    english_word = word_information[1]
+    category_id = word_information[2]
+    definition = word_information[3]
+    level = word_information[4]
+    image = word_information[5]
+    query = "SELECT category_name FROM categories WHERE category_id = ?"
+    cur.execute(query, (category_id,))
+    category = cur.fetchall()
+    return jsonify({'englishWord': english_word, 'maoriWord': maori_word, 'category': category,
+                    'wordDefinition': definition, 'wordLevel': level, 'wordImage': image})
+
+
+@app.route('/getwordidfromword', methods=['POST'])
+def word_id_from_word():
+    print("CALLED")
+    data = request.get_json()
+    maori_word = data["maori"]
+    english_word = data["english"]
+    con = open_database(DATABASE)
+    cur = con.cursor()
+    query = "SELECT word_id FROM words WHERE maoriword = ? and englishword = ?"
+    cur.execute(query, (maori_word, english_word))
+    word_id = cur.fetchone()[0]
+    con.close()
+    return {'wordId': word_id}
+
+
 @app.route('/addword', methods=['POST'])
 def add_word():
     print("HI")
@@ -243,7 +280,7 @@ def add_word():
     category = request.form["category"]
     definition = request.form["definition"]
     level = request.form["level"]
-    image_name = None
+    image_name_refined = None
     if "image" in request.files:
         # PLACEHOLDER REMEMBER TO PUT THIS IN ADD WORD
         image = request.files["image"]
@@ -283,6 +320,20 @@ def add_word():
         print(level)
     else:
         print("not admin/not logged in?")
+    return {}
+
+
+@app.route('/deleteword', methods=['POST'])
+def delete_word():
+    print("DELETING WORD")
+    json_data = request.get_json()
+    word_id = json_data["wordId"]
+    con = create_connection(DATABASE)
+    cur = con.cursor()
+    query = "DELETE FROM words WHERE word_id = ?"
+    cur.execute(query, (word_id,))
+    con.commit()
+    con.close()
     return {}
 
 
@@ -505,14 +556,26 @@ def admin():
         category_information = cur.fetchall()
         category_ids = [x[0] for x in category_information]
         category_names = [x[1] for x in category_information]
+        # Levels
         query = "SELECT * FROM levels"
         cur.execute(query)
         levels = [x[0] for x in cur.fetchall()]
+        # English words
+        query = "SELECT englishword, word_id FROM words"
+        cur.execute(query)
+        english_words = sorted(cur.fetchall(), key=lambda x: x[0])
+        # Maori words
+        query = "SELECT maoriword, word_id FROM words"
+        cur.execute(query)
+        maori_words = sorted(cur.fetchall(), key=lambda x: x[0])
+        print(english_words)
+        print(maori_words)
         print(levels)
         con.close()
         return render_template("admin.html", logged_in=json.dumps(is_logged_in()),
                                administrator=json.dumps(is_administrator()), category_ids=category_ids,
-                               category_names=category_names, levels=levels)
+                               category_names=category_names, levels=levels, english_words=english_words,
+                               maori_words=maori_words)
     else:
         return redirect("/")  # Return user to the home page if they aren't admin
 

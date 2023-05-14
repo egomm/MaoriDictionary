@@ -22,8 +22,8 @@
             <!-- This checks if an object points to the same memory address than another object -->
             <a id="home" href="/">home</a>
             <a id="categories" href="/categories/all-categories/1">categories</a>
-            <a id="logout" href="/logout">logout</a>
             <a id="admin" href="/admin">admin</a>
+            <a id="logout" href="/logout">logout</a>
             <a id="login" data-target="#loginModal" role="button" data-toggle="modal">login</a>
         </div>
     </div>
@@ -333,6 +333,7 @@
     const forgotPasswordModal = $('#forgotPasswordModal')
     const signUpModal = $('#signUpModal')
     const addWordModal = $('#addWordModal')
+    const deleteWordModal = $('#deleteWordModal')
 
     function ValidateLoginForm() { // Function for validating the login form
         (async () => { // Use an async to get whether the username & email are already used in the database
@@ -918,12 +919,123 @@
             formData.append("image", image.files[0])
         }
         postMultiPartAjax("/addword", formData)
-        closeAddWordModal()
-    }
-
-    function closeAddWordModal() {
+        // NEED TO CLEAR ALL THE TEXTBOXES NOW
+        document.getElementById("english-word").value = ""
+        document.getElementById("maori-word").value = ""
+        document.getElementById("word-definition").value = ""
+        const categoryElement = document.getElementById("word-select-category")
+        if (categoryElement.options.length > 0) { // Incase all categories are deleted for some reason
+            categoryElement.value = categoryElement.options[0].value
+        }
+        const levelElement = document.getElementById("level-select-category")
+        if (levelElement.options.length > 0) { // Incase all levels are deleted for some reason
+            levelElement.value = levelElement.options[0].value
+        }
+        image.value = ""
         addWordModal.modal('hide')
+        // DO THIS NEXT -> GET THE WORD ID
+        updateDeleteWord(englishWord, maoriWord)
     }
 
+    function updateDeleteWord(englishWord, maoriWord) {
+        (async() => {
+            try {
+                alert(englishWord + ", " + maoriWord)
+                const data = {english: englishWord, maori: maoriWord}
+                const response = await fetch('/getwordidfromword', { // fetch /getwordidfromword from app.py
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                const responseText = await response.json() // wait for the response
+                // NEED TO USE selectElement.insertBefore(childElement, referenceElement);
+                let wordId = responseText.wordId
+                const englishDeleteWord = document.getElementById("englishword-select-category")
+                let englishChildElement = document.createElement("option")
+                englishChildElement.value = wordId
+                englishChildElement.textContent = englishWord
+                englishDeleteWord.appendChild(englishChildElement)
+                const maoriDeleteWord = document.getElementById("maoriword-select-category")
+                let maoriChildElement = document.createElement("option")
+                maoriChildElement.value = wordId
+                maoriChildElement.textContent = maoriWord
+                maoriDeleteWord.appendChild(maoriChildElement)
+            } catch (error) {
+                console.log(error)
+            }
+        })()
+    }
+
+    function handleDeleteEnglishWordChange(selectedElement) {
+        const selectedOption = selectedElement.value;
+        const maoriList = document.getElementById("maoriword-select-category")
+        maoriList.value = selectedOption
+    }
+
+    function handleDeleteMaoriWordChange(selectedElement) {
+        const selectedOption = selectedElement.value;
+        const englishList = document.getElementById("englishword-select-category")
+        englishList.value = selectedOption
+    }
+
+    function deleteWordModalConfirmation() {
+        (async () => { // Use an async to get data about the word
+            try {
+                const imageContainer = document.getElementById("delete-word-modal-image")
+                imageContainer.innerHTML = ""
+                deleteWordModal.modal('show')
+                const wordId = document.getElementById("englishword-select-category").value // Will be same for maori word
+                const data = {id: wordId}
+                const response = await fetch('/getwordfromid', { // fetch /getwordinformation from app.py
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data) // parse through the data (email and username input)
+                })
+                const responseText = await response.json()
+                const englishWord = responseText.englishWord
+                const maoriWord = responseText.maoriWord
+                const wordDefinition = responseText.wordDefinition
+                const category = responseText.category
+                const wordLevel = responseText.wordLevel
+                let relativePath = "/static/images/noimage.png";
+                if (responseText.wordImage != null) {
+                    relativePath = `/static/images/${responseText.wordImage}`
+                }
+                const fullPath = window.location.origin + relativePath;
+                // Create a new <img> element
+                let img = document.createElement("img");
+                img.src = fullPath
+                imageContainer.appendChild(img);
+                document.getElementById("delete-word-modal-english-word").innerText = "English Word: " + englishWord
+                document.getElementById("delete-word-modal-maori-word").innerText = "Māori Word: " + maoriWord
+                document.getElementById("delete-word-modal-definition").innerText = "Definition: " + wordDefinition
+                document.getElementById("delete-word-modal-category").innerText = "Category: " + category
+                document.getElementById("delete-word-modal-level").innerText = "Level: " + wordLevel
+            } catch (error) {
+                console.log(error)
+            }
+        })()
+    }
+
+    function submitDeleteWordForm() {
+        const wordId = document.getElementById("englishword-select-category").value
+        const formData = {
+            "wordId": wordId
+        }
+        postAjax('/deleteword', formData, false, false, "")
+        // Need to update the dropdowns with the new data
+        const englishWord = document.getElementById("englishword-select-category");
+        let englishOptionToRemove = englishWord.querySelector("option[value='" + wordId + "']");
+        englishWord.removeChild(englishOptionToRemove);
+        const maoriWord = document.getElementById("maoriword-select-category");
+        let maoriOptionToRemove = maoriWord.querySelector("option[value='" + wordId + "']");
+        maoriWord.removeChild(maoriOptionToRemove);
+        handleDeleteEnglishWordChange(englishWord)
+        deleteWordModal.modal('hide')
+    }
 </script>
 </html>

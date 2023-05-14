@@ -14,7 +14,7 @@
 
 {% block main %}
 <h3>Add a word</h3>
-<form class="add-word" id="add-word-form" method="post" action="/add_category">
+<form class="admin-form add-word" id="add-word-form" method="post" action="/addword">
     <label for="english-word" class="form-label">English Word</label>
     <input type="text" name="english-word" id="english-word" class="form-element"/>
     <div class="field-incomplete" id="english-word-incomplete"></div>
@@ -40,7 +40,7 @@
     <div class="field-incomplete"></div>
     <label for="image-upload" class="form-label">Image</label>
     <input type="file" id="image-upload" name="imageUpload">
-    <input type="button" value="Add Word" class="form-submit" id="add-word-confirmation" onclick="validateAddWord()">
+    <input type="button" value="Add Word" class="form-submit admin-button" id="add-word-confirmation" onclick="validateAddWord()">
 </form>
 
 {# Add word modal #}
@@ -57,17 +57,66 @@
                 <div id="add-word-modal-definition" class="form-label modal-margin">Definition:</div>
                 <div id="add-word-modal-category" class="form-label modal-margin">Category:</div>
                 <div id="add-word-modal-level" class="form-label modal-margin">Level:</div>
-                <div id="add-word-modal-image" class="modal-margin"></div>
+                <div id="add-word-modal-image" class="modal-margin admin-image"></div>
             </div>
             <div class="modal-footer add-word-footer">
                 <div id="add-word-modal-confirmation">
-                    <input type="button" value="Cancel" class="form-submit" id="add-word-modal-confirmation-cancel" onclick="closeAddWordModal()">
+                    <input type="button" value="Cancel" class="form-submit" id="add-word-modal-confirmation-cancel" onclick="addWordModal.modal('hide')">
                     <input type="button" value="Confirm" class="form-submit" id="add-word-modal-confirmation-submit" onclick="submitAddWordForm()">
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<h3>Delete a word</h3>
+<form class="delete-word admin-form" id="delete-word-form" method="post" action="/deleteword">
+    <label for="englishword-select-category" class="form-label">English Word</label><br>
+    <select name="englishword-select-category" id="englishword-select-category" class="admin-dropdown" onchange="handleDeleteEnglishWordChange(this)">
+        {% for english_word in english_words %}
+            <option value="{{ english_word[1] }}">{{ english_word[0] }}</option>
+        {% endfor %}
+    </select>
+    <div class="field-incomplete"></div>
+    <label for="maoriword-select-category" class="form-label">Māori Word</label><br>
+    <select name="maoriword-select-category" id="maoriword-select-category" class="admin-dropdown" onchange="handleDeleteMaoriWordChange(this)">
+        {% for maori_word in maori_words %}
+            {% if maori_word[1] == english_words[0][1] %}
+                <option value="{{ maori_word[1] }}" selected>{{ maori_word[0] }}</option>
+            {% else %}
+                <option value="{{ maori_word[1] }}">{{ maori_word[0] }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+    <input type="button" value="Delete Word" class="form-submit admin-button" id="delete-word-confirmation" onclick="deleteWordModalConfirmation()">
+</form>
+
+{# Add word modal #}
+<div id="deleteWordModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                 <button type="button" class="close" data-dismiss="modal">×</button>
+                 <h4 class="modal-title">Confirm Delete Word</h4>
+            </div>
+            <div class="modal-body">
+                <div id="delete-word-modal-english-word" class="form-label modal-margin">English Word:</div>
+                <div id="delete-word-modal-maori-word" class="form-label modal-margin">Māori Word:</div>
+                <div id="delete-word-modal-definition" class="form-label modal-margin">Definition:</div>
+                <div id="delete-word-modal-category" class="form-label modal-margin">Category:</div>
+                <div id="delete-word-modal-level" class="form-label modal-margin">Level:</div>
+                <div id="delete-word-modal-image" class="modal-margin admin-image"></div>
+            </div>
+            <div class="modal-footer add-word-footer">
+                <div id="add-word-modal-confirmation">
+                    <input type="button" value="Cancel" class="form-submit" id="add-word-modal-confirmation-cancel" onclick="deleteWordModal.modal('hide')">
+                    <input type="button" value="Confirm" class="form-submit" id="add-word-modal-confirmation-submit" onclick="submitDeleteWordForm()">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <h4>Delete a category</h4>
 <form class="myform" method="post" action="/delete_category">
     <div class="form-group">
