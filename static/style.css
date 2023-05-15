@@ -754,6 +754,10 @@ h3, h4 {
     text-align: center;
 }
 
+.admin {
+    margin-bottom: 10%;
+}
+
 .admin-form {
     margin-bottom: 5%;
     width: 30%;

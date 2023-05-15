@@ -91,7 +91,7 @@
     <input type="button" value="Delete Word" class="form-submit admin-button" id="delete-word-confirmation" onclick="deleteWordModalConfirmation()">
 </form>
 
-{# Add word modal #}
+{# Delete word modal #}
 <div id="deleteWordModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -117,29 +117,32 @@
     </div>
 </div>
 
-<h4>Delete a category</h4>
-<form class="myform" method="post" action="/delete_category">
-    <div class="form-group">
-        <div class="form-label"><label for="name">Category Name:</label></div>
-        <div class="form-element">
-            <select id="cat_id" name="cat_id">
-                {% for category in categories %}
-                    <option value="{{ category[0] }}, {{ category[1] }}">{{ category[1] }}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="form-label"></div>
-        <div class="form-element"><input type="submit" value="Delete Category"></div>
-    </div>
+<h3>Add a category</h3>
+<form class="add-category admin-form" id="add-category-form" method="post" action="">
+    <label for="add-category-category" class="form-label">Category Name:</label><br>
+    <input type="text" name="add-category-category" id="add-category-category" class="form-element"/>
+    <div class="field-incomplete" id="add-category-category-incomplete"></div>
+    <input type="button" value="Add Category" class="form-submit admin-button" id="add-category-confirmation" onclick="validateAddCategoryForm()">
 </form>
 
-<h3>Item Admin</h3>
-<h4>Add an Item</h4>
-    <h4>Add an Item</h4>
-    <h4>Add an Item</h4>
-    <h4>Add an Item</h4>
-    <h4>Add an Item</h4>
-    <h4>Add an Item</h4>
+{# Add category modal #}
+<div id="addCategoryModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                 <button type="button" class="close" data-dismiss="modal">×</button>
+                 <h4 class="modal-title">Confirm Add Category</h4>
+            </div>
+            <div class="modal-body">
+                <div id="add-category-modal-category-name" class="form-label modal-margin">Category Name:</div>
+            </div>
+            <div class="modal-footer add-word-footer">
+                <div id="add-word-modal-confirmation">
+                    <input type="button" value="Cancel" class="form-submit" id="add-word-modal-confirmation-cancel" onclick="addCategoryModal.modal('hide')">
+                    <input type="button" value="Confirm" class="form-submit" id="add-word-modal-confirmation-submit" onclick="addCategory()">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

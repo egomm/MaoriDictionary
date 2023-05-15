@@ -328,12 +328,14 @@
     const definitionMaxLength = 128
     const maxImageLength = 128
     const maxImageSize = 15728640 /* Max image size in bytes (15mb) */
+    const categoryMaxLength = 32
 
     const loginModal = $('#loginModal')
     const forgotPasswordModal = $('#forgotPasswordModal')
     const signUpModal = $('#signUpModal')
     const addWordModal = $('#addWordModal')
     const deleteWordModal = $('#deleteWordModal')
+    const addCategoryModal = $('#addCategoryModal')
 
     function ValidateLoginForm() { // Function for validating the login form
         (async () => { // Use an async to get whether the username & email are already used in the database
@@ -856,6 +858,7 @@
                             document.getElementById("add-word-modal-maori-word").innerText = "Māori Word: " + maoriWord
                             document.getElementById("add-word-modal-definition").innerText = "Definition: " + definition
                             // Turn the category innerText into an array by splitting at each new line, then get the category name (category value starts at 1)
+                            // THIS WONT WORK - NEED TO CONSIDER THE FACT THE USER CAN DELETE CATEGORIES!
                             document.getElementById("add-word-modal-category").innerText = "Category: " + category.innerText.split("\n")[category.value - 1]
                             document.getElementById("add-word-modal-level").innerText = "Level: " + level.value
                             const previewContainer = document.getElementById('add-word-modal-image');
@@ -918,7 +921,19 @@
         if (image.files.length > 0) {
             formData.append("image", image.files[0])
         }
-        postMultiPartAjax("/addword", formData)
+        //postMultiPartAjax("/addword", formData) // Wait for this to submit
+        $.ajax({
+            type: 'POST',
+            url: "/addword",
+            data: formData,
+            processData: false, // Prevents jQuery from automatically converting data to string
+            contentType: false, // Tells jQuery not to set any content type header
+            success: function () {
+                addWordModal.modal('hide')
+                // DO THIS NEXT -> GET THE WORD ID
+                updateDeleteWord(englishWord, maoriWord)
+            }
+        })
         // NEED TO CLEAR ALL THE TEXTBOXES NOW
         document.getElementById("english-word").value = ""
         document.getElementById("maori-word").value = ""
@@ -932,15 +947,20 @@
             levelElement.value = levelElement.options[0].value
         }
         image.value = ""
-        addWordModal.modal('hide')
-        // DO THIS NEXT -> GET THE WORD ID
-        updateDeleteWord(englishWord, maoriWord)
+    }
+
+    function replaceMacrons(inputString) {
+        let macrons = ['ā', 'ē', 'ī', 'ō', 'ū']
+        let characters = ['a', 'e', 'i', 'o', 'u']
+        for (let i = 0; i < macrons.length; i++) {
+            inputString = inputString.replace(macrons[i], characters[i])
+        }
+        return inputString;
     }
 
     function updateDeleteWord(englishWord, maoriWord) {
         (async() => {
             try {
-                alert(englishWord + ", " + maoriWord)
                 const data = {english: englishWord, maori: maoriWord}
                 const response = await fetch('/getwordidfromword', { // fetch /getwordidfromword from app.py
                     method: 'POST',
@@ -950,18 +970,46 @@
                     body: JSON.stringify(data)
                 })
                 const responseText = await response.json() // wait for the response
-                // NEED TO USE selectElement.insertBefore(childElement, referenceElement);
                 let wordId = responseText.wordId
                 const englishDeleteWord = document.getElementById("englishword-select-category")
-                let englishChildElement = document.createElement("option")
-                englishChildElement.value = wordId
-                englishChildElement.textContent = englishWord
-                englishDeleteWord.appendChild(englishChildElement)
+                let englishNodes = englishDeleteWord.options
+                let englishOptions = []
+                for (let i = 0; i < englishNodes.length; i++) {
+                    // Append the options into a new array
+                    englishOptions.push(englishNodes[i]) // Need to do a regex here to replace all macros with english characters
+                }
+                const newEnglishOption = new Option(englishWord.toLowerCase(), wordId)
+                englishOptions.push(newEnglishOption)
+                englishOptions.sort((a, b) => replaceMacrons(a.text) > replaceMacrons(b.text) ? 1 : -1) // Moves to left or right
+                // Need to set the options now
+                let originalValue = englishDeleteWord.value;
+                for (let i = 0; i < englishOptions.length; i++) {
+                    englishNodes[i] = englishOptions[i]
+                }
+                englishDeleteWord.value = originalValue;
+                {#let englishChildElement = document.createElement("option")#}
+                {#englishChildElement.value = wordId#}
+                {#englishChildElement.textContent = englishWord#}
+                {#englishDeleteWord.appendChild(englishChildElement)#}
                 const maoriDeleteWord = document.getElementById("maoriword-select-category")
-                let maoriChildElement = document.createElement("option")
-                maoriChildElement.value = wordId
-                maoriChildElement.textContent = maoriWord
-                maoriDeleteWord.appendChild(maoriChildElement)
+                let maoriNodes = maoriDeleteWord.options
+                let maoriOptions = []
+                for (let i = 0; i < maoriNodes.length; i++) {
+                    // Append the options into a new array
+                    maoriOptions.push(maoriNodes[i])
+                }
+                const newMaoriOption = new Option(maoriWord.toLowerCase(), wordId)
+                maoriOptions.push(newMaoriOption)
+                maoriOptions.sort((a, b) => replaceMacrons(a.text) > replaceMacrons(b.text) ? 1: -1)
+                // Set the options
+                for (let i = 0; i < maoriOptions.length; i++) {
+                    maoriNodes[i] = maoriOptions[i]
+                }
+                maoriDeleteWord.value = originalValue
+                {#let maoriChildElement = document.createElement("option")#}
+                {#maoriChildElement.value = wordId#}
+                {#maoriChildElement.textContent = maoriWord#}
+                {#maoriDeleteWord.appendChild(maoriChildElement)#}
             } catch (error) {
                 console.log(error)
             }
@@ -981,7 +1029,7 @@
     }
 
     function deleteWordModalConfirmation() {
-        (async () => { // Use an async to get data about the word
+        (async() => { // Use an async to get data about the word
             try {
                 const imageContainer = document.getElementById("delete-word-modal-image")
                 imageContainer.innerHTML = ""
@@ -1036,6 +1084,101 @@
         maoriWord.removeChild(maoriOptionToRemove);
         handleDeleteEnglishWordChange(englishWord)
         deleteWordModal.modal('hide')
+    }
+
+    function capitaliseFirstCharEachWord(string) {
+        /*
+        * \b matches a word boundary, ensuring to make the first character of each word
+        * \w matches a word character
+        * g is used to perform a global search
+         */
+        return string.toLowerCase().replace(/\b\w/g, match => match.toUpperCase());
+    }
+
+    function validateAddCategoryForm() {
+        let categoryName = document.getElementById("add-category-category").value.trim()
+        const categoryNameIncomplete = document.getElementById("add-category-category-incomplete")
+        if (categoryName.length <= 0 || categoryName.length > categoryMaxLength) {
+            categoryNameIncomplete.innerText = `.The category name must be between 0 and ${categoryMaxLength} characters`
+        } else {
+            (async () => {
+                try {
+                    const data = {category: categoryName}
+                    const response = await fetch('/hascategory', { // fetch /getwordinformation from app.py
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    const responseText = await response.json()
+                    let hasCategory = responseText.hasCategory
+                    if (hasCategory) {
+                        categoryNameIncomplete.innerText = ".This category name is already in use"
+                    } else { // Passed all test cases
+                        categoryNameIncomplete.innerText = ""
+                        document.getElementById("add-category-modal-category-name").innerText = "Category Name: " + capitaliseFirstCharEachWord(categoryName)
+                        addCategoryModal.modal('show')
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            })()
+        }
+    }
+
+    function manageNewCategory(categoryName) {
+        (async() => {
+            try {
+                const data = {categoryName: categoryName}
+                const response = await fetch('/getcategoryid', { // fetch /getcategoryid from app.py
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                const responseText = await response.json() // wait for the response
+                const categoryId = responseText.categoryId
+                // Now manage the category list in add word and delete category
+                const addWordCategories = document.getElementById("word-select-category")
+                let addWordCategoryNodes = addWordCategories.options
+                let addWordCategoryOptions = []
+                for (let i = 0; i < addWordCategoryNodes.length; i++) {
+                    // Append the options into a new array
+                    addWordCategoryOptions.push(addWordCategoryNodes[i]) // Need to do a regex here to replace all macros with english characters
+                }
+                const newAddWordCategoryOption = new Option(categoryName, categoryId)
+                addWordCategoryOptions.push(newAddWordCategoryOption)
+                addWordCategoryOptions.sort((a, b) => a.text > b.text ? 1 : -1) // Moves to left or right
+                // Need to set the options now
+                let originalValue = addWordCategories.value;
+                for (let i = 0; i < addWordCategoryOptions.length; i++) {
+                    addWordCategoryNodes[i] = addWordCategoryOptions[i]
+                }
+                addWordCategories.value = originalValue;
+            } catch (error) {
+                console.log(error)
+            }
+        })()
+    }
+
+    function addCategory() {
+        const categoryName = capitaliseFirstCharEachWord(document.getElementById("add-category-category").value.trim())
+        const formData = {
+            "categoryName": categoryName
+        }
+        $.ajax({
+            type: 'POST',
+            url: "/addcategory",
+            data: JSON.stringify(formData),
+            processData: false,
+            contentType: 'application/json',
+            success: function () {
+                addCategoryModal.modal('hide')
+                manageNewCategory(categoryName)
+            }
+        })
     }
 </script>
 </html>

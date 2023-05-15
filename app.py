@@ -263,6 +263,8 @@ def word_id_from_word():
     data = request.get_json()
     maori_word = data["maori"]
     english_word = data["english"]
+    print("MAORI", maori_word)
+    print("ENGLISH", english_word)
     con = open_database(DATABASE)
     cur = con.cursor()
     query = "SELECT word_id FROM words WHERE maoriword = ? and englishword = ?"
@@ -270,6 +272,20 @@ def word_id_from_word():
     word_id = cur.fetchone()[0]
     con.close()
     return {'wordId': word_id}
+
+
+@app.route('/hascategory', methods=['POST'])
+def has_category():
+    data = request.get_json()
+    category_name = data["category"]
+    con = create_connection(DATABASE)
+    cur = con.cursor()
+    query = "SELECT category_name FROM categories"
+    cur.execute(query)
+    category_names = [x[0].lower() for x in cur.fetchall()]
+    contains_category = category_name.lower() in category_names
+    con.close()
+    return {'hasCategory': contains_category}
 
 
 @app.route('/addword', methods=['POST'])
@@ -332,6 +348,36 @@ def delete_word():
     cur = con.cursor()
     query = "DELETE FROM words WHERE word_id = ?"
     cur.execute(query, (word_id,))
+    con.commit()
+    con.close()
+    return {}
+
+
+@app.route('/getcategoryid', methods=['POST'])
+def get_category_id():
+    json_data = request.get_json()
+    category_name = json_data["categoryName"]
+    con = create_connection(DATABASE)
+    cur = con.cursor()
+    query = "SELECT category_id FROM categories WHERE category_name = ?"
+    cur.execute(query, (category_name,))
+    category_id = cur.fetchone()[0]
+    con.close()
+    return {"categoryId": category_id}
+
+
+@app.route('/addcategory', methods=['POST'])
+def add_category():
+    print('adding category')
+    print(request.get_json())
+    json_data = request.get_json()
+    print(json_data)
+    category_name = json_data["categoryName"]
+    print(category_name)
+    con = create_connection(DATABASE)
+    cur = con.cursor()
+    query = "INSERT INTO categories (category_name) VALUES (?)"
+    cur.execute(query, (category_name,))
     con.commit()
     con.close()
     return {}
@@ -553,7 +599,7 @@ def admin():
         cur = con.cursor()
         query = "SELECT * FROM categories"
         cur.execute(query)
-        category_information = cur.fetchall()
+        category_information = sorted(cur.fetchall(), key=lambda x: x[1])
         category_ids = [x[0] for x in category_information]
         category_names = [x[1] for x in category_information]
         # Levels
