@@ -838,6 +838,10 @@ option {
     margin-left: 5%;
 }
 
+#add-category-confirmation {
+    margin-top: 2.5% !important;
+}
+
 nav {
     background-color: rgba(51, 51, 51, 1.0); /* grey */
     text-align: center;

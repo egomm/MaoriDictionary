@@ -118,7 +118,7 @@
 </div>
 
 <h3>Add a category</h3>
-<form class="add-category admin-form" id="add-category-form" method="post" action="">
+<form class="add-category admin-form" id="add-category-form" method="post" action="/addcategory">
     <label for="add-category-category" class="form-label">Category Name:</label><br>
     <input type="text" name="add-category-category" id="add-category-category" class="form-element"/>
     <div class="field-incomplete" id="add-category-category-incomplete"></div>
@@ -142,6 +142,33 @@
                     <input type="button" value="Confirm" class="form-submit" id="add-word-modal-confirmation-submit" onclick="addCategory()">
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<h3>Delete a category</h3>
+<form class="delete-category admin-form" id="delete-category-form" method="post" action="">
+    <label for="category-name-delete-category" class="form-label">Category Name</label><br>
+    <select name="category-name-delete-category" id="category-name-delete-category" class="admin-dropdown">
+        {% for i in range(category_ids|length) %}
+            <option value="{{ category_ids[i] }}">{{ category_names[i] }}</option>
+        {% endfor %}
+    </select>
+    <input type="button" value="Delete Category" class="form-submit admin-button" id="delete-category-confirmation" onclick="validateDeleteCategory()">
+</form>
+
+{# Delete category modal #}
+<div id="deleteCategoryModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                 <button type="button" class="close" data-dismiss="modal">×</button>
+                 <h4 class="modal-title">Confirm Add Delete</h4>
+            </div>
+            <div class="modal-body">
+                <div id="delete-category-modal-category-name" class="form-label modal-margin">Category Name:</div>
+            </div>
+            <div class="modal-footer add-word-footer"></div>
         </div>
     </div>
 </div>

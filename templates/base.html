@@ -336,6 +336,7 @@
     const addWordModal = $('#addWordModal')
     const deleteWordModal = $('#deleteWordModal')
     const addCategoryModal = $('#addCategoryModal')
+    const deleteCategoryModal = $('#deleteCategoryModal')
 
     function ValidateLoginForm() { // Function for validating the login form
         (async () => { // Use an async to get whether the username & email are already used in the database
@@ -802,6 +803,25 @@
 
     window.addEventListener("resize", setImgSize)
 
+    function displayWordInformation(englishWord, maoriWord, definition) {
+            (async() => {
+                try {
+                    /*const data = {categorYName: }
+                    const response = await fetch('/getcategoryid', { // fetch /getwordinformation from app.py
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data) // parse through the data (email and username input)
+                    })
+                    const responseText = await response.json()*/
+
+                } catch(error) {
+                    console.log(error)
+                }
+            })()
+    }
+
     function validateAddWord() {
         (async () => { // Use an async to get whether the word is already used in the database
             try { // use try catch just in case
@@ -855,16 +875,17 @@
                             // Modify the elements on the modal
                             document.getElementById("add-word-modal-english-word").innerText = "English Word: " + englishWord
                             document.getElementById("add-word-modal-maori-word").innerText = "Māori Word: " + maoriWord
-                            document.getElementById("add-word-modal-maori-word").innerText = "Māori Word: " + maoriWord
+                            //document.getElementById("add-word-modal-maori-word").innerText = "Māori Word: " + maoriWord
                             document.getElementById("add-word-modal-definition").innerText = "Definition: " + definition
                             // Turn the category innerText into an array by splitting at each new line, then get the category name (category value starts at 1)
                             // THIS WONT WORK - NEED TO CONSIDER THE FACT THE USER CAN DELETE CATEGORIES!
-                            document.getElementById("add-word-modal-category").innerText = "Category: " + category.innerText.split("\n")[category.value - 1]
+                            // call an ajax here to get the category name from the id
+                            document.getElementById("add-word-modal-category").innerText = "Category: " + category.options[category.selectedIndex].text
                             document.getElementById("add-word-modal-level").innerText = "Level: " + level.value
                             const previewContainer = document.getElementById('add-word-modal-image');
                             if (image.files.length > 0) { // User has attached an image
                                 let reader = new FileReader(); // Create a new FileReader() object
-                                reader.onload = function(e) {
+                                reader.onload = function (e) {
                                     let imageElement = document.createElement('img');
                                     imageElement.src = e.target.result.toString();
                                     // Append the image element to the preview container
@@ -1097,14 +1118,15 @@
 
     function validateAddCategoryForm() {
         let categoryName = document.getElementById("add-category-category").value.trim()
-        const categoryNameIncomplete = document.getElementById("add-category-category-incomplete")
+        //const categoryNameIncomplete = document.getElementById("add-category-category-incomplete")
         if (categoryName.length <= 0 || categoryName.length > categoryMaxLength) {
-            categoryNameIncomplete.innerText = `.The category name must be between 0 and ${categoryMaxLength} characters`
+            //categoryNameIncomplete.innerText = `.The category name must be between 0 and ${categoryMaxLength} characters`
+            setValue("add-category-category", failedTextColour, "add-category-category-incomplete", `.The category name must be between 0 and ${categoryMaxLength} characters`)
         } else {
             (async () => {
                 try {
                     const data = {category: categoryName}
-                    const response = await fetch('/hascategory', { // fetch /getwordinformation from app.py
+                    const response = await fetch('/hascategory', { // fetch /hascategory from app.py
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1114,9 +1136,10 @@
                     const responseText = await response.json()
                     let hasCategory = responseText.hasCategory
                     if (hasCategory) {
-                        categoryNameIncomplete.innerText = ".This category name is already in use"
+                        setValue("add-category-category", failedTextColour, "add-category-category-incomplete", ".This category name is already in use")
                     } else { // Passed all test cases
-                        categoryNameIncomplete.innerText = ""
+                        clearText(["add-category-category-incomplete"])
+                        clearColour(["add-category-category"])
                         document.getElementById("add-category-modal-category-name").innerText = "Category Name: " + capitaliseFirstCharEachWord(categoryName)
                         addCategoryModal.modal('show')
                     }
@@ -1179,6 +1202,12 @@
                 manageNewCategory(categoryName)
             }
         })
+    }
+
+    function validateDeleteCategory() {
+        deleteCategoryModal.modal('show')
+        const categoryName = document.getElementById("category-name-delete-category")
+        document.getElementById("delete-category-modal-category-name").innerText = "Category Name: " + categoryName.options[categoryName.selectedIndex].text
     }
 </script>
 </html>

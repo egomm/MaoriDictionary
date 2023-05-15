@@ -366,6 +366,12 @@ def get_category_id():
     return {"categoryId": category_id}
 
 
+@app.route('/getcategoryname', methods=['POST'])
+def get_category_name():
+    json_data = request.get_json()
+    category_id = json_data["categoryId"]
+
+
 @app.route('/addcategory', methods=['POST'])
 def add_category():
     print('adding category')
@@ -441,7 +447,7 @@ def categories(category, page):
     cur = con.cursor()
     query = "SELECT category_name FROM categories"
     cur.execute(query)
-    category_list = [x[0] for x in cur.fetchall()]
+    category_list = sorted([x[0] for x in cur.fetchall()])
     con.close()
     current_category = 0
     print(category)
