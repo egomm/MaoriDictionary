@@ -167,8 +167,14 @@
             </div>
             <div class="modal-body">
                 <div id="delete-category-modal-category-name" class="form-label modal-margin">Category Name:</div>
+                <div class="form-label modal-margin">WARNING! This will delete all words in the category.</div>
             </div>
-            <div class="modal-footer add-word-footer"></div>
+            <div class="modal-footer add-word-footer">
+                <div id="add-word-modal-confirmation">
+                    <input type="button" value="Cancel" class="form-submit" id="add-word-modal-confirmation-cancel" onclick="deleteCategoryModal.modal('hide')">
+                    <input type="button" value="Confirm" class="form-submit" id="add-word-modal-confirmation-submit" onclick="deleteCategory()">
+                </div>
+            </div>
         </div>
     </div>
 </div>

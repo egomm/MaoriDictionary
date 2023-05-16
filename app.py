@@ -389,6 +389,22 @@ def add_category():
     return {}
 
 
+@app.route('/deletecategory', methods=['POST'])
+def delete_category():
+    json_data = request.get_json()
+    category_name = json_data["categoryName"]
+    print("Deleting category", category_name)
+    con = create_connection(DATABASE)
+    # Enable the foreign keys
+    con.execute("PRAGMA foreign_keys = ON")
+    cur = con.cursor()
+    query = "DELETE FROM categories WHERE category_name = ?"
+    cur.execute(query, (category_name,))
+    con.commit()
+    con.close()
+    return {}
+
+
 @app.route('/logout')
 def logout():
     [session.pop(key) for key in list(session.keys())]
@@ -405,15 +421,12 @@ def home():  # put application's code here
 @app.route('/categories/<category>/<page>', methods=['POST', 'GET'])
 def categories(category, page):
     # VALIDATE IT IF THE USER PUT IN A NON EXISTENT PAGE/CATEGORY
-    print(request.method)
     con = open_database(DATABASE)
     cur = con.cursor()
     query = "SELECT level from levels"
     cur.execute(query)
     levels = [level[0] for level in cur.fetchall()]
     con.close()
-    print("start")
-    print(levels)
     if session.get("selected-values") is None:
         session["selected-values"] = levels
     all_levels_selected = "all" in session["selected-values"]
@@ -421,9 +434,6 @@ def categories(category, page):
         selected_levels = levels
     else:
         selected_levels = [int(x) for x in session["selected-values"]]
-    print("SELECTED")
-    print(selected_levels)
-    print("end")
     if session.get("selected-language") is None:
         session["selected-language"] = "English-Māori"  # This is the 'origin language'
     if session.get("selected-sorting-method") is None:
@@ -441,29 +451,23 @@ def categories(category, page):
                 session["selected-words-per-page"] = json_data["selectedvalue"]
             if json_data["type"] == "level-filter":
                 session["selected-values"] = json_data["checkboxes"]
-            print(session["selected-values"])
-            print("abc")
     con = open_database(DATABASE)
     cur = con.cursor()
     query = "SELECT category_name FROM categories"
     cur.execute(query)
     category_list = sorted([x[0] for x in cur.fetchall()])
-    con.close()
     current_category = 0
-    print(category)
     sanitised_category_list = [x.replace("/", "").lower() for x in category_list]
     sanitised_category_list = [re.sub(r'\s+', '-', x) for x in sanitised_category_list]
-    for i in range(len(category_list)):
-        if sanitised_category_list[i] == category:
-            current_category = i + 1
-            break
-    print(current_category)
+    category_sanitised = category.title().replace("-", " ")
+    if category_sanitised != "All Categories":
+        query = "SELECT category_id FROM categories WHERE category_name = ?"
+        cur.execute(query, (category_sanitised,))
+        current_category = cur.fetchall()[0][0]
+        con.close()
     selected_language = session["selected-language"]
-    print(selected_language)
     sorting_method = session["selected-sorting-method"]
-    print(sorting_method)
     words_per_page = session["selected-words-per-page"]
-    print(words_per_page)
     # Need to render the words dependent on all of these constraints
     question_marks = "{}".format(','.join(['?'] * len(selected_levels)))
     if current_category > 0:
@@ -485,14 +489,18 @@ def categories(category, page):
     # [0] is maoriword, [1] is english word, [2] is definition, [3] is level, [4] is image, [5] is word id
     # NEED TO MAKE SURE THAT THE WORD ID WORKS WHEN THE CATEGORY ISN'T all-categories
     if current_category > 0:
-        category_name = sanitised_category_list[current_category - 1]
+        category_name = category  # sanitised_category_list[current_category - 1]
     else:
         category_name = "all-categories"
-    print(word_list)
     total_words = len(word_list)
     sorted_word_list = []
     page = int(page)
     current_page = page - 1
+    category_index = 0
+    for i in range(len(category_list)):
+        if sanitised_category_list[i] == category.lower():
+            category_index = i + 1
+            break
     if words_per_page != "All":
         words_per_page = int(words_per_page)
         actual_words_per_page = words_per_page
@@ -502,21 +510,17 @@ def categories(category, page):
     else:  # Display all words
         page_count = 1
         sorted_word_list = [word_list]
-        actual_words_per_page = len(sorted_word_list[current_page])
-
-    print(all_levels_selected)
-    print(selected_levels)
-    print(levels)
+        actual_words_per_page = len(sorted_word_list[page - 1])
     if len(sorted_word_list) > 0:
         minimum_value = (current_page * actual_words_per_page) + 1
         maximum_value = min((current_page + 1) * actual_words_per_page,
-                            (current_page * actual_words_per_page) + len(sorted_word_list[current_page]))
+                            (current_page * actual_words_per_page) + len(sorted_word_list[page - 1]))
     else:
         minimum_value = 0
         maximum_value = 0
     return render_template('categories.html', logged_in=json.dumps(is_logged_in()), administrator=json.dumps(is_administrator()),
                            category_list=category_list, sanitised_category_list=sanitised_category_list,
-                           current_category=current_category, category_name=category_name,
+                           current_category=category_index, category_name=category_name,
                            sorting_method=sorting_method, selected_language=selected_language,
                            words_per_page=words_per_page, word_list=sorted_word_list, page_count=page_count,
                            total_words=total_words, current_page=current_page, display_page=page,

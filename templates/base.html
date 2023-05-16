@@ -627,7 +627,7 @@
             "type": "sorting-methods",
             "selectedvalue": selectedValue
         }
-        postAjax("{{url_for('categories', category=0, page=1)}}", formData, true, false, "") // category=0 may need to be changed?
+        postAjax("{{url_for('categories', category='all-categories', page=1)}}", formData, true, false, "")
     }
 
     function handleWordsPerPage() {
@@ -644,7 +644,7 @@
         if (selectedValue !== "All" && previousValue !== "All") {
             newPage = Math.floor((previousValue / selectedValue) * (oldPage - 1)) + 1
         }
-        postAjax("{{url_for('categories', category=0, page=1)}}", formData, false, true, `/categories/${currentCategory}/${newPage}`)
+        postAjax("{{url_for('categories', category='all-categories', page=1)}}", formData, false, true, `/categories/${currentCategory}/${newPage}`)
     }
 
     $('#switch-language').click(function() {
@@ -658,7 +658,7 @@
             "type": "category-language",
             "language": newLanguage
         }
-        postAjax("{{url_for('categories', category=0, page=1)}}", formData, true, false, "")
+        postAjax("{{url_for('categories', category='all-categories', page=1)}}", formData, true, false, "")
     })
 
     requestAnimationFrame(function() {
@@ -798,7 +798,7 @@
             "checkboxes": activeCheckboxes
         }
         const currentCategory = $("#button-level-submit").data("category")
-        postAjax("{{url_for('categories', category=0, page=1)}}", formData, false, true, `/categories/${currentCategory}/1`) // redirect to first pay
+        postAjax("{{url_for('categories', category='all-categories', page=1)}}", formData, false, true, `/categories/${currentCategory}/1`) // redirect to first pay
     })
 
     window.addEventListener("resize", setImgSize)
@@ -1166,6 +1166,8 @@
                 // Now manage the category list in add word and delete category
                 const addWordCategories = document.getElementById("word-select-category")
                 let addWordCategoryNodes = addWordCategories.options
+                // .options returns a collection, so parse everything to a new array
+                // check if this is needed? ^!!!
                 let addWordCategoryOptions = []
                 for (let i = 0; i < addWordCategoryNodes.length; i++) {
                     // Append the options into a new array
@@ -1180,6 +1182,21 @@
                     addWordCategoryNodes[i] = addWordCategoryOptions[i]
                 }
                 addWordCategories.value = originalValue;
+                // Manage delete category list
+                const deleteCategoryCategories = document.getElementById("category-name-delete-category")
+                let deleteCategoryNodes = deleteCategoryCategories.options
+                let deleteCategoryOptions = []
+                for (let i = 0; i < deleteCategoryNodes.length; i++) {
+                    deleteCategoryOptions.push(deleteCategoryNodes[i])
+                }
+                const newDeleteCategoryOption = new Option(categoryName, categoryId)
+                deleteCategoryOptions.push(newDeleteCategoryOption)
+                deleteCategoryOptions.sort((a, b) => a.text > b.text ? 1: -1)
+                let originalDeleteCategoryValue = deleteCategoryCategories.value
+                for (let i = 0; i < deleteCategoryOptions.length; i++) {
+                    deleteCategoryNodes[i] = deleteCategoryOptions[i]
+                }
+                deleteCategoryCategories.value = originalDeleteCategoryValue
             } catch (error) {
                 console.log(error)
             }
@@ -1198,6 +1215,7 @@
             processData: false,
             contentType: 'application/json',
             success: function () {
+                document.getElementById("add-category-category").value = ""
                 addCategoryModal.modal('hide')
                 manageNewCategory(categoryName)
             }
@@ -1206,8 +1224,63 @@
 
     function validateDeleteCategory() {
         deleteCategoryModal.modal('show')
-        const categoryName = document.getElementById("category-name-delete-category")
-        document.getElementById("delete-category-modal-category-name").innerText = "Category Name: " + categoryName.options[categoryName.selectedIndex].text
+        const categoryList = document.getElementById("category-name-delete-category")
+        document.getElementById("delete-category-modal-category-name").innerText = "Category Name: " + categoryList.options[categoryList.selectedIndex].text
+    }
+
+    function manageDeleteCategory(categoryName, categoryId) {
+        // Manage delete category list
+        const deleteCategoryCategories = document.getElementById("category-name-delete-category")
+        let deleteCategoryNodes = deleteCategoryCategories.options
+        let deleteCategoryOptions = []
+        for (let i = 0; i < deleteCategoryNodes.length; i++) {
+            if (deleteCategoryNodes[i].value !== categoryId) {
+                deleteCategoryOptions.push(deleteCategoryNodes[i])
+            }
+        }
+        // Change all the values
+        for (let i = 0; i < deleteCategoryOptions.length; i++) {
+            deleteCategoryNodes[i] = deleteCategoryOptions[i]
+        }
+        if (deleteCategoryCategories.value === categoryId) {
+            deleteCategoryCategories.value = deleteCategoryNodes[0].value // Set the value back to the first value
+        }
+        // Manage add word category list
+        const addWordCategories = document.getElementById("word-select-category")
+        let addWordCategoryNodes = addWordCategories.options
+        let addWordCategoryOptions = []
+        for (let i = 0; i < addWordCategoryNodes.length; i++) {
+            if (addWordCategoryNodes[i].value !== categoryId) {
+                addWordCategoryOptions.push(addWordCategoryNodes[i])
+            }
+        }
+        // Change all the values
+        for (let i = 0; i < addWordCategoryOptions.length; i++) {
+            addWordCategoryNodes[i] = addWordCategoryOptions[i]
+        }
+        if (addWordCategories.value === categoryId) {
+            addWordCategories.value = addWordCategoryNodes[0].value // Set the value back to the first value
+        }
+    }
+
+    function deleteCategory() {
+        const categoryList = document.getElementById("category-name-delete-category")
+        const categoryName = categoryList.options[categoryList.selectedIndex].text
+        const categoryId = categoryList.value
+        const formData = {
+            "categoryName": categoryName
+        }
+        $.ajax({
+            type: 'POST',
+            url: "/deletecategory",
+            data: JSON.stringify(formData),
+            processData: false,
+            contentType: 'application/json',
+            success: function () {
+                deleteCategoryModal.modal('hide')
+                manageDeleteCategory(categoryName, categoryId)
+            }
+        })
     }
 </script>
 </html>
