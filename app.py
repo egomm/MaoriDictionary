@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, url_for, jsonify
+from flask import Flask, render_template, request, redirect, session, jsonify
 import sqlite3
 from sqlite3 import Error
 from flask_bcrypt import Bcrypt
@@ -47,9 +47,9 @@ def create_connection(db_file):
     return None
 
 
-def is_logged_in():  # Returns if the user is logged in based on the session id (from user_id)
+def is_logged_in():
     """
-    Checks if the user is logged in
+    Checks if the user is logged in from the session (getting the id key)
     :return: if the user is logged in
     """
     return session.get("id") is not None
@@ -57,7 +57,7 @@ def is_logged_in():  # Returns if the user is logged in based on the session id 
 
 def is_administrator():
     """
-    Checks if the user is an administrator
+    Checks if the user is an administrator (checks if the user is a teacher)
     :return: if the user is an administrator
     """
     is_admin = False
@@ -84,7 +84,8 @@ def sort_words(words, selected_language, sorting_method):
     :return: The sorted list
     """
     word_list = []
-    if sorting_method == "LEVEL":  # sort by level then alphabetically if there are multiple instances of the same level
+    # Sort by level, then sort alphabetically if there are multiple instances of the same level
+    if sorting_method == "LEVEL":
         if selected_language == "English-Māori":  # LEVEL with english-maori
             word_list = sorted(words, key=lambda x: (x[3], x[1]))
         elif selected_language == "Māori-English":  # LEVEL with maori-english
@@ -210,7 +211,7 @@ def login_data_manager():
             administrator = cur.fetchone()[0]
             matches = True
         con.close()
-    # Use javascript conventions for the return
+    # Use javascript conventions for the return (camelCase)
     return jsonify({'validLogin': matches, 'email': hasemail, 'userId': emailusernameid,
                     'administrator': administrator})
 
@@ -239,7 +240,6 @@ def change_password_data_manager():
         con.close()
         if firstname == user_information[1] and lastname == user_information[2] and email == user_information[4]:
             matches = True
-    # Base the check off the inserted username, all the data needs to be validated to allow password reset
     return jsonify({"validInformation": matches})
 
 
@@ -250,10 +250,10 @@ def signup_data_manager():
     This route is only accessible by a post method (the user cannot access this route)
     :return: If the username exists in the database, if the email exists in the database
     """
-    data = request.get_json()  # get the data from the html
+    data = request.get_json()  # Get the json data from the html
     email = data['email']
     username = data['username']
-    # return the validated data back to the html
+    # Return the validated data back to the html
     return jsonify({'usernameUsed': checkhasusername(username), 'emailUsed': checkhasemail(email)})
 
 
@@ -309,6 +309,11 @@ def word_from_id():
 
 @app.route('/getwordidfromword', methods=['POST'])
 def word_id_from_word():
+    """
+    Function for getting the word id from the english and maori word
+    This route is only accessible by a post method (the user cannot access this route)
+    :return: The word id from the provided information
+    """
     data = request.get_json()
     maori_word = data["maori"]
     english_word = data["english"]
@@ -323,6 +328,11 @@ def word_id_from_word():
 
 @app.route('/hascategory', methods=['POST'])
 def has_category():
+    """
+    Function for checking if a category exists given a category name
+    This route is only accessible by a post method (the user cannot access this route)
+    :return: If the category name has already been used
+    """
     data = request.get_json()
     category_name = data["category"]
     con = create_connection(DATABASE)
@@ -337,6 +347,10 @@ def has_category():
 
 @app.route('/addword', methods=['POST'])
 def add_word():
+    """
+    Function for adding a word given information about the word
+    :return: {} (effectively nothing as this route only accepts post methods)
+    """
     english_word = request.form["englishWord"]
     maori_word = request.form["maoriWord"]
     category = request.form["category"]
@@ -344,7 +358,6 @@ def add_word():
     level = request.form["level"]
     image_name_refined = None
     if "image" in request.files:
-        # PLACEHOLDER REMEMBER TO PUT THIS IN ADD WORD
         image = request.files["image"]
         image_name = image.filename
         extension = "." + image_name.rsplit('.', 1)[-1].lower()  # Get the extension (png, jpeg, etc)
@@ -375,6 +388,10 @@ def add_word():
 
 @app.route('/deleteword', methods=['POST'])
 def delete_word():
+    """
+    Function for deleting a word given the word id
+    :return: {} (effectively nothing as this route only accepts post methods)
+    """
     json_data = request.get_json()
     word_id = json_data["wordId"]
     con = create_connection(DATABASE)
@@ -387,12 +404,17 @@ def delete_word():
 
 
 @app.route('/deletewordfromdata', methods=['POST'])
-def delete_word_from_data():  # Alternative method for deleting a word
+def delete_word_from_data():
+    """
+    This function is an alternative method for deleting a word through using the maori or english word
+    :return: {} (effectively nothing as this route only accepts post methods)
+    """
     json_data = request.get_json()
     current_word = json_data["currentWord"]
     translated_word = json_data["translatedWord"]
     con = create_connection(DATABASE)
     cur = con.cursor()
+    # The query alternates between current_word and translated word as there can be English-Maori or Maori-English
     query = "DELETE FROM words WHERE maoriword = ? OR englishword = ? OR maoriword = ? OR englishword = ?"
     cur.execute(query, (current_word, translated_word, translated_word, current_word))
     con.commit()
@@ -402,6 +424,11 @@ def delete_word_from_data():  # Alternative method for deleting a word
 
 @app.route('/getcategoryid', methods=['POST'])
 def get_category_id():
+    """
+    This function gets the category id given a provided category name
+    This route is only accessible by a post method (the user cannot access this route)
+    :return: The category id from the provided category name
+    """
     json_data = request.get_json()
     category_name = json_data["categoryName"]
     con = create_connection(DATABASE)
@@ -415,6 +442,10 @@ def get_category_id():
 
 @app.route('/addcategory', methods=['POST'])
 def add_category():
+    """
+    Function for adding a category from a given category name
+    :return: {} (effectively nothing as this route only accepts post methods)
+    """
     json_data = request.get_json()
     category_name = json_data["categoryName"]
     con = create_connection(DATABASE)
@@ -428,10 +459,14 @@ def add_category():
 
 @app.route('/deletecategory', methods=['POST'])
 def delete_category():
+    """
+    Function for deleting a category given a category name
+    :return: {} (effectively nothing as this route only accepts post methods)
+    """
     json_data = request.get_json()
     category_name = json_data["categoryName"]
     con = create_connection(DATABASE)
-    # Enable the foreign keys
+    # Enable foreign keys
     con.execute("PRAGMA foreign_keys = ON")
     cur = con.cursor()
     query = "DELETE FROM categories WHERE category_name = ?"
@@ -443,12 +478,23 @@ def delete_category():
 
 @app.route('/logout')
 def logout():
+    """
+    Function and route for the user to log out
+    Iterate over all the current session keys and remove each key
+    :return: a redirect to the home page
+    """
     [session.pop(key) for key in list(session.keys())]
     return redirect('/')
 
 
 @app.route('/', methods=['POST', 'GET'])
-def home():  # put application's code here
+def home():
+    """
+    This is the route for the home page, the home page manages the search feature on the home page
+    If the request method is post :return: a redirect to the category search
+    If the request method is get :return: the home page with information about if the user is logged in,
+    or if the user is an administrator
+    """
     if request.method == "POST":
         search_input = request.form.get("text")
         return redirect(f"/categories/all-categories/search/{search_input}/1")
@@ -460,7 +506,20 @@ def home():  # put application's code here
 @app.route('/categories/<category>/<page>', defaults={'search': None}, methods=['POST', 'GET'])
 @app.route('/categories/<category>/search/<search>/<page>')
 def categories(category, page, search):
-    # VALIDATE IT IF THE USER PUT IN A NON EXISTENT PAGE/CATEGORY
+    """
+    Function for accessing the category page
+    :param category: the category name of the active category
+    :param page: the current page number
+    :param search: the current search (this can be None)
+    If the request method is get :return: information about the current category to display in categories.html,
+    this information includes: if the user is logged in, if the user is administrator, the raw category list,
+    the sanitised category list, the current category id, the current category name, the sorting method,
+    the selected language, the amount of words to display per page, the word list, the total page count,
+    the total number of words, the current page (as an index), the display page, the minimum word index on the page,
+    the maximum word index on the page, all the levels, if all levels are selected, the current select levels,
+    and the current search
+    If the request method is post :return: a redirect to the search which had just been inputted
+    """
     if request.method == "GET":
         con = open_database(DATABASE)
         cur = con.cursor()
@@ -483,7 +542,7 @@ def categories(category, page, search):
             session["selected-words-per-page"] = "12"  # store as a string as this can be All
         if request.method == "POST":
             json_data = request.get_json()
-            if "type" in json_data:  # failsafe
+            if "type" in json_data:  # This provides as a failsafe
                 if json_data["type"] == "category-language":
                     session["selected-language"] = json_data["language"]
                 if json_data["type"] == "sorting-methods":
@@ -588,27 +647,22 @@ def categories(category, page, search):
             if len(previous_search) > 0:  # There was a previous search
                 return redirect(f'/categories/{category}/1')
             else:
-                return redirect(f'/categories/{category}/{int(page)+1}')
-
-
-# make the request go under a custom thing
-@app.route('/contact', methods=['POST', 'GET'])
-def contact():
-    if request.method == 'POST':
-        # name = request.form.get('name')
-        # email = request.form.get('email')
-        # message = request.form.get('message')
-        # Do something with the form data (e.g., store it in a database)
-        return redirect(url_for('contact'))
-    else:
-        return render_template('contact.html', logged_in=json.dumps(is_logged_in()), administrator=is_administrator(),
-                               admin_clean=json.dumps(is_administrator()))
+                return redirect(f'/categories/{category}/{int(page) + 1}')
 
 
 @app.route('/translate/<word>', defaults={'word_id': None}, methods=['POST', 'GET'])
 @app.route('/translate/<word>/<word_id>', methods=['POST', 'GET'])
-def translate(word, word_id):  # Using the word and not the word id as its more readable to the user
-    # if English-Māori make sure that the english word is first, then the māori word is second and vice versa
+def translate(word, word_id):
+    """
+    This route is for getting information about a word based on the word and/or the word id
+    :param word: The english word or the maori word
+    :param word_id: The word id - this isn't a required field, so it can be None,
+    although using the word id is more efficient
+    If the word exists :return: information about the word: the current word, the translated word,
+    the word's definition, the word's level, the word's image, the user who added the word, the time the word was added,
+    the word id, if the user is logged in, and if the user is an administrator
+    If the word doesn't exist :return: a return to the first page of the all categories section
+    """
     con = open_database(DATABASE)
     cur = con.cursor()
     query = "SELECT englishword FROM words WHERE englishword = ?"
@@ -664,6 +718,11 @@ def translate(word, word_id):  # Using the word and not the word id as its more 
 
 @app.route("/admin", methods=["POST", "GET"])
 def admin():
+    """
+    This route is for accessing the admin page in order to add/delete words and add/delete categories
+    If the user is an administrator :return: if the user is logged in, if the user is an administrator (failsafe),
+    the category ids, the category names, the levels, the english words, and the maori words
+    """
     if is_administrator():
         con = open_database(DATABASE)
         cur = con.cursor()
@@ -694,6 +753,4 @@ def admin():
 
 
 if __name__ == '__main__':
-    app.run()
-    # app.run(host='0.0.0.0', debug=True)
-    # runs website locally
+    app.run()  # Run the website
