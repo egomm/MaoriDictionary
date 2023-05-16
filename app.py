@@ -37,7 +37,7 @@ def create_connection(db_file):
     """
     Create a connection with the database
     parameter: name of the database file
-    returns: a connection of the file
+    :return: a connection of the file
     """
     try:
         connection = sqlite3.connect(db_file)
@@ -48,21 +48,27 @@ def create_connection(db_file):
 
 
 def is_logged_in():  # Returns if the user is logged in based on the session id (from user_id)
-    print("LOGGED IN", session.get("id") is not None)
+    """
+    Checks if the user is logged in
+    :return: if the user is logged in
+    """
     return session.get("id") is not None
 
 
 def is_administrator():
-    admin = False
+    """
+    Checks if the user is an administrator
+    :return: if the user is an administrator
+    """
+    is_admin = False
     if is_logged_in():
         con = create_connection(DATABASE)
         cur = con.cursor()
         query = "SELECT administrator FROM users WHERE user_id = ?"
         cur.execute(query, (session.get("id"),))
-        admin = cur.fetchone()[0]
+        is_admin = cur.fetchone()[0]
         con.close()
-    print("ADMIN", admin)
-    return admin
+    return is_admin
 
 
 def sort_words(words, selected_language, sorting_method):
@@ -89,38 +95,6 @@ def sort_words(words, selected_language, sorting_method):
         elif selected_language == "Māori-English":  # A-Z with maori-english
             word_list = sorted(words, key=lambda x: x[0])
     return word_list
-
-
-# Context processor allows injection into the template as it runs before the template is rendered
-@app.context_processor
-def inject_data():  # Used for getting the data when there is an ajax post
-    print("hi?")
-    print(request.method)
-    if request.method == "POST":
-        json_data = request.get_json()  # check where the data came from, proceed accordingly
-        if "type" in json_data:
-            if json_data["type"] == "login":  # Login post
-                session['id'] = json_data["userid"]  # Set the session id to the userid
-            elif json_data["type"] == "signup":  # Signup post
-                print("SIGN UP")
-                con = open_database(DATABASE)
-                query = "INSERT INTO users (firstName, lastName, username, email, password, administrator) " \
-                        "VALUES (?, ?, ?, ?, ?, ?)"  # Insert sign up information into the users database
-                cur = con.cursor()
-                cur.execute(query,
-                            (json_data["firstname"], json_data["lastname"], json_data["username"], json_data["email"],
-                             bcrypt.generate_password_hash(json_data["password"]), json_data["role"]))
-                con.commit()
-                con.close()
-            elif json_data["type"] == "resetpassword":  # Reset password post
-                con = create_connection(DATABASE)
-                cur = con.cursor()
-                # Update the users database with the new bcrypt password
-                query = "UPDATE users SET password=? WHERE username=?"
-                cur.execute(query, (bcrypt.generate_password_hash(json_data["newpassword"]), json_data["username"]))
-                con.commit()
-                con.close()
-    return {}  # Nothing needs to be returned as this is on the context processor
 
 
 def checkhasusername(username):
@@ -153,8 +127,62 @@ def checkhasemail(email):
     return [x.lower() for x in emails].count(email.lower()) > 0
 
 
+@app.route('/login', methods=['POST'])
+def login():
+    """
+    This function logs in the user
+    :return: {} (effectively nothing as this route only accepts post methods)
+    """
+    json_data = request.get_json()
+    session['id'] = json_data["userid"]
+    return {}
+
+
+@app.route('/resetpassword', methods=['POST'])
+def reset_password():
+    """
+    This function resets the user's password
+    :return: {} (effectively nothing as this route only accepts post methods)
+    """
+    json_data = request.get_json()
+    con = create_connection(DATABASE)
+    cur = con.cursor()
+    # Update the users database with the new bcrypt password
+    query = "UPDATE users SET password=? WHERE username=?"
+    cur.execute(query, (bcrypt.generate_password_hash(json_data["newpassword"]), json_data["username"]))
+    con.commit()
+    con.close()
+    return {}
+
+
+@app.route('/signup', methods=['POST'])
+def sign_up():
+    """
+    This function signs up the user
+    :return: {} (effectively nothing as this route only accepts post methods)
+    """
+    json_data = request.get_json()
+    con = open_database(DATABASE)
+    query = "INSERT INTO users (firstName, lastName, username, email, password, administrator) " \
+            "VALUES (?, ?, ?, ?, ?, ?)"  # Insert sign up information into the users database
+    cur = con.cursor()
+    cur.execute(query,
+                (json_data["firstname"], json_data["lastname"], json_data["username"], json_data["email"],
+                 bcrypt.generate_password_hash(json_data["password"]), json_data["role"]))
+    con.commit()
+    con.close()
+    return {}
+
+
 @app.route('/getlogininformation', methods=['POST'])
 def login_data_manager():
+    """
+    This function manages the login data in order to validate it
+    This route is called by the base.html login modal when the user is logging in
+    This route is only accessible by a post method (the user cannot access this route)
+    :return: if the login is valid, if the email exists in the database,
+    if the user_id exists in the database, and if the user is an administrator
+    """
     data = request.get_json()
     emailusername = data['emailusername']
     password = data['password']
@@ -188,7 +216,13 @@ def login_data_manager():
 
 
 @app.route('/getchangepasswordinformation', methods=['POST'])
-def changepassword_data_manager():
+def change_password_data_manager():
+    """
+    This function manages the change password information
+    This route is called by the base.html when the user is changing their password
+    This route is only accessible by a post method (the user cannot access this route)
+    :return: If the information provided is valid (if the user information exists in the database)
+    """
     data = request.get_json()
     firstname = data['firstname']
     lastname = data['lastname']
@@ -210,7 +244,12 @@ def changepassword_data_manager():
 
 
 @app.route('/getsignupinformation', methods=['POST'])
-def signup_data_manager():  # function for managing the data which comes through from the modal requests
+def signup_data_manager():
+    """
+    Function for validating the signup data by checking if the username or email exists in the database
+    This route is only accessible by a post method (the user cannot access this route)
+    :return: If the username exists in the database, if the email exists in the database
+    """
     data = request.get_json()  # get the data from the html
     email = data['email']
     username = data['username']
@@ -220,6 +259,11 @@ def signup_data_manager():  # function for managing the data which comes through
 
 @app.route('/getwordinformation', methods=['POST'])
 def word_manager():
+    """
+    Function for validating the word information to check if the english word or maori word exits in the database
+    This route is only accessible by a post method (the user cannot access this route)
+    :return: If the english word exists in the database, if the maori word exists in the database
+    """
     data = request.get_json()
     maori_word = data['maori']
     english_word = data['english']
@@ -237,6 +281,12 @@ def word_manager():
 
 @app.route('/getwordfromid', methods=['POST'])
 def word_from_id():
+    """
+    Function for getting the word information from the word id
+    This route is only accessible by a post method (the user cannot access this route)
+    :return: the english word, the maori word, the category name, the word definition,
+    the word level, and the word image
+    """
     data = request.get_json()
     word_id = data["id"]
     con = open_database(DATABASE)
@@ -259,12 +309,9 @@ def word_from_id():
 
 @app.route('/getwordidfromword', methods=['POST'])
 def word_id_from_word():
-    print("CALLED")
     data = request.get_json()
     maori_word = data["maori"]
     english_word = data["english"]
-    print("MAORI", maori_word)
-    print("ENGLISH", english_word)
     con = open_database(DATABASE)
     cur = con.cursor()
     query = "SELECT word_id FROM words WHERE maoriword = ? and englishword = ?"
@@ -290,7 +337,6 @@ def has_category():
 
 @app.route('/addword', methods=['POST'])
 def add_word():
-    print("HI")
     english_word = request.form["englishWord"]
     maori_word = request.form["maoriWord"]
     category = request.form["category"]
@@ -300,23 +346,18 @@ def add_word():
     if "image" in request.files:
         # PLACEHOLDER REMEMBER TO PUT THIS IN ADD WORD
         image = request.files["image"]
-        print(image.filename)
         image_name = image.filename
         extension = "." + image_name.rsplit('.', 1)[-1].lower()  # Get the extension (png, jpeg, etc)
-        print(extension)
         image_name_refined = english_word.strip() + extension
         similar_images = []
         directory = os.path.join(app.root_path, 'static', 'images')
         for filename in os.listdir(directory):
             if os.path.isfile(os.path.join(directory, filename)):
                 file_name = os.path.splitext(filename)
-                print(english_word.strip() + ", " + file_name[0])
                 if file_name[1] == extension and english_word.strip() in file_name[0]:
                     similar_images.append(file_name)
-        print(len(similar_images))
         if len(similar_images) > 0:
             image_name_refined = english_word.strip() + str(len(similar_images)) + extension
-        print("REFINED", image_name_refined)
         image_path = os.path.join(app.root_path, 'static', 'images', image_name_refined)
         image_path = image_path.replace('\\', '/')  # Replace backslashes with forward slashes
         image.save(image_path)
@@ -329,19 +370,11 @@ def add_word():
                             session.get("id"), int(time.time() * 1000)))
         con.commit()
         con.close()
-        print(english_word)
-        print(maori_word)
-        print(definition)
-        print(category)
-        print(level)
-    else:
-        print("not admin/not logged in?")
     return {}
 
 
 @app.route('/deleteword', methods=['POST'])
 def delete_word():
-    print("DELETING WORD")
     json_data = request.get_json()
     word_id = json_data["wordId"]
     con = create_connection(DATABASE)
@@ -355,7 +388,6 @@ def delete_word():
 
 @app.route('/deletewordfromdata', methods=['POST'])
 def delete_word_from_data():  # Alternative method for deleting a word
-    print("CALLED?")
     json_data = request.get_json()
     current_word = json_data["currentWord"]
     translated_word = json_data["translatedWord"]
@@ -366,7 +398,6 @@ def delete_word_from_data():  # Alternative method for deleting a word
     con.commit()
     con.close()
     return {}
-
 
 
 @app.route('/getcategoryid', methods=['POST'])
@@ -382,20 +413,10 @@ def get_category_id():
     return {"categoryId": category_id}
 
 
-@app.route('/getcategoryname', methods=['POST'])
-def get_category_name():
-    json_data = request.get_json()
-    category_id = json_data["categoryId"]
-
-
 @app.route('/addcategory', methods=['POST'])
 def add_category():
-    print('adding category')
-    print(request.get_json())
     json_data = request.get_json()
-    print(json_data)
     category_name = json_data["categoryName"]
-    print(category_name)
     con = create_connection(DATABASE)
     cur = con.cursor()
     query = "INSERT INTO categories (category_name) VALUES (?)"
@@ -409,7 +430,6 @@ def add_category():
 def delete_category():
     json_data = request.get_json()
     category_name = json_data["categoryName"]
-    print("Deleting category", category_name)
     con = create_connection(DATABASE)
     # Enable the foreign keys
     con.execute("PRAGMA foreign_keys = ON")
@@ -429,13 +449,12 @@ def logout():
 
 @app.route('/', methods=['POST', 'GET'])
 def home():  # put application's code here
-    print("LOGGED", json.dumps(is_logged_in()))
     if request.method == "POST":
         search_input = request.form.get("text")
         return redirect(f"/categories/all-categories/search/{search_input}/1")
     else:
         return render_template('home.html', logged_in=json.dumps(is_logged_in()),
-                               administrator=is_administrator())
+                               administrator=is_administrator(), admin_clean=json.dumps(is_administrator()))
 
 
 @app.route('/categories/<category>/<page>', defaults={'search': None}, methods=['POST', 'GET'])
@@ -495,8 +514,8 @@ def categories(category, page, search):
         if current_category > 0:
             con = open_database(DATABASE)
             cur = con.cursor()
-            query = f"SELECT maoriword, englishword, definition, level, image, word_id FROM words WHERE cat_id = ? and" \
-                    f" level IN ({question_marks})"
+            query = f"SELECT maoriword, englishword, definition, level, image, word_id FROM words WHERE cat_id = ?" \
+                    f" and level IN ({question_marks})"
             cur.execute(query, (current_category, *tuple(selected_levels)))
             word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
             con.close()
@@ -515,7 +534,6 @@ def categories(category, page, search):
             current_search = search
             matching_words = []
             for word in word_list:
-                print("WORD", word)
                 if word[1].lower().startswith(search.lower()):
                     matching_words.append(word)
                 elif word[0].lower().startswith(search.lower()):
@@ -559,15 +577,14 @@ def categories(category, page, search):
                                word_list=sorted_word_list, page_count=page_count, total_words=total_words,
                                current_page=current_page, display_page=page, minimum_value=minimum_value,
                                maximum_value=maximum_value, levels=levels, all_levels_selected=all_levels_selected,
-                               selected_levels=selected_levels, current_search=current_search)
+                               selected_levels=selected_levels, current_search=current_search,
+                               admin_clean=json.dumps(is_administrator()))
     else:
         search_input = request.form.get("category-search-bar")
-        print("CALLED CALLED")
         if len(search_input) > 0:
             return redirect(f'/categories/{category}/search/{search_input}/1')
         else:
             previous_search = request.form.get("previous-search")
-            print(previous_search)
             if len(previous_search) > 0:  # There was a previous search
                 return redirect(f'/categories/{category}/1')
             else:
@@ -584,7 +601,8 @@ def contact():
         # Do something with the form data (e.g., store it in a database)
         return redirect(url_for('contact'))
     else:
-        return render_template('contact.html', logged_in=json.dumps(is_logged_in()), administrator=is_administrator())
+        return render_template('contact.html', logged_in=json.dumps(is_logged_in()), administrator=is_administrator(),
+                               admin_clean=json.dumps(is_administrator()))
 
 
 @app.route('/translate/<word>', defaults={'word_id': None}, methods=['POST', 'GET'])
@@ -597,7 +615,6 @@ def translate(word, word_id):  # Using the word and not the word id as its more 
     cur.execute(query, (word,))
     has_word = False
     if cur.fetchone() is not None:
-        print("English word")
         has_word = True
         if word_id is not None:
             query = "SELECT maoriword, definition, level, image, added_by, time_added FROM words WHERE word_id = ?"
@@ -607,7 +624,6 @@ def translate(word, word_id):  # Using the word and not the word id as its more 
         query = "SELECT maoriword FROM words WHERE maoriword = ?"
         cur.execute(query, (word,))
         if cur.fetchone() is not None:
-            print("Maori Word")
             has_word = True
             if word_id is not None:
                 query = "SELECT englishword, definition, level, image, added_by, time_added FROM words " \
@@ -622,7 +638,6 @@ def translate(word, word_id):  # Using the word and not the word id as its more 
             cur.execute(query, (word,))
         word_information = cur.fetchone()
         # [0] = translated word, [1] = definition, [2] = level, [3] = image
-        print(word_information[4] * 1000)
         current_word = word  # The word which the user clicked on
         translated_word = word_information[0]
         definition = word_information[1]
@@ -638,11 +653,11 @@ def translate(word, word_id):  # Using the word and not the word id as its more 
         data_time = datetime_object.strftime("%H:%M")
         data_time = datetime.datetime.strptime(data_time, "%H:%M").strftime("%I:%M%p").lower()
         con.close()
-        print("ADMIN", is_administrator())
         return render_template('translate.html', current_word=current_word, translated_word=translated_word,
                                definition=definition, level=level, image=image, user_added=user_added, time=data_time,
                                date=data_date, logged_in=json.dumps(is_logged_in()),
-                               administrator=is_administrator(), word_id=word_id)
+                               administrator=is_administrator(), word_id=word_id,
+                               admin_clean=json.dumps(is_administrator()))
     else:
         return redirect("/categories/all-categories/1")
 
@@ -669,14 +684,11 @@ def admin():
         query = "SELECT maoriword, word_id FROM words"
         cur.execute(query)
         maori_words = sorted(cur.fetchall(), key=lambda x: x[0])
-        print(english_words)
-        print(maori_words)
-        print(levels)
         con.close()
         return render_template("admin.html", logged_in=json.dumps(is_logged_in()),
                                administrator=is_administrator(), category_ids=category_ids,
                                category_names=category_names, levels=levels, english_words=english_words,
-                               maori_words=maori_words)
+                               maori_words=maori_words, admin_clean=json.dumps(is_administrator()))
     else:
         return redirect("/")  # Return user to the home page if they aren't admin
 

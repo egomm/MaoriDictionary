@@ -250,6 +250,7 @@
     }
 
     function checkLogin(logged_in, admin) {
+        /* Need to fix? */
         const loginElement = document.getElementById("login")
         const logoutElement = document.getElementById("logout")
         const adminElement = document.getElementById("admin")
@@ -273,7 +274,7 @@
     requestAnimationFrame(function() {
         /* This function is providing as a failsafe to make sure what is displayed in the navigation bar is correct
         * This function is called when the window is animated */
-        checkLogin({{ logged_in }}, {{ administrator }})
+        checkLogin({{ logged_in }}, {{ admin_clean }})
     })
 
     function setValue(colourId, colour, textId, text, fail) {
@@ -375,7 +376,7 @@
                         "type": "login",
                         "userid": responseText.userId
                     }
-                    postAjax("{{url_for('home')}}", formData, false, false, "") // Why isnt this working?
+                    postAjax("/login", formData, false, false, "") // Why isnt this working?
                     loginModal.modal('hide') // close login up modal
                 }
             } catch (error) {
@@ -445,7 +446,7 @@
                         "username": usernameInput,
                         "newpassword": passwordInput
                     }
-                    postAjax("{{url_for('home')}}", formData, false, false, "")
+                    postAjax("/resetpassword", formData, false, false, "")
                     document.getElementById("forgotpassword-incorrect").classList.add("successful")
                     document.getElementById("forgotpassword-incorrect").innerText = "Successfully Reset Password"
                 }
@@ -542,7 +543,7 @@
                         "email": document.getElementById("signup-email").value,
                         "password": document.getElementById("signup-password").value
                     }
-                    postAjax("{{url_for('home')}}", formData, false, false, "")
+                    postAjax("/signup", formData, false, false, "")
                     signUpModal.modal('hide') // close sign up modal
                     loginModal.modal('show') // open login modal
                 }
@@ -1297,7 +1298,13 @@
     }
 
     function validateSearchForm() {
-        return document.getElementById('text').value.trim().length > 0;
+        return document.getElementById('text').value.trim().length > 0
+    }
+
+    function validateCategorySearch() {
+        {# what? #}
+        alert(document.getElementById('category-search-bar').value.trim().length)
+        return document.getElementById('category-search-bar').value.trim().length > 0
     }
 </script>
 </html>
