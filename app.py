@@ -353,6 +353,22 @@ def delete_word():
     return {}
 
 
+@app.route('/deletewordfromdata', methods=['POST'])
+def delete_word_from_data():  # Alternative method for deleting a word
+    print("CALLED?")
+    json_data = request.get_json()
+    current_word = json_data["currentWord"]
+    translated_word = json_data["translatedWord"]
+    con = create_connection(DATABASE)
+    cur = con.cursor()
+    query = "DELETE FROM words WHERE maoriword = ? OR englishword = ? OR maoriword = ? OR englishword = ?"
+    cur.execute(query, (current_word, translated_word, translated_word, current_word))
+    con.commit()
+    con.close()
+    return {}
+
+
+
 @app.route('/getcategoryid', methods=['POST'])
 def get_category_id():
     json_data = request.get_json()
@@ -414,118 +430,148 @@ def logout():
 @app.route('/', methods=['POST', 'GET'])
 def home():  # put application's code here
     print("LOGGED", json.dumps(is_logged_in()))
-    return render_template('home.html', logged_in=json.dumps(is_logged_in()),
-                           administrator=json.dumps(is_administrator()))
-
-
-@app.route('/categories/<category>/<page>', methods=['POST', 'GET'])
-def categories(category, page):
-    # VALIDATE IT IF THE USER PUT IN A NON EXISTENT PAGE/CATEGORY
-    con = open_database(DATABASE)
-    cur = con.cursor()
-    query = "SELECT level from levels"
-    cur.execute(query)
-    levels = [level[0] for level in cur.fetchall()]
-    con.close()
-    if session.get("selected-values") is None:
-        session["selected-values"] = levels
-    all_levels_selected = "all" in session["selected-values"]
-    if all_levels_selected:
-        selected_levels = levels
-    else:
-        selected_levels = [int(x) for x in session["selected-values"]]
-    if session.get("selected-language") is None:
-        session["selected-language"] = "English-Māori"  # This is the 'origin language'
-    if session.get("selected-sorting-method") is None:
-        session["selected-sorting-method"] = "A-Z"  # A-Z
-    if session.get("selected-words-per-page") is None:
-        session["selected-words-per-page"] = "12"  # store as a string as this can be All
     if request.method == "POST":
-        json_data = request.get_json()
-        if "type" in json_data:  # failsafe
-            if json_data["type"] == "category-language":
-                session["selected-language"] = json_data["language"]
-            if json_data["type"] == "sorting-methods":
-                session["selected-sorting-method"] = json_data["selectedvalue"]
-            if json_data["type"] == "words-per-page":
-                session["selected-words-per-page"] = json_data["selectedvalue"]
-            if json_data["type"] == "level-filter":
-                session["selected-values"] = json_data["checkboxes"]
-    con = open_database(DATABASE)
-    cur = con.cursor()
-    query = "SELECT category_name FROM categories"
-    cur.execute(query)
-    category_list = sorted([x[0] for x in cur.fetchall()])
-    current_category = 0
-    sanitised_category_list = [x.replace("/", "").lower() for x in category_list]
-    sanitised_category_list = [re.sub(r'\s+', '-', x) for x in sanitised_category_list]
-    category_sanitised = category.title().replace("-", " ")
-    if category_sanitised != "All Categories":
-        query = "SELECT category_id FROM categories WHERE category_name = ?"
-        cur.execute(query, (category_sanitised,))
-        current_category = cur.fetchall()[0][0]
-        con.close()
-    selected_language = session["selected-language"]
-    sorting_method = session["selected-sorting-method"]
-    words_per_page = session["selected-words-per-page"]
-    # Need to render the words dependent on all of these constraints
-    question_marks = "{}".format(','.join(['?'] * len(selected_levels)))
-    if current_category > 0:
+        search_input = request.form.get("text")
+        return redirect(f"/categories/all-categories/search/{search_input}/1")
+    else:
+        return render_template('home.html', logged_in=json.dumps(is_logged_in()),
+                               administrator=is_administrator())
+
+
+@app.route('/categories/<category>/<page>', defaults={'search': None}, methods=['POST', 'GET'])
+@app.route('/categories/<category>/search/<search>/<page>')
+def categories(category, page, search):
+    # VALIDATE IT IF THE USER PUT IN A NON EXISTENT PAGE/CATEGORY
+    if request.method == "GET":
         con = open_database(DATABASE)
         cur = con.cursor()
-        query = f"SELECT maoriword, englishword, definition, level, image, word_id FROM words WHERE cat_id = ? and" \
-                f" level IN ({question_marks})"
-        cur.execute(query, (current_category, *tuple(selected_levels)))
-        word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
+        query = "SELECT level from levels"
+        cur.execute(query)
+        levels = [level[0] for level in cur.fetchall()]
         con.close()
-    else:  # current category is 0 (or error has occurred so just display all)
+        if session.get("selected-values") is None:
+            session["selected-values"] = levels
+        all_levels_selected = "all" in session["selected-values"]
+        if all_levels_selected:
+            selected_levels = levels
+        else:
+            selected_levels = [int(x) for x in session["selected-values"]]
+        if session.get("selected-language") is None:
+            session["selected-language"] = "English-Māori"  # This is the 'origin language'
+        if session.get("selected-sorting-method") is None:
+            session["selected-sorting-method"] = "A-Z"  # A-Z
+        if session.get("selected-words-per-page") is None:
+            session["selected-words-per-page"] = "12"  # store as a string as this can be All
+        if request.method == "POST":
+            json_data = request.get_json()
+            if "type" in json_data:  # failsafe
+                if json_data["type"] == "category-language":
+                    session["selected-language"] = json_data["language"]
+                if json_data["type"] == "sorting-methods":
+                    session["selected-sorting-method"] = json_data["selectedvalue"]
+                if json_data["type"] == "words-per-page":
+                    session["selected-words-per-page"] = json_data["selectedvalue"]
+                if json_data["type"] == "level-filter":
+                    session["selected-values"] = json_data["checkboxes"]
         con = open_database(DATABASE)
         cur = con.cursor()
-        query = f"SELECT maoriword, englishword, definition, level, image, word_id FROM words WHERE level" \
-                f" IN ({question_marks})"
-        cur.execute(query, (*tuple(selected_levels),))
-        word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
-        con.close()
-    # [0] is maoriword, [1] is english word, [2] is definition, [3] is level, [4] is image, [5] is word id
-    # NEED TO MAKE SURE THAT THE WORD ID WORKS WHEN THE CATEGORY ISN'T all-categories
-    if current_category > 0:
-        category_name = category  # sanitised_category_list[current_category - 1]
+        query = "SELECT category_name FROM categories"
+        cur.execute(query)
+        category_list = sorted([x[0] for x in cur.fetchall()])
+        current_category = 0
+        sanitised_category_list = [x.replace("/", "").lower() for x in category_list]
+        sanitised_category_list = [re.sub(r'\s+', '-', x) for x in sanitised_category_list]
+        category_sanitised = category.title().replace("-", " ")
+        if category_sanitised != "All Categories":
+            query = "SELECT category_id FROM categories WHERE category_name = ?"
+            cur.execute(query, (category_sanitised,))
+            current_category = cur.fetchall()[0][0]
+            con.close()
+        selected_language = session["selected-language"]
+        sorting_method = session["selected-sorting-method"]
+        words_per_page = session["selected-words-per-page"]
+        # Need to render the words dependent on all of these constraints
+        question_marks = "{}".format(','.join(['?'] * len(selected_levels)))
+        if current_category > 0:
+            con = open_database(DATABASE)
+            cur = con.cursor()
+            query = f"SELECT maoriword, englishword, definition, level, image, word_id FROM words WHERE cat_id = ? and" \
+                    f" level IN ({question_marks})"
+            cur.execute(query, (current_category, *tuple(selected_levels)))
+            word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
+            con.close()
+        else:  # current category is 0 (or error has occurred so just display all)
+            con = open_database(DATABASE)
+            cur = con.cursor()
+            query = f"SELECT maoriword, englishword, definition, level, image, word_id FROM words WHERE level" \
+                    f" IN ({question_marks})"
+            cur.execute(query, (*tuple(selected_levels),))
+            word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
+            con.close()
+        # [0] is maoriword, [1] is english word, [2] is definition, [3] is level, [4] is image, [5] is word id
+        # Only reset the current search when the category has changed
+        current_search = ""
+        if search is not None:
+            current_search = search
+            matching_words = []
+            for word in word_list:
+                print("WORD", word)
+                if word[1].lower().startswith(search.lower()):
+                    matching_words.append(word)
+                elif word[0].lower().startswith(search.lower()):
+                    matching_words.append(word)
+            word_list = matching_words
+        if current_category > 0:
+            category_name = category  # sanitised_category_list[current_category - 1]
+        else:
+            category_name = "all-categories"
+        total_words = len(word_list)
+        sorted_word_list = []
+        page = int(page)
+        current_page = page - 1
+        category_index = 0
+        for i in range(len(category_list)):
+            if sanitised_category_list[i] == category.lower():
+                category_index = i + 1
+                break
+        if words_per_page != "All":
+            words_per_page = int(words_per_page)
+            actual_words_per_page = words_per_page
+            page_count = math.ceil(len(word_list) / words_per_page)
+            for i in range(0, len(word_list), words_per_page):
+                sorted_word_list.append(list(word_list[i:i + words_per_page]))
+        else:  # Display all words
+            page_count = 1
+            sorted_word_list = [word_list]
+            actual_words_per_page = len(sorted_word_list[page - 1])
+        if len(sorted_word_list) > 0:
+            minimum_value = (current_page * actual_words_per_page) + 1
+            maximum_value = min((current_page + 1) * actual_words_per_page,
+                                (current_page * actual_words_per_page) + len(sorted_word_list[page - 1]))
+        else:
+            minimum_value = 0
+            maximum_value = 0
+        return render_template('categories.html', logged_in=json.dumps(is_logged_in()),
+                               administrator=is_administrator(), category_list=category_list,
+                               sanitised_category_list=sanitised_category_list, current_category=category_index,
+                               category_name=category_name, sorting_method=sorting_method,
+                               selected_language=selected_language, words_per_page=words_per_page,
+                               word_list=sorted_word_list, page_count=page_count, total_words=total_words,
+                               current_page=current_page, display_page=page, minimum_value=minimum_value,
+                               maximum_value=maximum_value, levels=levels, all_levels_selected=all_levels_selected,
+                               selected_levels=selected_levels, current_search=current_search)
     else:
-        category_name = "all-categories"
-    total_words = len(word_list)
-    sorted_word_list = []
-    page = int(page)
-    current_page = page - 1
-    category_index = 0
-    for i in range(len(category_list)):
-        if sanitised_category_list[i] == category.lower():
-            category_index = i + 1
-            break
-    if words_per_page != "All":
-        words_per_page = int(words_per_page)
-        actual_words_per_page = words_per_page
-        page_count = math.ceil(len(word_list) / words_per_page)
-        for i in range(0, len(word_list), words_per_page):
-            sorted_word_list.append(list(word_list[i:i + words_per_page]))
-    else:  # Display all words
-        page_count = 1
-        sorted_word_list = [word_list]
-        actual_words_per_page = len(sorted_word_list[page - 1])
-    if len(sorted_word_list) > 0:
-        minimum_value = (current_page * actual_words_per_page) + 1
-        maximum_value = min((current_page + 1) * actual_words_per_page,
-                            (current_page * actual_words_per_page) + len(sorted_word_list[page - 1]))
-    else:
-        minimum_value = 0
-        maximum_value = 0
-    return render_template('categories.html', logged_in=json.dumps(is_logged_in()), administrator=json.dumps(is_administrator()),
-                           category_list=category_list, sanitised_category_list=sanitised_category_list,
-                           current_category=category_index, category_name=category_name,
-                           sorting_method=sorting_method, selected_language=selected_language,
-                           words_per_page=words_per_page, word_list=sorted_word_list, page_count=page_count,
-                           total_words=total_words, current_page=current_page, display_page=page,
-                           minimum_value=minimum_value, maximum_value=maximum_value, levels=levels,
-                           all_levels_selected=all_levels_selected, selected_levels=selected_levels)
+        search_input = request.form.get("category-search-bar")
+        print("CALLED CALLED")
+        if len(search_input) > 0:
+            return redirect(f'/categories/{category}/search/{search_input}/1')
+        else:
+            previous_search = request.form.get("previous-search")
+            print(previous_search)
+            if len(previous_search) > 0:  # There was a previous search
+                return redirect(f'/categories/{category}/1')
+            else:
+                return redirect(f'/categories/{category}/{int(page)+1}')
 
 
 # make the request go under a custom thing
@@ -538,14 +584,12 @@ def contact():
         # Do something with the form data (e.g., store it in a database)
         return redirect(url_for('contact'))
     else:
-        return render_template('contact.html', logged_in=json.dumps(is_logged_in()), administrator=json.dumps(is_administrator()))
+        return render_template('contact.html', logged_in=json.dumps(is_logged_in()), administrator=is_administrator())
 
 
 @app.route('/translate/<word>', defaults={'word_id': None}, methods=['POST', 'GET'])
 @app.route('/translate/<word>/<word_id>', methods=['POST', 'GET'])
 def translate(word, word_id):  # Using the word and not the word id as its more readable to the user
-    translated_word = "test"
-    print(session["selected-language"])
     # if English-Māori make sure that the english word is first, then the māori word is second and vice versa
     con = open_database(DATABASE)
     cur = con.cursor()
@@ -594,10 +638,11 @@ def translate(word, word_id):  # Using the word and not the word id as its more 
         data_time = datetime_object.strftime("%H:%M")
         data_time = datetime.datetime.strptime(data_time, "%H:%M").strftime("%I:%M%p").lower()
         con.close()
+        print("ADMIN", is_administrator())
         return render_template('translate.html', current_word=current_word, translated_word=translated_word,
                                definition=definition, level=level, image=image, user_added=user_added, time=data_time,
                                date=data_date, logged_in=json.dumps(is_logged_in()),
-                               administrator=json.dumps(is_administrator()), word_id=word_id)
+                               administrator=is_administrator(), word_id=word_id)
     else:
         return redirect("/categories/all-categories/1")
 
@@ -629,7 +674,7 @@ def admin():
         print(levels)
         con.close()
         return render_template("admin.html", logged_in=json.dumps(is_logged_in()),
-                               administrator=json.dumps(is_administrator()), category_ids=category_ids,
+                               administrator=is_administrator(), category_ids=category_ids,
                                category_names=category_names, levels=levels, english_words=english_words,
                                maori_words=maori_words)
     else:

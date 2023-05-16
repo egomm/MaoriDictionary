@@ -337,6 +337,7 @@
     const deleteWordModal = $('#deleteWordModal')
     const addCategoryModal = $('#addCategoryModal')
     const deleteCategoryModal = $('#deleteCategoryModal')
+    const directDeleteWordModal = $('#directDeleteWordModal')
 
     function ValidateLoginForm() { // Function for validating the login form
         (async () => { // Use an async to get whether the username & email are already used in the database
@@ -1281,6 +1282,22 @@
                 manageDeleteCategory(categoryName, categoryId)
             }
         })
+    }
+
+    function directlyDeleteWord() {
+        const wordInformation = document.getElementById("translate-header-word").innerText.split("\n")
+        const currentWord = wordInformation[0]
+        const translatedWord = wordInformation[1]
+        const formData = {
+            "currentWord": currentWord,
+            "translatedWord": translatedWord
+        }
+        postAjax("/deletewordfromdata", formData, false, true, "/categories/all-categories/1")
+        directDeleteWordModal.modal('hide')
+    }
+
+    function validateSearchForm() {
+        return document.getElementById('text').value.trim().length > 0;
     }
 </script>
 </html>

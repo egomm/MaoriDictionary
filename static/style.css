@@ -842,6 +842,12 @@ option {
     margin-top: 2.5% !important;
 }
 
+#delete-word-confirmation {
+    margin-top: 5%;
+    width: 25%;
+    color: white;
+}
+
 nav {
     background-color: rgba(51, 51, 51, 1.0); /* grey */
     text-align: center;

@@ -97,8 +97,11 @@
                 <div class="category-divider-elements">
                     <div id="category-search-text">SEARCH</div>
                     <div class="category-search">
-                        <input id="category-search-bar" type="text" placeholder="Search in English or Māori...">
-                        <button id="category-search-submit" type="submit"><img src="/static/images/search.png"></button>
+                        <form id="category-search-form" method="post" action="/categories/{{ category_name }}/{{ current_page }}">
+                            <input type="hidden" name="previous-search" value="{{ current_search }}">
+                            <input name="category-search-bar" id="category-search-bar" type="text" placeholder="Search in English or Māori..." value="{{ current_search }}">
+                            <button id="category-search-submit" type="submit"><img src="/static/images/search.png"></button>
+                        </form>
                     </div>
                     <div id="category-language-title">LANGUAGE</div>
                     <div id="category-language-background" data-selected-language="{{ selected_language }}">{{ selected_language }}</div> {# edit the data here? #}
@@ -137,10 +140,14 @@
                                         <div class="text">
                                             <div id="word-table-word">
                                                 {% if selected_language == "English-Māori" %}
-                                                    <div id="word-table-title"><a href="/translate/{{ word_list[current_page][j][1] }}/{{ word_list[current_page][j][5] }}">{{ word_list[current_page][j][1] }}</a></div>
+                                                    <div id="word-table-title">
+                                                        <a href="/translate/{{ word_list[current_page][j][1] }}/{{ word_list[current_page][j][5] }}">{{ word_list[current_page][j][1] }}</a>
+                                                    </div>
                                                     <div id="word-table-translation">{{ word_list[current_page][j][0] }}</div>
                                                 {% else %}
-                                                    <div id="word-table-title"><a href="/translate/{{ word_list[current_page][j][0] }}/{{ word_list[current_page][j][5] }}">{{ word_list[current_page][j][0] }}</a></div>
+                                                    <div id="word-table-title">
+                                                        <a href="/translate/{{ word_list[current_page][j][0] }}/{{ word_list[current_page][j][5] }}">{{ word_list[current_page][j][0] }}</a>
+                                                    </div>
                                                     <div id="word-table-translation">{{ word_list[current_page][j][1] }}</div>
                                                 {% endif %}
                                             </div>
@@ -175,24 +182,50 @@
                      {# add the 'active' class #}
                      <ul class="pagination pagination-lg">
                          {% if display_page > 1 %}
-                             <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page - 1 }}"><</a></li> {# previous page #}
-                             <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/1">1</a></li> {# first page #}
-                             {% if display_page > 2 %}
-                                 <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page - 1 }}">{{ display_page - 1 }}</a></li> {# previous page #}
+                             {% if current_search|length > 0 %}
+                                 <li class="page-item"> {# previous page #}
+                                     <a class="page-link" href="/categories/{{ category_name }}/search/{{ current_search }}/{{ display_page - 1 }}"><</a>
+                                 </li>
+                                 <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/search/{{ current_search }}/1">1</a></li> {# first page #}
+                                 {% if display_page > 2 %}
+                                     <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/search/{{ current_search }}/{{ display_page - 1 }}">{{ display_page - 1 }}</a></li> {# previous page #}
+                                 {% endif %}
+                             {% else %}
+                                 <li class="page-item"> {# previous page #}
+                                     <a class="page-link" href="/categories/{{ category_name }}/{{ display_page - 1 }}"><</a>
+                                 </li>
+                                 <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/1">1</a></li> {# first page #}
+                                 {% if display_page > 2 %}
+                                     <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page - 1 }}">{{ display_page - 1 }}</a></li> {# previous page #}
+                                 {% endif %}
                              {% endif %}
                          {% else %}
                              <li class="page-item"><a class="page-link" href=""><</a></li>
                          {% endif %}
-                         <li class="page-item"><a class="page-link active-page" href="/categories/{{ category_name }}/{{ display_page }}">{{ display_page }}</a></li>  {# active page #}
-                        {# next page #}
-                        {% if display_page < page_count %} {# not last page #}
-                            <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page + 1 }}">{{ display_page + 1 }}</a></li> {# next page #}
-                            {% if display_page + 1 < page_count %} {# not second to last page #}
-                                <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ page_count }}">{{ page_count }}</a></li>
+                        {% if current_search|length > 0 %}
+                             <li class="page-item"><a class="page-link active-page" href="/categories/{{ category_name }}/search/{{ current_search }}/{{ display_page }}">{{ display_page }}</a></li>  {# active page #}
+                            {# next page #}
+                            {% if display_page < page_count %} {# not last page #}
+                                <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/search/{{ current_search }}/{{ display_page + 1 }}">{{ display_page + 1 }}</a></li> {# next page #}
+                                {% if display_page + 1 < page_count %} {# not second to last page #}
+                                    <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/search/{{ current_search }}/{{ page_count }}">{{ page_count }}</a></li>
+                                {% endif %}
+                                <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/search/{{ current_search }}/{{ display_page + 1 }}">></a></li> {# next page #}
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="">></a></li>
                             {% endif %}
-                            <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page + 1 }}">></a></li> {# next page #}
                         {% else %}
-                            <li class="page-item"><a class="page-link" href="">></a></li>
+                             <li class="page-item"><a class="page-link active-page" href="/categories/{{ category_name }}/{{ display_page }}">{{ display_page }}</a></li>  {# active page #}
+                            {# next page #}
+                            {% if display_page < page_count %} {# not last page #}
+                                <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page + 1 }}">{{ display_page + 1 }}</a></li> {# next page #}
+                                {% if display_page + 1 < page_count %} {# not second to last page #}
+                                    <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ page_count }}">{{ page_count }}</a></li>
+                                {% endif %}
+                                <li class="page-item"><a class="page-link" href="/categories/{{ category_name }}/{{ display_page + 1 }}">></a></li> {# next page #}
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="">></a></li>
+                            {% endif %}
                         {% endif %}
                     </ul>
                 </div>

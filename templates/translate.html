@@ -6,7 +6,7 @@
 
 {% block main %}
     <div id="translate-content">
-        <form action="/" method="POST" class="translate-search-bar">
+        <form action="/" method="POST" class="translate-search-bar" onsubmit="return validateSearchForm()">
             <input type="text" placeholder="Search in English or Māori..." name="text" id="text">
             <button type="submit"><img src="/static/images/search.png"></button>
         </form>
@@ -23,6 +23,9 @@
                 <div id="translate-definition">{{ definition }}</div>
                 <div id="translate-level">Level: {{ level }}</div>
                 <div id="translate-added-by">Added by {{ user_added }} at {{ time }} on {{ date }}</div>
+                {% if administrator %}
+                    <input type="button" value="Delete word" class="form-submit" id="delete-word-confirmation" onclick="directDeleteWordModal.modal('show')">
+                {% endif %}
             </div>
             <div id="translate-break"></div>
             <div id="translate-image">
@@ -35,6 +38,24 @@
         </div>
         <div id="extra-word-information">
 
+        </div>
+    </div>
+
+    {# Delete word modal #}
+    <div id="directDeleteWordModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h4 class="modal-title">Confirm Delete Word</h4>
+                </div>
+                <div class="modal-footer add-word-footer">
+                    <div id="add-word-modal-confirmation">
+                        <input type="button" value="Cancel" class="form-submit" id="add-word-modal-confirmation-cancel" onclick="directDeleteWordModal.modal('hide')">
+                        <input type="button" value="Confirm" class="form-submit" id="add-word-modal-confirmation-submit" onclick="directlyDeleteWord()">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
