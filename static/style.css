@@ -225,6 +225,7 @@ body {
 }
 
 .category-divider-elements {
+    font-size: 1.5rem;
     height: 5vh;
     display: flex;
     align-items: center;
@@ -236,6 +237,7 @@ body {
 }
 
 #category-search-bar {
+    background: none;
     padding-left: 2%;
     width: 85%;
     border: none;
@@ -269,7 +271,7 @@ body {
 }
 
 #category-language-title {
-    margin-left: 29.5%;
+    margin-left: 25%;
 }
 
 #category-language-background {
@@ -278,7 +280,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 8%;
+    width: 11%;
     height: 60%;
     background-color: white;
 }
@@ -538,7 +540,6 @@ body {
   flex-direction: column;
     margin-right: 5%;
   align-self: flex-start;
-  /*flex-grow: 1;*/
 }
 
 #word-testing {
@@ -550,7 +551,7 @@ body {
 }
 
 .word-table-image-container {
-    height: 100%; /* This may cause issues? */
+    height: 100%;
     margin-left: 5%;
     width: 35%;
     display: flex;
@@ -646,7 +647,6 @@ body {
 
 .categories #categorylist td { /* Need to work on this */
     font-size: 2rem;
-    /*border: 1px solid #dddddd;*/
     text-align: center;
 }
 
@@ -656,8 +656,6 @@ body {
     background: white center;
     background-size: cover;
     height: 92vh;
-    /*background-color: rgba(52, 73, 94, 1.0);*/
-    /*color: rgba(236, 240, 241, 1.0);*/
 }
 
 .container::after {
@@ -780,10 +778,6 @@ h3, h4 {
     outline: none;
 }
 
-option {
-    /*overflow-y: scroll;*/
-}
-
 #add-word-modal-image {
     margin-left: 5%;
 }
@@ -844,6 +838,12 @@ option {
 
 #delete-word-confirmation {
     margin-top: 5%;
+    width: 90%;
+    color: white;
+}
+
+#direct-delete-word-confirmation {
+    margin-top: 5%;
     width: 25%;
     color: white;
 }
@@ -852,12 +852,15 @@ nav {
     background-color: rgba(51, 51, 51, 1.0); /* grey */
     text-align: center;
     height: 8vh;
-    /*color: rgba(52, 152, 219, 1.0);!*light blue*!*/
-    /*font-size: 1.5rem;*/
+    width: 100%;
     font-size: 3vh;
     padding: 0 2rem 0.7rem;
     color: rgba(255, 255, 255, 1.0); /*white*/
     font-weight: bold;
+}
+
+body {
+    width: 100%;
 }
 
 .navbar-brand {
@@ -872,25 +875,17 @@ nav {
 
 nav a {
     color: white;
-    /*margin:0 0.5rem;*/
     padding: 0 0.5rem;
-    /*font-size: 1.5rem;*/
-    font-size: 2.5vh;
-    /*border: 1px solid rgba(52, 152, 219, 1.0);*/
-    /*border-radius:0.5rem;*/
+    font-size: 2.5rem;
 }
 
 nav a:hover {
-    /*color: rgba(44, 62, 80, 1.0); !* darkest blue *!*/
-    /*background-color: rgba(52, 152, 219, 1.0); !*light blue*!*/
     color: white;
     text-decoration: none;
     border-bottom: 3px solid white;
 }
 
 .navbar-links a, a:visited {
-    /*color: rgba(255, 255, 255, 1.0);*/
-    /*color:hotpink;*/
     text-decoration: none;
     color: inherit;
 }
@@ -950,20 +945,95 @@ nav a:hover {
     .search-bar input {
         padding: 24px 0;
     }
-}
-
-@media only screen and (max-width: 450px) {
-    nav {
-        font-size: 2.5vh;
-    }
-    nav a {
-        font-size: 2vh;
+    .category-button {
+        font-size: 0.75rem;
     }
 }
 
 @media only screen and (max-width: 500px) {
     .search-bar {
         width: 100vw;
+    }
+    .navbar-brand {
+        font-size: 1.5rem;
+    }
+    nav a {
+        font-size: 1.5rem;
+    }
+}
+
+@media only screen and (max-width: 1400px) {
+    #category-language-title {
+        margin-left: 11%;
+    }
+    .category-divider-elements  {
+        font-size: 1.25rem;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    .category-divider-elements  {
+        font-size: 1.1rem;
+    }
+    #category-language-title {
+        margin-left: 7%;
+    }
+    .category-button {
+        font-size: 1.75rem;
+    }
+    #word-table-title {
+        font-size: 2.75rem;
+    }
+    #word-table-translation {
+        font-size: 2.75rem;
+    }
+    #word-table-definition {
+        font-size: 1.5rem;
+    }
+    #word-table-level {
+        font-size: 1.25rem;
+    }
+}
+
+@media only screen and (max-width: 1000px) {
+    .category-divider-elements  {
+        font-size: 0.8rem;
+    }
+    #category-language-title {
+        margin-left: 5%;
+    }
+    .category-button {
+        font-size: 1.5rem;
+    }
+    #word-table-title {
+        font-size: 2.5rem;
+    }
+    #word-table-translation {
+        font-size: 2.5rem;
+    }
+    #word-table-definition {
+        font-size: 1.3rem;
+    }
+    #word-table-level {
+        font-size: 1.05rem;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .category-button {
+        font-size: 1.1rem;
+    }
+    #word-table-title {
+        font-size: 2rem;
+    }
+    #word-table-translation {
+        font-size: 2rem;
+    }
+    .category-divider-elements #word-table-definition {
+        font-size: 1.1rem;
+    }
+    #word-table-level {
+        font-size: 0.85rem;
     }
 }
 
@@ -973,5 +1043,20 @@ nav a:hover {
     }
     .homecontainer {
         width: 100%;
+    }
+    .category-button {
+        font-size: 0.75rem;
+    }
+    #word-table-title {
+        font-size: 1.5rem;
+    }
+    #word-table-translation {
+        font-size: 1.5rem;
+    }
+    .category-divider-elements #word-table-definition {
+        font-size: 1rem;
+    }
+    #word-table-level {
+        font-size: 0.75rem;
     }
 }

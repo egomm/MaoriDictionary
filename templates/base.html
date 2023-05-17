@@ -453,11 +453,13 @@
                 })
                 const responseText = await response.json() // wait for the response
                 document.getElementById("forgotpassword-incorrect").classList.remove("successful")
-                clearText(["forgotpassword-incorrect", "forgotpassword-firstname-incomplete", "forgotpassword-lastname-incomplete", "forgotpassword-username-incomplete", "forgotpassword-email-incomplete", "forgotpassword-password-incomplete", "forgotpassword-confirmpassword-incomplete"])
+                clearText(["forgotpassword-incorrect", "forgotpassword-firstname-incomplete", "forgotpassword-lastname-incomplete", "forgotpassword-username-incomplete",
+                    "forgotpassword-email-incomplete", "forgotpassword-password-incomplete", "forgotpassword-confirmpassword-incomplete"])
                 clearColour(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
                 let fail = false // variable used throughout to check if the data is valid
                 // Iterate over fields to check if they have any input, if they don't notify their respected error message
-                const elementsToCheck = ["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"]
+                const elementsToCheck = ["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password",
+                    "forgotpassword-confirmpassword"]
                 const elementMessages = {
                     "forgotpassword-firstname": ".First name is required",
                     "forgotpassword-lastname": ".Last name is required",
@@ -526,7 +528,8 @@
                 let usernameInUse = responseText.usernameUsed
                 let emailInUse = responseText.emailUsed
                 // clear the text and colour from previous errors
-                clearText(["signup-button-incomplete", "signup-firstname-incomplete", "signup-lastname-incomplete", "signup-username-incomplete", "signup-email-incomplete", "signup-password-incomplete", "signup-confirmpassword-incomplete"])
+                clearText(["signup-button-incomplete", "signup-firstname-incomplete", "signup-lastname-incomplete", "signup-username-incomplete", "signup-email-incomplete",
+                    "signup-password-incomplete", "signup-confirmpassword-incomplete"])
                 clearColour(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
                 let fail = false // variable used throughout the check if the data the user inputted is valid
                 const teacherButton = document.getElementById("teacher-button").classList.contains("active")
@@ -568,7 +571,8 @@
                 if (emailInput.length > 0) { // Ensure that the email input is at least one character long
                     if (emailInput.length > emailMaxLength || emailInput.length < emailMinLength) { // Limit email address to be between 4-256 characters
                         fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".Email must be between 4-256 characters", true)
-                    } else if (!(emailInput.includes('@') && emailInput.split('@')[emailInput.split('@').length - 1].includes('.'))) { // "very.(),:;<>[]\".VERY.\"very@\\ \"very\".unusual"@strange.example.com <- this email address is valid, so this should accept that
+                    } else if (!(emailInput.includes('@') && emailInput.split('@')[emailInput.split('@').length - 1].includes('.'))) {
+                        // "very.(),:;<>[]\".VERY.\"very@\\ \"very\".unusual"@strange.example.com <- this email address is valid, so this should accept that
                         fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".Email must include '@' and '.' afterwards", true)
                     } else if (emailInUse) { // Disallow duplicate email addresses
                         fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".This email address is already in use", true)
@@ -659,7 +663,8 @@
         document.getElementById("forgotpassword-show-password").checked = false // Set the checked value to false
         document.getElementById("forgotpassword-incorrect").classList.remove("successful")
         clearValue(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
-        clearText(["forgotpassword-incorrect", "forgotpassword-firstname-incomplete", "forgotpassword-lastname-incomplete", "forgotpassword-username-incomplete", "forgotpassword-email-incomplete", "forgotpassword-password-incomplete", "forgotpassword-confirmpassword-incomplete"])
+        clearText(["forgotpassword-incorrect", "forgotpassword-firstname-incomplete", "forgotpassword-lastname-incomplete", "forgotpassword-username-incomplete",
+            "forgotpassword-email-incomplete", "forgotpassword-password-incomplete", "forgotpassword-confirmpassword-incomplete"])
         clearColour(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
     })
 
@@ -673,7 +678,8 @@
         removeTeacherButtonInput()
         removeStudentButtonInput()
         clearValue(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
-        clearText(["signup-button-incomplete", "signup-firstname-incomplete", "signup-lastname-incomplete", "signup-username-incomplete", "signup-email-incomplete", "signup-password-incomplete", "signup-confirmpassword-incomplete"])
+        clearText(["signup-button-incomplete", "signup-firstname-incomplete", "signup-lastname-incomplete", "signup-username-incomplete", "signup-email-incomplete",
+            "signup-password-incomplete", "signup-confirmpassword-incomplete"])
         clearColour(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
     })
 
@@ -768,6 +774,9 @@
         }
     }
 
+    // Set the image size when the page is resized
+    window.addEventListener("resize", setImgSize)
+
     const collapsible = document.getElementById("level-filters-collapsible")
     collapsible.addEventListener("click", function() {
         /** Manage the text and display of the level collapsible when it is clicked */
@@ -861,6 +870,7 @@
 
     const levelCheckbox = document.querySelectorAll(".level-filter-check")
     levelCheckbox.forEach(levelCheckbox => {
+        /** Manage the checkboxes when an element with the class level-filter-check is clicked */
         levelCheckbox.addEventListener('click', (event) => {
             // This stops the event
             event.stopPropagation()
@@ -870,6 +880,10 @@
 
     const levelFilters = document.querySelectorAll(".button-level-filter")
     levelFilters.forEach(levelFilters => {
+        /**
+         * Manage the checkboxes when an element with the class button-level-filter is clicked,
+         * also change the checkbox state of the level filters
+         */
         levelFilters.addEventListener('click', () => {
             const checkbox = levelFilters.querySelector('input[type="checkbox"]')
             checkbox.checked = !checkbox.checked
@@ -879,6 +893,10 @@
 
     const levelFilterSubmit = document.getElementById("button-level-submit")
     levelFilterSubmit.addEventListener('click', () => {
+        /**
+         * Function which is called when the user submits their changes to the levels
+         * This posts an ajax request with the current selected checkboxes
+         */
         const activeCheckboxStates = JSON.parse(localStorage.getItem('storedCheckboxStates'))
         let activeCheckboxes = []
         for (const checkbox in activeCheckboxStates) {
@@ -894,30 +912,14 @@
         postAjax("{{url_for('categories', category='all-categories', page=1)}}", formData, false, true, `/categories/${currentCategory}/1`) // redirect to first pay
     })
 
-    window.addEventListener("resize", setImgSize)
-
-    function displayWordInformation(englishWord, maoriWord, definition) {
-            (async() => {
-                try {
-                    /*const data = {categorYName: }
-                    const response = await fetch('/getcategoryid', { // fetch /getwordinformation from app.py
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data) // parse through the data (email and username input)
-                    })
-                    const responseText = await response.json()*/
-
-                } catch(error) {
-                    console.log(error)
-                }
-            })()
-    }
-
     function validateAddWord() {
+        /**
+         * Function for validating the addition of a new word
+         * This get the english word, maori word, and definition then check if it meets the given parameters,
+         * if anything doesn't meet the given parameters, then return an appropriate error message
+         */
         (async () => { // Use an async to get whether the word is already used in the database
-            try { // use try catch just in case
+            try {
                 const englishWord = document.getElementById("english-word").value.trim()
                 const maoriWord = document.getElementById("maori-word").value.trim()
                 const definition = document.getElementById("word-definition").value.trim()
@@ -928,7 +930,7 @@
                 } else if (definition.length > definitionMaxLength) {
                     setValue("word-definition", failedTextColour, "word-definition-incomplete", ".Word definition must be no longer than 128 characters")
                 }
-                /* Ensure that there are no special characters
+                /** Ensure that there are no special characters
                 * /: The starting delimiter of the regular expression.
                 * ^: Anchors the match to the beginning of the string.
                 * [a-z|āēīōū]: Character set that matches any lowercase letter (a-z) or the specific characters ā, ē, ī, ō, ū.
@@ -950,7 +952,7 @@
                     })
                     const responseText = await response.json() // wait for the response
                     /* Words can translate into multiple different words in other languages,
-                    *only disallow repeated entries for both the word and the translated word */
+                    * only disallow repeated entries for both the word and the translated word */
                     let englishInUse = responseText.hasEnglishWord
                     let maoriInUse = responseText.hasMaoriWord
                     if (englishInUse && maoriInUse) {
@@ -968,11 +970,8 @@
                             // Modify the elements on the modal
                             document.getElementById("add-word-modal-english-word").innerText = "English Word: " + englishWord
                             document.getElementById("add-word-modal-maori-word").innerText = "Māori Word: " + maoriWord
-                            //document.getElementById("add-word-modal-maori-word").innerText = "Māori Word: " + maoriWord
                             document.getElementById("add-word-modal-definition").innerText = "Definition: " + definition
                             // Turn the category innerText into an array by splitting at each new line, then get the category name (category value starts at 1)
-                            // THIS WONT WORK - NEED TO CONSIDER THE FACT THE USER CAN DELETE CATEGORIES!
-                            // call an ajax here to get the category name from the id
                             document.getElementById("add-word-modal-category").innerText = "Category: " + category.options[category.selectedIndex].text
                             document.getElementById("add-word-modal-level").innerText = "Level: " + level.value
                             const previewContainer = document.getElementById('add-word-modal-image');
@@ -1020,6 +1019,8 @@
     }
 
     function submitAddWordForm() {
+        /** This function is for submitting the validated word into the app.py */
+        // Cannot use an object literal here as I am also managing data with an image
         let formData = new FormData();
         const englishWord = document.getElementById("english-word").value.trim()
         const maoriWord = document.getElementById("maori-word").value.trim()
@@ -1043,11 +1044,10 @@
             contentType: false, // Tells jQuery not to set any content type header
             success: function () {
                 addWordModal.modal('hide')
-                // DO THIS NEXT -> GET THE WORD ID
                 updateDeleteWord(englishWord, maoriWord)
             }
         })
-        // NEED TO CLEAR ALL THE TEXTBOXES NOW
+        // Clear all the text boxes
         document.getElementById("english-word").value = ""
         document.getElementById("maori-word").value = ""
         document.getElementById("word-definition").value = ""
@@ -1063,6 +1063,11 @@
     }
 
     function replaceMacrons(inputString) {
+        /**
+         * This function is for replacing macrons in maori in place of a corresponding latin character
+         * This is useful for using sorted() in order to sort words by alphabetical order
+         * as macrons are placed weirdly lexicographically
+         */
         let macrons = ['ā', 'ē', 'ī', 'ō', 'ū']
         let characters = ['a', 'e', 'i', 'o', 'u']
         for (let i = 0; i < macrons.length; i++) {
@@ -1072,6 +1077,11 @@
     }
 
     function updateDeleteWord(englishWord, maoriWord) {
+        /**
+         * This function is called when the user has added a word into their database,
+         * this adds the newly added word into the word list in 'Delete Word',
+         * allowing administrators to delete newly added words
+         */
         (async() => {
             try {
                 const data = {english: englishWord, maori: maoriWord}
@@ -1100,10 +1110,6 @@
                     englishNodes[i] = englishOptions[i]
                 }
                 englishDeleteWord.value = originalValue;
-                {#let englishChildElement = document.createElement("option")#}
-                {#englishChildElement.value = wordId#}
-                {#englishChildElement.textContent = englishWord#}
-                {#englishDeleteWord.appendChild(englishChildElement)#}
                 const maoriDeleteWord = document.getElementById("maoriword-select-category")
                 let maoriNodes = maoriDeleteWord.options
                 let maoriOptions = []
@@ -1119,10 +1125,6 @@
                     maoriNodes[i] = maoriOptions[i]
                 }
                 maoriDeleteWord.value = originalValue
-                {#let maoriChildElement = document.createElement("option")#}
-                {#maoriChildElement.value = wordId#}
-                {#maoriChildElement.textContent = maoriWord#}
-                {#maoriDeleteWord.appendChild(maoriChildElement)#}
             } catch (error) {
                 console.log(error)
             }
@@ -1130,19 +1132,28 @@
     }
 
     function handleDeleteEnglishWordChange(selectedElement) {
+        /**
+         * This function handles the english word dropdown in the delete word section,
+         * automatically selecting the corresponding maori word
+        */
         const selectedOption = selectedElement.value;
         const maoriList = document.getElementById("maoriword-select-category")
         maoriList.value = selectedOption
     }
 
     function handleDeleteMaoriWordChange(selectedElement) {
+        /**
+         * This function handles the maori word dropdown in the delete word section,
+         * automatically selecting the corresponding english word
+        */
         const selectedOption = selectedElement.value;
         const englishList = document.getElementById("englishword-select-category")
         englishList.value = selectedOption
     }
 
     function deleteWordModalConfirmation() {
-        (async() => { // Use an async to get data about the word
+        /** This function is for the delete word modal, and allows the user to see the information about the word before confirming deletion */
+        (async() => {
             try {
                 const imageContainer = document.getElementById("delete-word-modal-image")
                 imageContainer.innerHTML = ""
@@ -1183,6 +1194,10 @@
     }
 
     function submitDeleteWordForm() {
+        /**
+         * Post the delete word form data to the app.py to delete the word from the database,
+         * then ensure that any instance of this word is removed from the others forms in the admin section
+        */
         const wordId = document.getElementById("englishword-select-category").value
         const formData = {
             "wordId": wordId
@@ -1200,7 +1215,7 @@
     }
 
     function capitaliseFirstCharEachWord(string) {
-        /*
+        /**
         * \b matches a word boundary, ensuring to make the first character of each word
         * \w matches a word character
         * g is used to perform a global search
@@ -1209,10 +1224,9 @@
     }
 
     function validateAddCategoryForm() {
+        /** Function for validating the add category form information in order to return any errors back to the user */
         let categoryName = document.getElementById("add-category-category").value.trim()
-        //const categoryNameIncomplete = document.getElementById("add-category-category-incomplete")
         if (categoryName.length <= 0 || categoryName.length > categoryMaxLength) {
-            //categoryNameIncomplete.innerText = `.The category name must be between 0 and ${categoryMaxLength} characters`
             setValue("add-category-category", failedTextColour, "add-category-category-incomplete", `.The category name must be between 0 and ${categoryMaxLength} characters`)
         } else {
             (async () => {
@@ -1243,6 +1257,7 @@
     }
 
     function manageNewCategory(categoryName) {
+        /** Manage the addition of a new category */
         (async() => {
             try {
                 const data = {categoryName: categoryName}
@@ -1259,7 +1274,6 @@
                 const addWordCategories = document.getElementById("word-select-category")
                 let addWordCategoryNodes = addWordCategories.options
                 // .options returns a collection, so parse everything to a new array
-                // check if this is needed? ^!!!
                 let addWordCategoryOptions = []
                 for (let i = 0; i < addWordCategoryNodes.length; i++) {
                     // Append the options into a new array
@@ -1267,7 +1281,7 @@
                 }
                 const newAddWordCategoryOption = new Option(categoryName, categoryId)
                 addWordCategoryOptions.push(newAddWordCategoryOption)
-                addWordCategoryOptions.sort((a, b) => a.text > b.text ? 1 : -1) // Moves to left or right
+                addWordCategoryOptions.sort((a, b) => replaceMacrons(a.text) > replaceMacrons(b.text) ? 1 : -1) // Moves to left or right
                 // Need to set the options now
                 let originalValue = addWordCategories.value;
                 for (let i = 0; i < addWordCategoryOptions.length; i++) {
@@ -1283,7 +1297,7 @@
                 }
                 const newDeleteCategoryOption = new Option(categoryName, categoryId)
                 deleteCategoryOptions.push(newDeleteCategoryOption)
-                deleteCategoryOptions.sort((a, b) => a.text > b.text ? 1: -1)
+                deleteCategoryOptions.sort((a, b) => replaceMacrons(a.text) > replaceMacrons(b.text) ? 1: -1)
                 let originalDeleteCategoryValue = deleteCategoryCategories.value
                 for (let i = 0; i < deleteCategoryOptions.length; i++) {
                     deleteCategoryNodes[i] = deleteCategoryOptions[i]
@@ -1296,6 +1310,7 @@
     }
 
     function addCategory() {
+        /** Function for adding a category by posting the information via AJAX and managing the category if the post was successful */
         const categoryName = capitaliseFirstCharEachWord(document.getElementById("add-category-category").value.trim())
         const formData = {
             "categoryName": categoryName
@@ -1315,13 +1330,14 @@
     }
 
     function validateDeleteCategory() {
+        /** Display the category name on the delete category confirmation modal when the user is deleting a category */
         deleteCategoryModal.modal('show')
         const categoryList = document.getElementById("category-name-delete-category")
         document.getElementById("delete-category-modal-category-name").innerText = "Category Name: " + categoryList.options[categoryList.selectedIndex].text
     }
 
     function manageDeleteCategory(categoryName, categoryId) {
-        // Manage delete category list
+        /** Manage the category when the user deletes it (make it so that the user cannot add a word into this category/delete it again) */
         const deleteCategoryCategories = document.getElementById("category-name-delete-category")
         let deleteCategoryNodes = deleteCategoryCategories.options
         let deleteCategoryOptions = []
@@ -1356,6 +1372,7 @@
     }
 
     function deleteCategory() {
+        /** Post data about the category which the user is deleting to the app.py and delete the category */
         const categoryList = document.getElementById("category-name-delete-category")
         const categoryName = categoryList.options[categoryList.selectedIndex].text
         const categoryId = categoryList.value
@@ -1376,6 +1393,7 @@
     }
 
     function directlyDeleteWord() {
+        /** Directly delete the word from the category list */
         const wordInformation = document.getElementById("translate-header-word").innerText.split("\n")
         const currentWord = wordInformation[0]
         const translatedWord = wordInformation[1]
@@ -1388,12 +1406,12 @@
     }
 
     function validateSearchForm() {
+        /** Validate the home page/translate page search form to make sure that the search isn't empty */
         return document.getElementById('text').value.trim().length > 0
     }
 
     function validateCategorySearch() {
-        {# what? #}
-        alert(document.getElementById('category-search-bar').value.trim().length)
+        /** Validate the category page search form to make sure that the search isn't empty */
         return document.getElementById('category-search-bar').value.trim().length > 0
     }
 </script>

@@ -520,7 +520,11 @@ def categories(category, page, search):
     and the current search
     If the request method is post :return: a redirect to the search which had just been inputted
     """
-    if request.method == "GET":
+    using_search = False
+    if "category-search-bar" in request.form:
+        if len(request.form.get("category-search-bar")) > 0:
+            using_search = True
+    if request.method == "GET" or not using_search:
         con = open_database(DATABASE)
         cur = con.cursor()
         query = "SELECT level from levels"
