@@ -18,8 +18,6 @@
     <div class="header">
         <div class="navbar-brand">Māori Dictionary</div>
         <div class="navbar-links">
-            <!-- Only works if I explicitly declare that is has to be true -->
-            <!-- This checks if an object points to the same memory address than another object -->
             <a id="home" href="/">home</a>
             <a id="categories" href="/categories/all-categories/1">categories</a>
             <a id="admin" href="/admin">admin</a>
@@ -195,13 +193,21 @@
 </div>
 <script>
     function postAjax(directedUrl, formData, reload, redirect, url) {
+        /**
+        This function is for posting to a direct url using AJAX
+        :param directedUrl: The url which the post is directed to
+        :param formData: The form data which is provided
+        :param reload: If the page should be reloaded after the data has been posted
+        :param redirect: Redirect to another webpage
+        :param url: The webpage to redirect to (only used if redirect is true)
+         */
         $.ajax({
             type: 'POST',
             url: directedUrl,
             contentType: "application/json",
             data: JSON.stringify(formData),
             success: function() {
-                if (reload) { // reload the page after the data has been posted
+                if (reload) { // Reload the page after the data has been posted
                     location.reload()
                 } else if (redirect) {
                     location.href = url
@@ -210,22 +216,20 @@
         })
     }
 
-    function postMultiPartAjax(directedUrl, formData) {
-        $.ajax({
-            type: 'POST',
-            url: directedUrl,
-            data: formData,
-            processData: false, // Prevents jQuery from automatically converting data to string
-            contentType: false // Tells jQuery not to set any content type header
-        })
-    }
-
     function showLoginPassword() {
+        /**
+         * This function is for displaying the password on the login modal
+         * This is done by changing the type between password and text with a ternary operator
+         */
         const showPassword = document.getElementById("login-password")
         showPassword.type === "password" ? showPassword.type = "text" : showPassword.type = "password"
     }
 
     function showForgotPasswordPassword() {
+        /**
+         * This function is for displaying the password on the forgot password modal
+         * This is done by changing the display type of the inputs between text and password
+         */
         const showPassword = document.getElementById("forgotpassword-password")
         const showConfirmPassword = document.getElementById("forgotpassword-confirmpassword")
         if (showPassword.type === "password") {
@@ -238,6 +242,10 @@
     }
 
     function showSignUpPassword() {
+        /**
+         * This function is for displaying the password on the signup modal
+         * This is done by changing the display type of the inputs between text and password
+         */
         const showPassword = document.getElementById("signup-password")
         const showConfirmPassword = document.getElementById("signup-confirmpassword")
         if (showPassword.type === "password") {
@@ -250,7 +258,12 @@
     }
 
     function checkLogin(logged_in, admin) {
-        /* Need to fix? */
+        /**
+         * This function is for checking if the user is logged in
+         * This will control the display of the login element, logout element, and admin element
+         * :param logged_in: If the user is logged in or not
+         * :param admin: If the user is an administrator or not
+         */
         const loginElement = document.getElementById("login")
         const logoutElement = document.getElementById("logout")
         const adminElement = document.getElementById("admin")
@@ -271,50 +284,75 @@
         }
     }
 
-    requestAnimationFrame(function() {
-        /* This function is providing as a failsafe to make sure what is displayed in the navigation bar is correct
-        * This function is called when the window is animated */
-        checkLogin({{ logged_in }}, {{ admin_clean }})
-    })
-
     function setValue(colourId, colour, textId, text, fail) {
+        /**
+         * This function is for setting the value of an element
+         * This is especially useful for alerting a user if their input is invalid
+         * :param colourId: The element to apply the colour to (as a border colour)
+         * :param colour: The colour for the border colour
+         * :param textId: The element to apply the text to (as innerText)
+         * :param text: The text to apply to the element
+         * :param fail: This parameter is parsed through the function to define a value,
+         * the fail parameter isn't required
+         * :return fail: This will return the fail which has been parsed through,
+         * this can return null if the fail parameter isn't being used
+         */
         document.getElementById(colourId).style.borderColor = colour
         document.getElementById(textId).innerText = text
         return fail
     }
 
-    function clearValue(inputValues) { // Function for clearing the value of elements by their id
+    function clearValue(inputValues) {
+        /**
+         * Function for clearing the value of elements based on their respective ids
+         * :param inputValues: An array of element ids to set their value to an empty string
+         */
         for (const value of inputValues) {
             document.getElementById(value).value = ""
         }
     }
 
-    function clearText(inputText) { // Function for clearing the text of elements by their id
+    function clearText(inputText) {
+        /**
+         * Function for clearing the text of elements based on their respective ids
+         * :param inputText: An array of element ids to set their inner text to an empty string
+         */
         for (const text of inputText) {
             document.getElementById(text).innerText = ""
         }
     }
 
-    function clearColour(inputColour) { // Function for clearing the border colour
+    function clearColour(inputColour) {
+        /**
+         * Function for clearing the border colour of elements based on their respective ids
+         * :param inputColour: An array of element ids to set their border colour to black
+         */
         for (const colour of inputColour) {
             document.getElementById(colour).style.borderColor = "#000"
         }
     }
 
-    function removeTeacherButtonInput() { // Remove the teacher button input
+    function removeTeacherButtonInput() {
+        /**
+         * Function for removing the teacher input, this will remove the active class from the teacher button
+         */
         const teacherButton = document.getElementById("teacher-button")
         if (teacherButton.classList.contains("active")) {
             teacherButton.classList.remove("active")
         }
     }
 
-    function removeStudentButtonInput() { // Remove the student button input
+    function removeStudentButtonInput() {
+        /**
+         * Function for removing the student input, this will remove the active class from the student button
+         */
         const studentButton = document.getElementById("student-button")
         if (studentButton.classList.contains("active")) {
             studentButton.classList.remove("active")
         }
     }
 
+    // Manage the variables for the login/forgot password/signup modals
     const failedTextColour = "#e54b72"
     const firstnameMaxLength = 64
     const lastnameMaxLength = 64
@@ -331,6 +369,7 @@
     const maxImageSize = 15728640 /* Max image size in bytes (15mb) */
     const categoryMaxLength = 32
 
+    // Information about all of the modals
     const loginModal = $('#loginModal')
     const forgotPasswordModal = $('#forgotPasswordModal')
     const signUpModal = $('#signUpModal')
@@ -340,10 +379,15 @@
     const deleteCategoryModal = $('#deleteCategoryModal')
     const directDeleteWordModal = $('#directDeleteWordModal')
 
-    function ValidateLoginForm() { // Function for validating the login form
+    function ValidateLoginForm() {
+        /**
+         * This function is for validating the login form by fetching the login information from app.py
+         * :return: false in order to cancel the submission of the form so that it can be managed via AJAX
+         */
         (async () => { // Use an async to get whether the username & email are already used in the database
-            try { // use try catch just in case
-                const emailUsernameInput = document.getElementById("login-username").value.trim() // .trim() is used to clear the whitespace at start/end of string (same as .strip() in python)
+            try {
+                // .trim() is used to clear the whitespace at start/end of string
+                const emailUsernameInput = document.getElementById("login-username").value.trim()
                 const passwordInput = document.getElementById("login-password").value.trim()
                 const data = {emailusername: emailUsernameInput, password: passwordInput}
                 const response = await fetch('/getlogininformation', { // fetch /getlogininformation from app.py
@@ -386,7 +430,11 @@
         return false
     }
 
-    function ValidateForgotPasswordForm() { // Function for validating the forgot password form
+    function ValidateForgotPasswordForm() {
+        /**
+         * This function is for validating the forgot password form
+         * :return: false in order to cancel the submission of the form so that it can be managed via AJAX
+         */
         (async () => { // Use an async to get whether this data exists in the database for the password reset
             try { // use try catch just in case
                 const firstNameInput = document.getElementById("forgotpassword-firstname").value.trim()
@@ -457,7 +505,11 @@
         return false
     }
 
-    function ValidateSignUpForm() { // Function for validating the sign-up form
+    function ValidateSignUpForm() {
+        /**
+         * Function for validating the signup form
+         * :return: false in order to cancel the submission of the form
+         */
         (async () => { // Use an async to get whether the username & email are already used in the database
             try { // use try catch just in case
                 const usernameInput = document.getElementById("signup-username").value.trim()
@@ -554,7 +606,8 @@
         return false // cancel the form as the data is being managed by ajax
     }
 
-    $('#student-button').click(function() { // Manage the click event of the student button (in sign up)
+    $('#student-button').click(function() {
+        /** Manage the student button click event by adding an active class */
         if (!document.getElementById("student-button").classList.contains("active")) {
             document.getElementById("student-button").classList.add("active")
             removeTeacherButtonInput()
@@ -563,7 +616,8 @@
         }
     })
 
-    $('#teacher-button').click(function() { // Manage the click event of the teacher button (in sign up)
+    $('#teacher-button').click(function() {
+        /** Manage the teacher button click event by adding an active class */
         if (!document.getElementById("teacher-button").classList.contains("active")) {
             document.getElementById("teacher-button").classList.add("active")
             removeStudentButtonInput()
@@ -573,16 +627,22 @@
     })
 
     $('#login').click(function() {
+        /** Hide the scrollbar when the user clicks the login */
         document.body.style.overflow = "hidden"
     })
 
-    function checkModalVisibility() { // Ensures that the overflow (whether the scroll bar is valid or not) is only set to auto if all the modals are hidden
+    function checkModalVisibility() {
+        /** Ensures that the whether the scroll bar is visible is only set to auto if all the modals are hidden */
         if (!loginModal.is(':visible') && !forgotPasswordModal.is(':visible') && !signUpModal.is(':visible')) {
             document.body.style.overflow = "auto"
         }
     }
 
-    loginModal.on('hidden.bs.modal', function() { // Login modal close event
+    loginModal.on('hidden.bs.modal', function() {
+        /**
+         * Function which is called on the login modal close event
+         * This will clear all the values related to the login modal and call checkModalVisibility()
+         */
         checkModalVisibility()
         document.getElementById("login-show-password").checked = false // Set the checked value to false
         clearValue(["login-username", "login-password"])
@@ -591,6 +651,10 @@
     })
 
     forgotPasswordModal.on('hidden.bs.modal', function() { // Forgot password modal close event
+        /**
+         * Function which is called on the forgot password modal close event
+         * This will clear all the values related to the forgot password modal and call checkModalVisibility()
+         */
         checkModalVisibility()
         document.getElementById("forgotpassword-show-password").checked = false // Set the checked value to false
         document.getElementById("forgotpassword-incorrect").classList.remove("successful")
@@ -599,7 +663,11 @@
         clearColour(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
     })
 
-    signUpModal.on('hidden.bs.modal', function() { // Sign up modal close event
+    signUpModal.on('hidden.bs.modal', function() {
+        /**
+         * Function which is called on the signup modal close event
+         * This will clear all the values related to the signup modal and call checkModalVisibility()
+         */
         checkModalVisibility()
         document.getElementById("signup-show-password").checked = false // Set the checked value to false
         removeTeacherButtonInput()
@@ -609,21 +677,24 @@
         clearColour(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
     })
 
-    $('.closeLoginModal').click(function() { // On clicking login modal close button, close modal (this is a class as it is called multiple times)
+    $('.closeLoginModal').click(function() {
+        /** On clicking login modal close button, close modal (this is a class as it is called multiple times) */
         loginModal.modal('hide')
     })
 
-        $('#closeForgotPasswordModal').click(function() { // On clicking forgot password modal close button, close modal
+    $('#closeForgotPasswordModal').click(function() {
+        /** On clicking forgot password modal close button, close modal */
         forgotPasswordModal.modal('hide')
     })
 
-    $('#closeSignUpModal').click(function() { // On clicking sign up modal close button, close modal
+    $('#closeSignUpModal').click(function() {
+        /** On clicking sign up modal close button, close modal */
         signUpModal.modal('hide')
     })
 
-
     // For the categories.html
     function handleSortChange() {
+        /** Handle when the user changes the sorting methods for the words */
         const selectedValue = document.getElementById("sorting-methods").value
         const formData = {
             "type": "sorting-methods",
@@ -633,6 +704,7 @@
     }
 
     function handleWordsPerPage() {
+        /** Handle when the user changes the amount of words displaying per page */
         const selectedValue = document.getElementById("words-per-page").value
         const formData = {
             "type": "words-per-page",
@@ -650,7 +722,7 @@
     }
 
     $('#switch-language').click(function() {
-        // Change between English-Māori and Māori-English
+        /** Function for switching the currently selected language */
         const language = document.getElementById("category-language-background").innerText
         let newLanguage = "English-Māori" // prevents any errors (e.g. if it is for some reason another string)
         if (language === "English-Māori") {
@@ -664,6 +736,11 @@
     })
 
     requestAnimationFrame(function() {
+        /**
+         * This function is providing as a failsafe to make sure what is displayed in the navigation bar is correct
+         * This function is called when the window is animated
+        */
+        checkLogin({{ logged_in }}, {{ admin_clean }})
         setImgSize()
         const sorting = document.getElementById("sorting-methods")
         sorting.value = sorting.dataset.sortingMethod
@@ -671,7 +748,8 @@
         wordsPerPage.value = wordsPerPage.dataset.wordsPerPage
     })
 
-    function setImgSize() { // Set the image size
+    function setImgSize() {
+        /** This function sets the size of the image proportional to the container size after it has been loaded */
         const images = document.getElementsByClassName("word-table-image")
         const textContainers = document.getElementsByClassName("text")
         const imageContainers = document.getElementsByClassName("word-table-image-container")
@@ -692,6 +770,7 @@
 
     const collapsible = document.getElementById("level-filters-collapsible")
     collapsible.addEventListener("click", function() {
+        /** Manage the text and display of the level collapsible when it is clicked */
         this.classList.toggle("active-level-filter")
         const content = this.nextElementSibling
         const expandedLevelFilters = document.getElementById("expand-level-filters")
@@ -706,72 +785,84 @@
 
     const previousCheckboxes = document.querySelectorAll('.level-filter-check');
     const previousCheckboxStates = {}
+    // Manage the states of the level filter checkbox states
     previousCheckboxes.forEach((checkbox) => {
           previousCheckboxStates[checkbox.id] = checkbox.checked
     })
     localStorage.setItem('storedCheckboxStates', JSON.stringify(previousCheckboxStates))
 
     function manageCheckboxes() {
-            const checkboxes = document.querySelectorAll('.level-filter-check')
-            const storedCheckboxStates = JSON.parse(localStorage.getItem('storedCheckboxStates'))
-            const checkboxStates = {}
-            checkboxes.forEach((checkbox) => {
-                  checkboxStates[checkbox.id] = checkbox.checked
-            })
-            if (storedCheckboxStates["level-filter-all"] && checkboxStates["level-filter-all"]) { // Previous state was true and new state is true
-                // check if any other checkbox has been set to true
-                let anyTrueCheckbox = false
+        /**
+         * Function for managing the checkboxes
+         * This ensures that there will always be a checkbox selected,
+         * and that no other checkboxes can be selected if the all categories checkbox is selected
+         */
+        const checkboxes = document.querySelectorAll('.level-filter-check')
+        const storedCheckboxStates = JSON.parse(localStorage.getItem('storedCheckboxStates'))
+        const checkboxStates = {}
+        checkboxes.forEach((checkbox) => {
+              checkboxStates[checkbox.id] = checkbox.checked
+        })
+        if (storedCheckboxStates["level-filter-all"] && checkboxStates["level-filter-all"]) {
+            // Previous state was true and new state is true
+            // check if any other checkbox has been set to true
+            let anyTrueCheckbox = false
+            for (const checkbox in checkboxStates) {
+                if (checkbox === "level-filter-all") {
+                    continue; // Skip the level-filter-all checkbox
+                }
+                if (checkboxStates[checkbox]) {
+                    anyTrueCheckbox = true
+                    break;
+                }
+            }
+            if (anyTrueCheckbox) {
+                const allCheckbox = document.getElementById("level-filter-all")
+                allCheckbox.checked = false
+                checkboxStates["level-filter-all"] = false
+            }
+        } else if (!storedCheckboxStates["level-filter-all"] && checkboxStates["level-filter-all"]) {
+            // Previous state was false and new state is true
+            // set all other checkboxes to false
+            for (const checkbox in checkboxStates) {
+                if (checkbox === "level-filter-all") {
+                    continue; // Skip the level-filter-all checkbox
+                }
+                const currentCheckbox = document.getElementById(checkbox)
+                currentCheckbox.checked = false
+                checkboxStates[checkbox] = false
+            }
+        } else if (storedCheckboxStates["level-filter-all"] && !checkboxStates["level-filter-all"]) {
+            // Previous state was true and new state is false
+            const anyTrueCheckbox = Object.values(checkboxStates).some((checked) => checked)
+            if (!anyTrueCheckbox) {
+                const currentCheckbox = document.getElementById("level-filter-all")
+                currentCheckbox.checked = true
+                checkboxStates["level-filter-all"] = true
+            }
+        } else {
+            // Previous state was false and new state is false
+            // user cannot unselect
+            const anyTrueCheckbox = Object.values(checkboxStates).some((checked) => checked)
+            if (!anyTrueCheckbox) {
                 for (const checkbox in checkboxStates) {
-                    if (checkbox === "level-filter-all") {
-                        continue; // Skip the level-filter-all checkbox
-                    }
-                    if (checkboxStates[checkbox]) {
-                        anyTrueCheckbox = true
+                    if (checkboxStates[checkbox] !== storedCheckboxStates[checkbox]) {
+                        const currentCheckbox = document.getElementById(checkbox)
+                        currentCheckbox.checked = true
+                        checkboxStates[checkbox] = true
                         break;
                     }
                 }
-                if (anyTrueCheckbox) {
-                    const allCheckbox = document.getElementById("level-filter-all")
-                    allCheckbox.checked = false
-                    checkboxStates["level-filter-all"] = false
-                }
-            } else if (!storedCheckboxStates["level-filter-all"] && checkboxStates["level-filter-all"]) { // Previous state was false and new state is true
-                // set all other checkboxes to false
-                for (const checkbox in checkboxStates) {
-                    if (checkbox === "level-filter-all") {
-                        continue; // Skip the level-filter-all checkbox
-                    }
-                    const currentCheckbox = document.getElementById(checkbox)
-                    currentCheckbox.checked = false
-                    checkboxStates[checkbox] = false
-                }
-            } else if (storedCheckboxStates["level-filter-all"] && !checkboxStates["level-filter-all"]) { // Previous state was true and new state is false
-                const anyTrueCheckbox = Object.values(checkboxStates).some((checked) => checked)
-                if (!anyTrueCheckbox) {
-                    const currentCheckbox = document.getElementById("level-filter-all")
-                    currentCheckbox.checked = true
-                    checkboxStates["level-filter-all"] = true
-                }
-            } else { // Previous state was false and new state is false
-                // user cannot unselect
-                const anyTrueCheckbox = Object.values(checkboxStates).some((checked) => checked)
-                if (!anyTrueCheckbox) {
-                    for (const checkbox in checkboxStates) {
-                        if (checkboxStates[checkbox] !== storedCheckboxStates[checkbox]) {
-                            const currentCheckbox = document.getElementById(checkbox)
-                            currentCheckbox.checked = true
-                            checkboxStates[checkbox] = true
-                            break;
-                        }
-                    }
-                }
             }
-            localStorage.setItem('storedCheckboxStates', JSON.stringify(checkboxStates))
+        }
+        // Store the checkbox states in local storage
+        localStorage.setItem('storedCheckboxStates', JSON.stringify(checkboxStates))
     }
 
     const levelCheckbox = document.querySelectorAll(".level-filter-check")
     levelCheckbox.forEach(levelCheckbox => {
         levelCheckbox.addEventListener('click', (event) => {
+            // This stops the event
             event.stopPropagation()
             manageCheckboxes()
         })
@@ -944,7 +1035,6 @@
         if (image.files.length > 0) {
             formData.append("image", image.files[0])
         }
-        //postMultiPartAjax("/addword", formData) // Wait for this to submit
         $.ajax({
             type: 'POST',
             url: "/addword",
