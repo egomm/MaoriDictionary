@@ -582,9 +582,10 @@
                 if (emailInput.length > 0) { // Ensure that the email input is at least one character long
                     if (emailInput.length > emailMaxLength || emailInput.length < emailMinLength) { // Limit email address to be between 4-256 characters
                         fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".Email must be between 4-256 characters", true)
-                    } else if (!(emailInput.includes('@') && emailInput.split('@')[emailInput.split('@').length - 1].includes('.'))) {
-                        // "very.(),:;<>[]\".VERY.\"very@\\ \"very\".unusual"@strange.example.com <- this email address is valid, so this should accept that
-                        fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".Email must include '@' and '.' afterwards", true)
+                    } else if (!(emailInput.replace(/[^@]/g, "").length === 1 && emailInput.split('@')[emailInput.split('@').length - 1].includes('.'))) {
+                        /* The email input must only contain one @ (this is checked by replacing everything which is not @ and then getting the length)
+                        The email must also have an '.' after the @ */
+                        fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".Email must include one '@' and a '.' afterwards", true)
                     } else if (emailInUse) { // Disallow duplicate email addresses
                         fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".This email address is already in use", true)
                     }
@@ -659,6 +660,7 @@
          * This will clear all the values related to the login modal and call checkModalVisibility()
          */
         checkModalVisibility()
+        document.getElementById("login-password").type = "password"
         document.getElementById("login-show-password").checked = false // Set the checked value to false
         clearValue(["login-username", "login-password"])
         clearText(["login-incorrect", "login-username-incomplete", "login-password-incomplete"])
@@ -671,6 +673,8 @@
          * This will clear all the values related to the forgot password modal and call checkModalVisibility()
          */
         checkModalVisibility()
+        document.getElementById("forgotpassword-password").type = "password"
+        document.getElementById("forgotpassword-confirmpassword").type = "password"
         document.getElementById("forgotpassword-show-password").checked = false // Set the checked value to false
         document.getElementById("forgotpassword-incorrect").classList.remove("successful")
         clearValue(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
@@ -685,6 +689,8 @@
          * This will clear all the values related to the signup modal and call checkModalVisibility()
          */
         checkModalVisibility()
+        document.getElementById("signup-password").type = "password"
+        document.getElementById("signup-confirmpassword").type = "password"
         document.getElementById("signup-show-password").checked = false // Set the checked value to false
         removeTeacherButtonInput()
         removeStudentButtonInput()
@@ -932,8 +938,8 @@
          */
         (async () => { // Use an async to get whether the word is already used in the database
             try {
-                const englishWord = document.getElementById("english-word").value.trim()
-                const maoriWord = document.getElementById("maori-word").value.trim()
+                const englishWord = document.getElementById("english-word").value.trim().toLowerCase()
+                const maoriWord = document.getElementById("maori-word").value.trim().toLowerCase()
                 const definition = document.getElementById("word-definition").value.trim()
                 clearText(["word-definition-incomplete"])
                 clearColour(["word-definition"])

@@ -110,6 +110,7 @@ def checkhasusername(username):
     cur.execute(query)
     usernames = [username[0] for username in cur.fetchall()]
     con.close()
+    print("USERNAME", [x.lower() for x in usernames].count(username.lower()))
     return [x.lower() for x in usernames].count(username.lower()) > 0
 
 
@@ -125,6 +126,7 @@ def checkhasemail(email):
     cur.execute(query)
     emails = [email[0] for email in cur.fetchall()]
     con.close()
+    print("EMAIL", [x.lower() for x in emails].count(email.lower()))
     return [x.lower() for x in emails].count(email.lower()) > 0
 
 
@@ -150,7 +152,7 @@ def reset_password():
     cur = con.cursor()
     # Update the users database with the new bcrypt password
     query = "UPDATE users SET password=? WHERE username=?"
-    cur.execute(query, (bcrypt.generate_password_hash(json_data["newpassword"]), json_data["username"]))
+    cur.execute(query, (bcrypt.generate_password_hash(json_data["newpassword"]), json_data["username"].lower()))
     con.commit()
     con.close()
     return {}
@@ -168,8 +170,9 @@ def sign_up():
             "VALUES (?, ?, ?, ?, ?, ?)"  # Insert sign up information into the users database
     cur = con.cursor()
     cur.execute(query,
-                (json_data["firstname"], json_data["lastname"], json_data["username"], json_data["email"],
-                 bcrypt.generate_password_hash(json_data["password"]), json_data["role"]))
+                (json_data["firstname"].lower(), json_data["lastname"].lower(), json_data["username"].lower(),
+                 json_data["email"].lower(), bcrypt.generate_password_hash(json_data["password"]),
+                 json_data["role"]))
     con.commit()
     con.close()
     return {}
@@ -185,7 +188,7 @@ def login_data_manager():
     if the user_id exists in the database, and if the user is an administrator
     """
     data = request.get_json()
-    emailusername = data['emailusername']
+    emailusername = data['emailusername'].lower()
     password = data['password']
     administrator = False
     matches = False
@@ -205,6 +208,7 @@ def login_data_manager():
         query = "SELECT password FROM users WHERE user_id = ?"
         cur.execute(query, (emailusernameid,))
         hashedpassword = cur.fetchone()[0]
+        print(bcrypt.check_password_hash(hashedpassword, password))
         if bcrypt.check_password_hash(hashedpassword, password):
             query = "SELECT administrator FROM users WHERE user_id = ?"
             cur.execute(query, (emailusernameid,))
@@ -225,10 +229,10 @@ def change_password_data_manager():
     :return: If the information provided is valid (if the user information exists in the database)
     """
     data = request.get_json()
-    firstname = data['firstname']
-    lastname = data['lastname']
-    username = data['username']
-    email = data['email']
+    firstname = data['firstname'].lower()
+    lastname = data['lastname'].lower()
+    username = data['username'].lower()
+    email = data['email'].lower()
     matches = False
     hasusername = checkhasusername(username)
     if hasusername:
@@ -251,8 +255,8 @@ def signup_data_manager():
     :return: If the username exists in the database, if the email exists in the database
     """
     data = request.get_json()  # Get the json data from the html
-    email = data['email']
-    username = data['username']
+    email = data['email'].lower()
+    username = data['username'].lower()
     # Return the validated data back to the html
     return jsonify({'usernameUsed': checkhasusername(username), 'emailUsed': checkhasemail(email)})
 
@@ -265,16 +269,16 @@ def word_manager():
     :return: If the english word exists in the database, if the maori word exists in the database
     """
     data = request.get_json()
-    maori_word = data['maori']
-    english_word = data['english']
+    maori_word = data['maori'].lower()
+    english_word = data['english'].lower()
     con = open_database(DATABASE)
     cur = con.cursor()
     query = "SELECT maoriword, englishword FROM words"  # Used for validation
     cur.execute(query)
     words = cur.fetchall()
-    maori_words = [x[0] for x in words]
+    maori_words = [x[0].lower() for x in words]
     has_maori_word = maori_word in maori_words
-    english_words = [x[1] for x in words]
+    english_words = [x[1].lower() for x in words]
     has_english_word = english_word in english_words
     return jsonify({'hasEnglishWord': has_english_word, 'hasMaoriWord': has_maori_word})
 
@@ -334,7 +338,7 @@ def has_category():
     :return: If the category name has already been used
     """
     data = request.get_json()
-    category_name = data["category"]
+    category_name = data["category"].lower()
     con = create_connection(DATABASE)
     cur = con.cursor()
     query = "SELECT category_name FROM categories"
@@ -351,8 +355,8 @@ def add_word():
     Function for adding a word given information about the word
     :return: {} (effectively nothing as this route only accepts post methods)
     """
-    english_word = request.form["englishWord"]
-    maori_word = request.form["maoriWord"]
+    english_word = request.form["englishWord"].lower()
+    maori_word = request.form["maoriWord"].lower()
     category = request.form["category"]
     definition = request.form["definition"]
     level = request.form["level"]
