@@ -1246,6 +1246,19 @@
         let categoryName = document.getElementById("add-category-category").value.trim()
         if (categoryName.length <= 0 || categoryName.length > categoryMaxLength) {
             setValue("add-category-category", failedTextColour, "add-category-category-incomplete", `.The category name must be between 0 and ${categoryMaxLength} characters`)
+        } else if (categoryName.replace(/[a-zA-Z\/āēīōūĀĒĪŌŪ]/g, "").trim().length > 0 ) {
+            /**
+             * Use a regular expression to check if the category name input is value
+             * a-z matches all lowercase latin letters
+             * A-Z matches all uppercase latin letters
+             * / matches all slashes
+             * āēīōūĀĒĪŌŪ matches all the maori letters with a macron
+             * /g performs a global search
+             * .trim() trims off all whitespace
+             * This then checks if there is any text remaining after this regular expression has been performed,
+             * display an error message to the user if this is met
+             */
+            setValue("add-category-category", failedTextColour, "add-category-category-incomplete", ". '/' The category name cannot contain special characters, except for")
         } else {
             (async () => {
                 try {
@@ -1429,7 +1442,13 @@
     }
 
     function validateCategorySearch() {
-        /** Validate the category page search form to make sure that the search isn't empty */
+        /**
+         * Validate the category page search form to make sure that the search isn't empty
+         * Allow the user to search nothing
+        */
+        if (document.getElementById("previous-search").value.trim().length > 0) {
+            return true
+        }
         return document.getElementById('category-search-bar').value.trim().length > 0
     }
 </script>

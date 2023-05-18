@@ -110,7 +110,6 @@ def checkhasusername(username):
     cur.execute(query)
     usernames = [username[0] for username in cur.fetchall()]
     con.close()
-    print("USERNAME", [x.lower() for x in usernames].count(username.lower()))
     return [x.lower() for x in usernames].count(username.lower()) > 0
 
 
@@ -126,7 +125,6 @@ def checkhasemail(email):
     cur.execute(query)
     emails = [email[0] for email in cur.fetchall()]
     con.close()
-    print("EMAIL", [x.lower() for x in emails].count(email.lower()))
     return [x.lower() for x in emails].count(email.lower()) > 0
 
 
@@ -208,7 +206,6 @@ def login_data_manager():
         query = "SELECT password FROM users WHERE user_id = ?"
         cur.execute(query, (emailusernameid,))
         hashedpassword = cur.fetchone()[0]
-        print(bcrypt.check_password_hash(hashedpassword, password))
         if bcrypt.check_password_hash(hashedpassword, password):
             query = "SELECT administrator FROM users WHERE user_id = ?"
             cur.execute(query, (emailusernameid,))
@@ -500,7 +497,6 @@ def home():
     If the request method is get :return: the home page with information about if the user is logged in,
     or if the user is an administrator
     """
-    print(is_logged_in())
     if request.method == "POST":
         search_input = request.form.get("text")
         return redirect(f"/categories/all-categories/search/{search_input}/1")
@@ -526,16 +522,8 @@ def categories(category, page, search):
     and the current search
     If the request method is post :return: a redirect to the search which had just been inputted
     """
-    print("CALLED")
-    print(request.method)
-    print(time.time())
-    # Need to fix this
-    using_search = False
-    if "category-search-bar" in request.form:
-        if len(request.form.get("category-search-bar")) > 0:
-            using_search = True
+    using_search = "category-search-bar" in request.form
     if not using_search:
-        print("HERE")
         con = open_database(DATABASE)
         cur = con.cursor()
         query = "SELECT level from levels"
@@ -559,7 +547,6 @@ def categories(category, page, search):
             json_data = request.get_json()
             if "type" in json_data:  # This provides as a failsafe
                 if json_data["type"] == "category-language":
-                    print("LANGUAGE", json_data["language"])
                     session["selected-language"] = json_data["language"]
                 if json_data["type"] == "sorting-methods":
                     session["selected-sorting-method"] = json_data["selectedvalue"]
@@ -573,9 +560,11 @@ def categories(category, page, search):
         cur.execute(query)
         category_list = sorted([x[0] for x in cur.fetchall()])
         current_category = 0
-        sanitised_category_list = [x.replace("/", "").lower() for x in category_list]
+        # In order to avoid an internal server error (500) with an extra /, replace the /'s with +'s
+        sanitised_category_list = [x.replace("/", "+").lower() for x in category_list]
+        # replace the whitespace with -
         sanitised_category_list = [re.sub(r'\s+', '-', x) for x in sanitised_category_list]
-        category_sanitised = category.title().replace("-", " ")
+        category_sanitised = category.title().replace("-", " ").replace("+", "/")
         if category_sanitised != "All Categories":
             query = "SELECT category_id FROM categories WHERE category_name = ?"
             cur.execute(query, (category_sanitised,))
@@ -584,7 +573,6 @@ def categories(category, page, search):
         selected_language = session["selected-language"]
         sorting_method = session["selected-sorting-method"]
         words_per_page = session["selected-words-per-page"]
-        print("WORDS PER PAGE", words_per_page)
         # Need to render the words dependent on all of these constraints
         question_marks = "{}".format(','.join(['?'] * len(selected_levels)))
         if current_category > 0:
@@ -632,12 +620,16 @@ def categories(category, page, search):
             words_per_page = int(words_per_page)
             actual_words_per_page = words_per_page
             page_count = math.ceil(len(word_list) / words_per_page)
-            for i in range(0, len(word_list), words_per_page):
-                sorted_word_list.append(list(word_list[i:i + words_per_page]))
+            if len(word_list) > 0:
+                for i in range(0, len(word_list), words_per_page):
+                    sorted_word_list.append(list(word_list[i:i + words_per_page]))
         else:  # Display all words
             page_count = 1
-            sorted_word_list = [word_list]
-            actual_words_per_page = len(sorted_word_list[page - 1])
+            if len(word_list) > 0:
+                sorted_word_list = [word_list]
+                actual_words_per_page = len(sorted_word_list[page - 1])
+            else:
+                actual_words_per_page = 0
         if len(sorted_word_list) > 0:
             minimum_value = (current_page * actual_words_per_page) + 1
             maximum_value = min((current_page + 1) * actual_words_per_page,
@@ -645,7 +637,6 @@ def categories(category, page, search):
         else:
             minimum_value = 0
             maximum_value = 0
-        print(time.time())
         return render_template('categories.html', logged_in=json.dumps(is_logged_in()),
                                administrator=is_administrator(), category_list=category_list,
                                sanitised_category_list=sanitised_category_list, current_category=category_index,
