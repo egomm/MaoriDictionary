@@ -71,6 +71,10 @@ def is_administrator():
     return is_admin
 
 
+def remove_extra_whitespace(string):
+    return re.sub(' +', ' ', string)
+
+
 def sort_words(words, selected_language, sorting_method):
     """
     Sort words using a lambda function that takes an element of the tuple as its parameter
@@ -352,8 +356,8 @@ def add_word():
     Function for adding a word given information about the word
     :return: {} (effectively nothing as this route only accepts post methods)
     """
-    english_word = request.form["englishWord"].lower()
-    maori_word = request.form["maoriWord"].lower()
+    english_word = remove_extra_whitespace(request.form["englishWord"].lower())
+    maori_word = remove_extra_whitespace(request.form["maoriWord"].lower())
     category = request.form["category"]
     definition = request.form["definition"]
     level = request.form["level"]
@@ -448,7 +452,7 @@ def add_category():
     :return: {} (effectively nothing as this route only accepts post methods)
     """
     json_data = request.get_json()
-    category_name = json_data["categoryName"]
+    category_name = remove_extra_whitespace(json_data["categoryName"])
     con = create_connection(DATABASE)
     cur = con.cursor()
     query = "INSERT INTO categories (category_name) VALUES (?)"
@@ -565,6 +569,16 @@ def categories(category, page, search):
         # replace the whitespace with -
         sanitised_category_list = [re.sub(r'\s+', '-', x) for x in sanitised_category_list]
         category_sanitised = category.title().replace("-", " ").replace("+", "/")
+        if re.match(r"\d", category_sanitised):
+            category_sanitised = category_sanitised.lower()
+        # Need to make it so that it checks if a word starts with a number
+        category_sanitised_array = category_sanitised.split(" ")
+        new_category_sanitised = ""
+        for string in category_sanitised_array:
+            if string[0].isdigit():
+                string = string.lower()
+            new_category_sanitised += string + " "
+        category_sanitised = new_category_sanitised.strip()
         if category_sanitised != "All Categories":
             query = "SELECT category_id FROM categories WHERE category_name = ?"
             cur.execute(query, (category_sanitised,))
