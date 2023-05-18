@@ -520,11 +520,16 @@ def categories(category, page, search):
     and the current search
     If the request method is post :return: a redirect to the search which had just been inputted
     """
+    print("CALLED")
+    print(request.method)
+    print(time.time())
+    # Need to fix this
     using_search = False
     if "category-search-bar" in request.form:
         if len(request.form.get("category-search-bar")) > 0:
             using_search = True
-    if request.method == "GET" or not using_search:
+    if not using_search:
+        print("HERE")
         con = open_database(DATABASE)
         cur = con.cursor()
         query = "SELECT level from levels"
@@ -548,6 +553,7 @@ def categories(category, page, search):
             json_data = request.get_json()
             if "type" in json_data:  # This provides as a failsafe
                 if json_data["type"] == "category-language":
+                    print("LANGUAGE", json_data["language"])
                     session["selected-language"] = json_data["language"]
                 if json_data["type"] == "sorting-methods":
                     session["selected-sorting-method"] = json_data["selectedvalue"]
@@ -572,6 +578,7 @@ def categories(category, page, search):
         selected_language = session["selected-language"]
         sorting_method = session["selected-sorting-method"]
         words_per_page = session["selected-words-per-page"]
+        print("WORDS PER PAGE", words_per_page)
         # Need to render the words dependent on all of these constraints
         question_marks = "{}".format(','.join(['?'] * len(selected_levels)))
         if current_category > 0:
@@ -632,6 +639,7 @@ def categories(category, page, search):
         else:
             minimum_value = 0
             maximum_value = 0
+        print(time.time())
         return render_template('categories.html', logged_in=json.dumps(is_logged_in()),
                                administrator=is_administrator(), category_list=category_list,
                                sanitised_category_list=sanitised_category_list, current_category=category_index,

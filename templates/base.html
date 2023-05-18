@@ -20,6 +20,7 @@
         <div class="navbar-links">
             <a id="home" href="/">home</a>
             <a id="categories" href="/categories/all-categories/1">categories</a>
+            {# Do administrator checks here #}
             <a id="admin" href="/admin">admin</a>
             <a id="logout" href="/logout">logout</a>
             <a id="login" data-target="#loginModal" role="button" data-toggle="modal">login</a>
@@ -730,14 +731,19 @@
     $('#switch-language').click(function() {
         /** Function for switching the currently selected language */
         const language = document.getElementById("category-language-background").innerText
-        let newLanguage = "English-Māori" // prevents any errors (e.g. if it is for some reason another string)
+        let newLanguage; // prevents any errors (e.g. if it is for some reason another string)
         if (language === "English-Māori") {
+            document.getElementById("category-language-background").innerText = "Māori-English"
             newLanguage = "Māori-English"
+        } else {
+            document.getElementById("category-language-background").innerText = "English-Māori"
+            newLanguage = "English-Māori"
         }
         const formData = {
             "type": "category-language",
             "language": newLanguage
         }
+        // Now need to fix this!
         postAjax("{{url_for('categories', category='all-categories', page=1)}}", formData, true, false, "")
     })
 
@@ -748,10 +754,6 @@
         */
         checkLogin({{ logged_in }}, {{ admin_clean }})
         setImgSize()
-        const sorting = document.getElementById("sorting-methods")
-        sorting.value = sorting.dataset.sortingMethod
-        const wordsPerPage = document.getElementById("words-per-page")
-        wordsPerPage.value = wordsPerPage.dataset.wordsPerPage
     })
 
     function setImgSize() {

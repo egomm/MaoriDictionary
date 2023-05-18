@@ -607,6 +607,7 @@ body {
     margin-top: auto;
     text-align: left;
     display: flex;
+    width: 30%;
 }
 
 .category-button {
@@ -972,11 +973,18 @@ nav a:hover {
 }
 
 @media only screen and (max-width: 1200px) {
+    .category-search img {
+        width: 18px;
+        height: 18px;
+    }
     .category-divider-elements  {
         font-size: 1.1rem;
     }
     #category-language-title {
         margin-left: 7%;
+    }
+    #level-filters {
+        font-size: 1.75rem;
     }
     .category-button {
         font-size: 1.75rem;
@@ -996,11 +1004,21 @@ nav a:hover {
 }
 
 @media only screen and (max-width: 1000px) {
+    .category-search img {
+        width: 14px;
+        height: 14px;
+    }
     .category-divider-elements  {
         font-size: 0.8rem;
     }
     #category-language-title {
         margin-left: 5%;
+    }
+    #expand-level-filters {
+        font-size: 2.25rem;
+    }
+    #level-filters {
+        font-size: 1.5rem;
     }
     .category-button {
         font-size: 1.5rem;
@@ -1020,6 +1038,22 @@ nav a:hover {
 }
 
 @media only screen and (max-width: 800px) {
+    .category-search img {
+        width: 10px;
+        height: 10px;
+    }
+    .category-divider-elements  {
+        font-size: 0.6rem;
+    }
+    #category-language-title {
+        margin-left: 5%;
+    }
+    #expand-level-filters {
+        font-size: 1.65rem;
+    }
+    #level-filters {
+        font-size: 1.1rem;
+    }
     .category-button {
         font-size: 1.1rem;
     }
@@ -1043,6 +1077,18 @@ nav a:hover {
     }
     .homecontainer {
         width: 100%;
+    }
+    .category-divider-elements  {
+        font-size: 0.3rem;
+    }
+    #category-language-title {
+        margin-left: 0;
+    }
+    #expand-level-filters {
+        font-size: 1.125rem;
+    }
+    #level-filters {
+        font-size: 0.75rem;
     }
     .category-button {
         font-size: 0.75rem;

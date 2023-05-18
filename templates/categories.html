@@ -110,16 +110,24 @@
                     <div id="category-sort-title">SORT BY</div>
                     {# Allow the user to sort by category if this is in the 'All Categories' #}
                     <select id="sorting-methods" onchange="handleSortChange()" data-sorting-method="{{ sorting_method }}">
-                        <option value="A-Z">A-Z</option>
-                        <option value="LEVEL">LEVEL</option>
+                        {% for sortingValue in ["A-Z", "LEVEL"] %}
+                            {% if sorting_method == sortingValue %}
+                                <option value="{{ sortingValue }}" selected="selected">{{ sortingValue }}</option>
+                            {% else %}
+                                <option value="{{ sortingValue }}">{{ sortingValue }}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
                     <div class="category-header-divider"></div>
                     <div id="category-words-per-page">WORDS PER PAGE</div>
                     <select id="words-per-page" onchange="handleWordsPerPage()" data-words-per-page="{{ words_per_page }}" data-category="{{ category_name }}" data-old-page="{{ display_page }}" data-previous-value="{{ words_per_page }}">
-                        <option value="6">6</option>
-                        <option value="12">12</option>
-                        <option value="24">24</option>
-                        <option value="All">All</option>
+                        {% for wordValue in [6, 12, 24, "All"] %}
+                            {% if words_per_page == wordValue %}
+                                <option value="{{ wordValue }}" selected="selected">{{ wordValue }}</option>
+                            {% else %}
+                                <option value="{{ wordValue }}">{{ wordValue }}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
                 </div>
             </div>
