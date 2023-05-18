@@ -480,10 +480,11 @@ def delete_category():
 def logout():
     """
     Function and route for the user to log out
-    Iterate over all the current session keys and remove each key
+    Iterate over all the current session keys and remove each key if the user is logged in
     :return: a redirect to the home page
     """
-    [session.pop(key) for key in list(session.keys())]
+    if is_logged_in():
+        [session.pop(key) for key in list(session.keys())]
     return redirect('/')
 
 
@@ -495,11 +496,12 @@ def home():
     If the request method is get :return: the home page with information about if the user is logged in,
     or if the user is an administrator
     """
+    print(is_logged_in())
     if request.method == "POST":
         search_input = request.form.get("text")
         return redirect(f"/categories/all-categories/search/{search_input}/1")
     else:
-        return render_template('home.html', logged_in=json.dumps(is_logged_in()),
+        return render_template('home.html', logged_in=json.dumps(is_logged_in()), logged_in_clean=is_logged_in(),
                                administrator=is_administrator(), admin_clean=json.dumps(is_administrator()))
 
 
@@ -537,7 +539,7 @@ def categories(category, page, search):
         levels = [level[0] for level in cur.fetchall()]
         con.close()
         if session.get("selected-values") is None:
-            session["selected-values"] = levels
+            session["selected-values"] = "all"
         all_levels_selected = "all" in session["selected-values"]
         if all_levels_selected:
             selected_levels = levels
@@ -649,7 +651,7 @@ def categories(category, page, search):
                                current_page=current_page, display_page=page, minimum_value=minimum_value,
                                maximum_value=maximum_value, levels=levels, all_levels_selected=all_levels_selected,
                                selected_levels=selected_levels, current_search=current_search,
-                               admin_clean=json.dumps(is_administrator()))
+                               admin_clean=json.dumps(is_administrator()), logged_in_clean=is_logged_in())
     else:
         search_input = request.form.get("category-search-bar")
         if len(search_input) > 0:
@@ -723,7 +725,7 @@ def translate(word, word_id):
                                definition=definition, level=level, image=image, user_added=user_added, time=data_time,
                                date=data_date, logged_in=json.dumps(is_logged_in()),
                                administrator=is_administrator(), word_id=word_id,
-                               admin_clean=json.dumps(is_administrator()))
+                               admin_clean=json.dumps(is_administrator()), logged_in_clean=is_logged_in())
     else:
         return redirect("/categories/all-categories/1")
 
@@ -759,7 +761,8 @@ def admin():
         return render_template("admin.html", logged_in=json.dumps(is_logged_in()),
                                administrator=is_administrator(), category_ids=category_ids,
                                category_names=category_names, levels=levels, english_words=english_words,
-                               maori_words=maori_words, admin_clean=json.dumps(is_administrator()))
+                               maori_words=maori_words, admin_clean=json.dumps(is_administrator()),
+                               logged_in_clean=is_logged_in())
     else:
         return redirect("/")  # Return user to the home page if they aren't admin
 

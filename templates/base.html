@@ -21,12 +21,22 @@
             <a id="home" href="/">home</a>
             <a id="categories" href="/categories/all-categories/1">categories</a>
             {# Do administrator checks here #}
-            <a id="admin" href="/admin">admin</a>
-            <a id="logout" href="/logout">logout</a>
-            <a id="login" data-target="#loginModal" role="button" data-toggle="modal">login</a>
+            {% if administrator %}
+                <a id="admin" href="/admin">admin</a>
+            {% else %}
+                <a id="admin" href="/admin" class="hidden">admin</a>
+            {% endif %}
+            {% if logged_in_clean %}
+                <a id="logout" href="/logout">logout</a>
+                <a id="login" data-target="#loginModal" role="button" data-toggle="modal" class="hidden">login</a>
+            {% else %}
+                <a id="login" data-target="#loginModal" role="button" data-toggle="modal">login</a>
+                <a id="logout" href="/logout" class="hidden">logout</a>
+            {% endif %}
         </div>
     </div>
 </nav>
+<!--Manage the class of the container, the header text, and the page header (a subheader)-->
 <div class="{% block container %}{% endblock %}">
     <header>
         <h1>{% block header %}{% endblock %}</h1>
@@ -752,7 +762,7 @@
          * This function is providing as a failsafe to make sure what is displayed in the navigation bar is correct
          * This function is called when the window is animated
         */
-        checkLogin({{ logged_in }}, {{ admin_clean }})
+        //checkLogin({{ logged_in }}, {{ admin_clean }})
         setImgSize()
     })
 
