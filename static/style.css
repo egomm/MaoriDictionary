@@ -80,7 +80,8 @@ body {
 }
 
 .hidden {
-  display: none !important;
+    /* This makes it so that the display isn't visible */
+    display: none !important;
 }
 
 .incorrect {

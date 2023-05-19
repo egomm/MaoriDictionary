@@ -1246,14 +1246,13 @@
         let categoryName = document.getElementById("add-category-category").value.trim()
         if (categoryName.length <= 0 || categoryName.length > categoryMaxLength) {
             setValue("add-category-category", failedTextColour, "add-category-category-incomplete", `.The category name must be between 0 and ${categoryMaxLength} characters`)
-        } else if (categoryName.replace(/[a-zA-Z\d\/āēīōūĀĒĪŌŪ]/g, "").trim().length > 0 ) {
+        } else if (categoryName.replace(/[a-zA-Z\d\/]/g, "").trim().length > 0 ) {
             /**
              * Use a regular expression to check if the category name input is value
              * a-z matches all lowercase latin letters
              * A-Z matches all uppercase latin letters
              * \d matches all numbers
              * / matches all slashes
-             * āēīōūĀĒĪŌŪ matches all the maori letters with a macron
              * /g performs a global search
              * .trim() trims off all whitespace
              * This then checks if there is any text remaining after this regular expression has been performed,

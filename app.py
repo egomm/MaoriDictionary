@@ -72,6 +72,12 @@ def is_administrator():
 
 
 def remove_extra_whitespace(string):
+    """
+    This function selects all whitespace between different words and makes sure there is only one space
+    This is done by using a regular expression by substituting this with only one space
+    :param string: The word to remove the extra whitespace from
+    :return: The word which the extra white space has been removed
+    """
     return re.sub(' +', ' ', string)
 
 
@@ -569,14 +575,14 @@ def categories(category, page, search):
         # replace the whitespace with -
         sanitised_category_list = [re.sub(r'\s+', '-', x) for x in sanitised_category_list]
         category_sanitised = category.title().replace("-", " ").replace("+", "/")
-        if re.match(r"\d", category_sanitised):
-            category_sanitised = category_sanitised.lower()
+        # if re.match(r"\d", category_sanitised):
+        #     category_sanitised = category_sanitised.lower()
         # Need to make it so that it checks if a word starts with a number
         category_sanitised_array = category_sanitised.split(" ")
         new_category_sanitised = ""
         for string in category_sanitised_array:
-            if string[0].isdigit():
-                string = string.lower()
+            if len(string) > 1:
+                string = string[0] + string[1:len(string)].lower()
             new_category_sanitised += string + " "
         category_sanitised = new_category_sanitised.strip()
         if category_sanitised != "All Categories":
