@@ -20,12 +20,13 @@
         <div class="navbar-links">
             <a id="home" href="/">home</a>
             <a id="categories" href="/categories/all-categories/1">categories</a>
-            {# Do administrator checks here #}
+            <!--Check if the user is an administrator-->
             {% if administrator %}
                 <a id="admin" href="/admin">admin</a>
             {% else %}
                 <a id="admin" href="/admin" class="hidden">admin</a>
             {% endif %}
+            <!--Check if the user is logged in-->
             {% if logged_in_clean %}
                 <a id="logout" href="/logout">logout</a>
                 <a id="login" data-target="#loginModal" role="button" data-toggle="modal" class="hidden">login</a>
@@ -50,7 +51,7 @@
 </div>
 </body>
 
-{# Login Modal #}
+<!--Login Modal-->
  <div id="loginModal" class="modal fade">
       <div class="modal-dialog">
            <div class="modal-content">
@@ -59,6 +60,7 @@
                      <h4 class="modal-title">Login</h4>
                 </div>
                 <div class="modal-body">
+                    <!--Login form with all the input fields-->
                     <form class="loginform" method="POST" onsubmit="return ValidateLoginForm()">
                         <input type="hidden" name="loginform" value=""/>
                         <div id="login-incorrect" class="incorrect"></div>
@@ -73,6 +75,7 @@
                         </div>
                         <div class="field-incomplete" id="login-password-incomplete"></div>
                         <label for="login-show-password" class="show-password form-label">
+                            <!--Show password on the show password click-->
                             <input type="checkbox" id="login-show-password" onclick="return showLoginPassword()">
                             Show Password
                         </label>
@@ -91,7 +94,7 @@
       </div>
  </div>
 
-{# Forgot Password #}
+<!--Forgot Password Modal-->
 <div id="forgotPasswordModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -102,36 +105,36 @@
             <div class="modal-body">
                 <form class="forgotpasswordform" id="forgotpasswordform" method="POST" onsubmit="return ValidateForgotPasswordForm()">
                     <div id="forgotpassword-incorrect" class="incorrect"></div>
-                    {# First name field #}
+                    <!--First Name Field-->
                     <label for="forgotpassword-firstname" class="form-label">First Name</label>
                     <input type="text" name="forgotpassword-firstname" id="forgotpassword-firstname" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-firstname-incomplete"></div>
-                    {# Last name field #}
+                    <!--Last Name Field-->
                     <label for="forgotpassword-lastname" class="form-label">Last Name</label>
                     <input type="text" name="forgotpassword-lastname" id="forgotpassword-lastname" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-lastname-incomplete"></div>
-                    {# Username field #}
+                    <!--Username Field-->
                     <label for="forgotpassword-username" class="form-label">Username</label>
                     <input type="text" name="forgotpassword-username" id="forgotpassword-username" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-username-incomplete"></div>
-                    {# Email field #}
+                    <!--Email Field-->
                     <label for="forgotpassword-email" class="form-label">Email</label>
                     <input type="text" name="forgotpassword-email" id="forgotpassword-email" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-email-incomplete"></div>
-                    {# Password field #}
+                    <!--Password Field-->
                     <label for="forgotpassword-password" class="form-label">Password</label>
                     <input type="password" name="forgotpassword-password" id="forgotpassword-password" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-password-incomplete"></div>
-                    {# Confirm password field #}
+                    <!--Confirm Password Field-->
                     <label for="forgotpassword-confirmpassword" class="form-label">Confirm Password</label>
                     <input type="password" name="forgotpassword-confirmpassword" id="forgotpassword-confirmpassword" class="form-element"/>
                     <div class="field-incomplete" id="forgotpassword-confirmpassword-incomplete"></div>
-                    {# Show password #}
+                    <!--Show Password-->
                     <label for="forgotpassword-show-password" class="show-password form-label">
                         <input type="checkbox" id="forgotpassword-show-password" onclick="return showForgotPasswordPassword()">
                         Show Password
                     </label>
-                    {# Submit #}
+                    <!--Submit-->
                     <div id="form-forgotpassword-submit">
                         <input type="submit" value="Reset Password" class="form-submit" id="forgotpassword-submit">
                     </div>
@@ -144,7 +147,7 @@
     </div>
 </div>
 
-{# Sign Up Modal #}
+<!--Sign Up Modal-->
 <div id="signUpModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -155,42 +158,42 @@
             <div class="modal-body">
                 <form class="signupform" id="signupform" method="POST" onsubmit="return ValidateSignUpForm()">
                     <input type="hidden" id="signup-form" name="signup-form" value=""/>
-                    {# Student teacher button #}
+                    <!--Student and teacher button-->
                     <div class="student-teacher-button" id="student-teacher-button">
                         <button type="button" class="button-student-teacher" id="student-button">Student</button><button type="button" class="button-student-teacher" id="teacher-button">Teacher</button>
                     </div>
                     <div class="field-incomplete" id="signup-button-incomplete"></div>
                     <input type="hidden" name="teacherButton" id="teacherButton" value="Student"/>
-                    {# First name field #}
+                    <!--First name field-->
                     <label for="signup-firstname" class="form-label">First Name</label>
                     <input type="text" name="signup-firstname" id="signup-firstname" class="form-element"/>
                     <div class="field-incomplete" id="signup-firstname-incomplete"></div>
-                    {# Last name field #}
+                    <!--Last name field-->
                     <label for="signup-lastname" class="form-label">Last Name</label>
                     <input type="text" name="signup-lastname" id="signup-lastname" class="form-element"/>
                     <div class="field-incomplete" id="signup-lastname-incomplete"></div>
-                    {# Username field #}
+                    <!--Username field-->
                     <label for="signup-username" class="form-label">Username</label>
                     <input type="text" name="signup-username" id="signup-username" class="form-element"/>
                     <div class="field-incomplete" id="signup-username-incomplete"></div>
-                    {# Email field #}
+                    <!--Email field-->
                     <label for="signup-email" class="form-label">Email</label>
                     <input type="text" name="signup-email" id="signup-email" class="form-element"/>
                     <div class="field-incomplete" id="signup-email-incomplete"></div>
-                    {# Password field #}
+                    <!--Password field-->
                     <label for="signup-password" class="form-label">Password</label>
                     <input type="password" name="signup-password" id="signup-password" class="form-element"/>
                     <div class="field-incomplete" id="signup-password-incomplete"></div>
-                    {# Confirm password field #}
+                    <!--Confirm password field-->
                     <label for="signup-confirmpassword" class="form-label">Confirm Password</label>
                     <input type="password" name="signup-confirmpassword" id="signup-confirmpassword" class="form-element"/>
                     <div class="field-incomplete" id="signup-confirmpassword-incomplete"></div>
-                    {# Show password #}
+                    <!--Show password field-->
                     <label for="signup-show-password" class="show-password form-label">
                         <input type="checkbox" id="signup-show-password" onclick="return showSignUpPassword()">
                         Show Password
                     </label>
-                    {# Submit #}
+                    <!--Submit-->
                     <div id="form-signup-submit">
                         <input type="submit" value="Sign Up" class="form-submit" id="signup-submit">
                     </div>
@@ -363,24 +366,24 @@
         }
     }
 
-    // Manage the variables for the login/forgot password/signup modals
+    // Manage the constants for the login/forgot password/signup modals
     const failedTextColour = "#e54b72"
     const firstnameMaxLength = 64
     const lastnameMaxLength = 64
     const usernameMaxLength = 32
-    const emailMaxLength = 256
+    const emailMaxLength = 128
     const emailMinLength = 4
     const passwordMinLength = 8
     const passwordMaxLength = 128
 
-    // For admin
+    // Constants for admin
     const wordMaxLength = 72
     const definitionMaxLength = 128
     const maxImageLength = 128
     const maxImageSize = 15728640 /* Max image size in bytes (15mb) */
     const categoryMaxLength = 32
 
-    // Information about all of the modals
+    // Information about all the modals
     const loginModal = $('#loginModal')
     const forgotPasswordModal = $('#forgotPasswordModal')
     const signUpModal = $('#signUpModal')
@@ -431,7 +434,7 @@
                         "type": "login",
                         "userid": responseText.userId
                     }
-                    postAjax("/login", formData, false, false, "") // Why isnt this working?
+                    postAjax("/login", formData, false, false, "")
                     loginModal.modal('hide') // close login up modal
                 }
             } catch (error) {
@@ -464,13 +467,15 @@
                 })
                 const responseText = await response.json() // wait for the response
                 document.getElementById("forgotpassword-incorrect").classList.remove("successful")
-                clearText(["forgotpassword-incorrect", "forgotpassword-firstname-incomplete", "forgotpassword-lastname-incomplete", "forgotpassword-username-incomplete",
+                clearText(["forgotpassword-incorrect", "forgotpassword-firstname-incomplete", "forgotpassword-lastname-incomplete",
+                    "forgotpassword-username-incomplete",
                     "forgotpassword-email-incomplete", "forgotpassword-password-incomplete", "forgotpassword-confirmpassword-incomplete"])
-                clearColour(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
+                clearColour(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email",
+                    "forgotpassword-password", "forgotpassword-confirmpassword"])
                 let fail = false // variable used throughout to check if the data is valid
                 // Iterate over fields to check if they have any input, if they don't notify their respected error message
-                const elementsToCheck = ["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password",
-                    "forgotpassword-confirmpassword"]
+                const elementsToCheck = ["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email",
+                    "forgotpassword-password", "forgotpassword-confirmpassword"]
                 const elementMessages = {
                     "forgotpassword-firstname": ".First name is required",
                     "forgotpassword-lastname": ".Last name is required",
@@ -486,13 +491,16 @@
                         fail = setValue(elementId, failedTextColour, `${elementId}-incomplete`, elementMessages[elementId], true)
                     }
                 }
-                if (firstNameInput.length > 0 && lastNameInput.length > 0 && usernameInput.length > 0 && emailInput.length > 0 && (passwordInput.length > 0 || confirmPasswordInput.length > 0)) {
+                if (firstNameInput.length > 0 && lastNameInput.length > 0 && usernameInput.length > 0 && emailInput.length > 0
+                    && (passwordInput.length > 0 || confirmPasswordInput.length > 0)) {
                     if (passwordInput !== confirmPasswordInput) {
                         fail = setValue("forgotpassword-password", failedTextColour, "forgotpassword-password-incomplete", ".Passwords do not match", true)
                         setValue("forgotpassword-confirmpassword", failedTextColour, "forgotpassword-confirmpassword-incomplete", ".Passwords do not match", true)
                     } else if (passwordInput.length < passwordMinLength || passwordInput.length > passwordMaxLength) {
-                        fail = setValue("forgotpassword-password", failedTextColour, "forgotpassword-password-incomplete", ".Password must be between 8-128 characters", true)
-                        setValue("forgotpassword-confirmpassword", failedTextColour, "forgotpassword-confirmpassword-incomplete", ".Password must be between 8-128 characters", true)
+                        fail = setValue("forgotpassword-password", failedTextColour, "forgotpassword-password-incomplete",
+                            ".Password must be between 8-128 characters", true)
+                        setValue("forgotpassword-confirmpassword", failedTextColour, "forgotpassword-confirmpassword-incomplete",
+                            ".Password must be between 8-128 characters", true)
                     } else if (!responseText.validInformation) {
                         fail = true
                         document.getElementById("forgotpassword-incorrect").innerText = "Unable to reset password - Invalid Credentials"
@@ -539,9 +547,11 @@
                 let usernameInUse = responseText.usernameUsed
                 let emailInUse = responseText.emailUsed
                 // clear the text and colour from previous errors
-                clearText(["signup-button-incomplete", "signup-firstname-incomplete", "signup-lastname-incomplete", "signup-username-incomplete", "signup-email-incomplete",
+                clearText(["signup-button-incomplete", "signup-firstname-incomplete", "signup-lastname-incomplete", "signup-username-incomplete",
+                    "signup-email-incomplete",
                     "signup-password-incomplete", "signup-confirmpassword-incomplete"])
-                clearColour(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
+                clearColour(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email",
+                    "signup-password", "signup-confirmpassword"])
                 let fail = false // variable used throughout the check if the data the user inputted is valid
                 const teacherButton = document.getElementById("teacher-button").classList.contains("active")
                 const studentButton = document.getElementById("student-button").classList.contains("active")
@@ -563,25 +573,30 @@
                     const elementId = elementsToCheck[x]
                     const element = document.getElementById(elementId).value.trim()
                     if (element.length === 0) {
+                        // Notify the user that the field is incomplete
                         fail = setValue(elementId, failedTextColour, `${elementId}-incomplete`, elementMessages[elementId], true)
                     }
                 }
                 const firstNameInput = document.getElementById("signup-firstname").value.trim()
                 if (firstNameInput.length > firstnameMaxLength) { // Limit first name input to 64 characters
-                    fail = setValue("signup-firstname", failedTextColour, "signup-firstname-incomplete", ".First name must be no more than 64 characters", true)
+                    fail = setValue("signup-firstname", failedTextColour, "signup-firstname-incomplete",
+                        `.First name must be no more than ${firstnameMaxLength} characters`, true)
                 }
                 const lastNameInput = document.getElementById("signup-lastname").value.trim()
                 if (lastNameInput.length > lastnameMaxLength) { // Limit last name input to 64 characters
-                    fail = setValue("signup-lastname", failedTextColour, "signup-lastname-incomplete", ".Last name must be no more than 64 characters", true)
+                    fail = setValue("signup-lastname", failedTextColour, "signup-lastname-incomplete",
+                        `.Last name must be no more than ${lastnameMaxLength} characters`, true)
                 }
                 if (usernameInput.length > usernameMaxLength) { // Limit username name input to 64 characters
-                    fail = setValue("signup-username", failedTextColour, "signup-username-incomplete", ".Username must be no more than 32 characters", true)
+                    fail = setValue("signup-username", failedTextColour, "signup-username-incomplete",
+                        `.Username must be no more than ${usernameMaxLength} characters`, true)
                 } else if (usernameInUse) { // Disallow duplicate usernames
                     fail = setValue("signup-username", failedTextColour, "signup-username-incomplete", ".This username is already in use", true)
                 }
                 if (emailInput.length > 0) { // Ensure that the email input is at least one character long
-                    if (emailInput.length > emailMaxLength || emailInput.length < emailMinLength) { // Limit email address to be between 4-256 characters
-                        fail = setValue("signup-email", failedTextColour, "signup-email-incomplete", ".Email must be between 4-256 characters", true)
+                    if (emailInput.length > emailMaxLength || emailInput.length < emailMinLength) { // Limit email address to be between 4-128 characters
+                        fail = setValue("signup-email", failedTextColour, "signup-email-incomplete",
+                            `.Email must be between ${emailMinLength}-${emailMaxLength} characters`, true)
                     } else if (!(emailInput.replace(/[^@]/g, "").length === 1 && emailInput.split('@')[emailInput.split('@').length - 1].includes('.'))) {
                         /* The email input must only contain one @ (this is checked by replacing everything which is not @ and then getting the length)
                         The email must also have an '.' after the @ */
@@ -592,13 +607,17 @@
                 }
                 const passwordInput = document.getElementById("signup-password").value.trim()
                 const confirmPasswordInput = document.getElementById("signup-confirmpassword").value.trim()
-                if (passwordInput.length > 0 || confirmPasswordInput.length > 0) { // Ensure that the password input or confirm password input is at least one character long
+                // Ensure that the password input or confirm password input is at least one character long
+                if (passwordInput.length > 0 || confirmPasswordInput.length > 0) {
                     if (passwordInput.length > 0 && passwordInput !== confirmPasswordInput) { // passwords must be equal
                         fail = setValue("signup-password", failedTextColour, "signup-password-incomplete", ".Passwords do not match", true)
                         setValue("signup-confirmpassword", failedTextColour, "signup-confirmpassword-incomplete", ".Passwords do not match", true)
-                    } else if (passwordInput.length < passwordMinLength || passwordInput.length > passwordMaxLength) { // password should have to be 8-128 characters
-                        fail = setValue("signup-password", failedTextColour, "signup-password-incomplete", ".Password must be between 8-128 characters", true)
-                        setValue("signup-confirmpassword", failedTextColour, "signup-confirmpassword-incomplete", ".Password must be between 8-128 characters", true)
+                    } else if (passwordInput.length < passwordMinLength || passwordInput.length > passwordMaxLength) {
+                        // password should have to be 8-128 characters
+                        fail = setValue("signup-password", failedTextColour, "signup-password-incomplete",
+                            `.Password must be between ${passwordMinLength}-${passwordMaxLength} characters`, true)
+                        setValue("signup-confirmpassword", failedTextColour, "signup-confirmpassword-incomplete",
+                            `.Password must be between ${passwordMinLength}-${passwordMaxLength} characters`, true)
                     }
                 }
                 if (!fail) { // Data has been validated, sign up the user
@@ -677,10 +696,12 @@
         document.getElementById("forgotpassword-confirmpassword").type = "password"
         document.getElementById("forgotpassword-show-password").checked = false // Set the checked value to false
         document.getElementById("forgotpassword-incorrect").classList.remove("successful")
-        clearValue(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
+        clearValue(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password",
+            "forgotpassword-confirmpassword"])
         clearText(["forgotpassword-incorrect", "forgotpassword-firstname-incomplete", "forgotpassword-lastname-incomplete", "forgotpassword-username-incomplete",
             "forgotpassword-email-incomplete", "forgotpassword-password-incomplete", "forgotpassword-confirmpassword-incomplete"])
-        clearColour(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password", "forgotpassword-confirmpassword"])
+        clearColour(["forgotpassword-firstname", "forgotpassword-lastname", "forgotpassword-username", "forgotpassword-email", "forgotpassword-password",
+            "forgotpassword-confirmpassword"])
     })
 
     signUpModal.on('hidden.bs.modal', function() {
@@ -694,10 +715,12 @@
         document.getElementById("signup-show-password").checked = false // Set the checked value to false
         removeTeacherButtonInput()
         removeStudentButtonInput()
-        clearValue(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
-        clearText(["signup-button-incomplete", "signup-firstname-incomplete", "signup-lastname-incomplete", "signup-username-incomplete", "signup-email-incomplete",
-            "signup-password-incomplete", "signup-confirmpassword-incomplete"])
-        clearColour(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password", "signup-confirmpassword"])
+        clearValue(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password",
+            "signup-confirmpassword"])
+        clearText(["signup-button-incomplete", "signup-firstname-incomplete", "signup-lastname-incomplete", "signup-username-incomplete",
+            "signup-email-incomplete", "signup-password-incomplete", "signup-confirmpassword-incomplete"])
+        clearColour(["teacher-button", "student-button", "signup-firstname", "signup-lastname", "signup-username", "signup-email", "signup-password",
+            "signup-confirmpassword"])
     })
 
     $('.closeLoginModal').click(function() {
@@ -759,17 +782,12 @@
             "type": "category-language",
             "language": newLanguage
         }
-        // Now need to fix this!
         postAjax("{{url_for('categories', category='all-categories', page=1)}}", formData, true, false, "")
     })
 
     requestAnimationFrame(function() {
-        /**
-         * This function is providing as a failsafe to make sure what is displayed in the navigation bar is correct
-         * This function is called when the window is animated
-        */
-        //checkLogin({{ logged_in }}, {{ admin_clean }})
-        setImgSize()
+        /** This function is called when the window is animated and is used to call setImgSize() */
+        setImgSize() // Sets the size of the category images
     })
 
     function setImgSize() {
@@ -927,7 +945,8 @@
             "checkboxes": activeCheckboxes
         }
         const currentCategory = $("#button-level-submit").data("category")
-        postAjax("{{url_for('categories', category='all-categories', page=1)}}", formData, false, true, `/categories/${currentCategory}/1`) // redirect to first pay
+        // redirect to first page
+        postAjax("{{url_for('categories', category='all-categories', page=1)}}", formData, false, true, `/categories/${currentCategory}/1`)
     })
 
     function validateAddWord() {
@@ -959,7 +978,8 @@
                 */
                 let validEnglishWord = /^[a-z|āēīōū\s]+$/.test(englishWord.toLowerCase())
                 let validMaoriWord = /^[a-z|āēīōū\s]+$/.test(maoriWord.toLowerCase())
-                if (englishWord.length > 0 && maoriWord.length > 0 && englishWord.length <= wordMaxLength && maoriWord.length <= wordMaxLength && validEnglishWord && validMaoriWord) {
+                if (englishWord.length > 0 && maoriWord.length > 0 && englishWord.length <= wordMaxLength && maoriWord.length <= wordMaxLength
+                    && validEnglishWord && validMaoriWord) {
                     const data = {english: englishWord, maori: maoriWord}
                     const response = await fetch('/getwordinformation', { // fetch /getwordinformation from app.py
                         method: 'POST',
@@ -1117,7 +1137,7 @@
                 let englishOptions = []
                 for (let i = 0; i < englishNodes.length; i++) {
                     // Append the options into a new array
-                    englishOptions.push(englishNodes[i]) // Need to do a regex here to replace all macros with english characters
+                    englishOptions.push(englishNodes[i])
                 }
                 const newEnglishOption = new Option(englishWord.toLowerCase(), wordId)
                 englishOptions.push(newEnglishOption)
@@ -1192,6 +1212,7 @@
                 const category = responseText.category
                 const wordLevel = responseText.wordLevel
                 let relativePath = "/static/images/noimage.png";
+                // Check if this word has any image, else use the placeholder image
                 if (responseText.wordImage != null) {
                     relativePath = `/static/images/${responseText.wordImage}`
                 }
@@ -1245,7 +1266,8 @@
         /** Function for validating the add category form information in order to return any errors back to the user */
         let categoryName = document.getElementById("add-category-category").value.trim()
         if (categoryName.length <= 0 || categoryName.length > categoryMaxLength) {
-            setValue("add-category-category", failedTextColour, "add-category-category-incomplete", `.The category name must be between 0 and ${categoryMaxLength} characters`)
+            setValue("add-category-category", failedTextColour, "add-category-category-incomplete",
+                `.The category name must be between 0 and ${categoryMaxLength} characters`)
         } else if (categoryName.replace(/[a-zA-Z\d\/]/g, "").trim().length > 0 ) {
             /**
              * Use a regular expression to check if the category name input is value
@@ -1258,7 +1280,8 @@
              * This then checks if there is any text remaining after this regular expression has been performed,
              * display an error message to the user if this is met
              */
-            setValue("add-category-category", failedTextColour, "add-category-category-incomplete", ". '/' The category name cannot contain special characters, except for")
+            setValue("add-category-category", failedTextColour, "add-category-category-incomplete",
+                ". '/' The category name cannot contain special characters, except for")
         } else {
             (async () => {
                 try {
@@ -1308,7 +1331,7 @@
                 let addWordCategoryOptions = []
                 for (let i = 0; i < addWordCategoryNodes.length; i++) {
                     // Append the options into a new array
-                    addWordCategoryOptions.push(addWordCategoryNodes[i]) // Need to do a regex here to replace all macros with english characters
+                    addWordCategoryOptions.push(addWordCategoryNodes[i])
                 }
                 const newAddWordCategoryOption = new Option(categoryName, categoryId)
                 addWordCategoryOptions.push(newAddWordCategoryOption)

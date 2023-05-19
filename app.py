@@ -12,6 +12,7 @@ import time
 
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 
+# Get the path of the database
 DATABASE = os.path.join(PROJECT_ROOT, "maoridictionary.db")
 
 app = Flask(__name__)
@@ -62,11 +63,17 @@ def is_administrator():
     """
     is_admin = False
     if is_logged_in():
+        # Create a connection to the database
         con = create_connection(DATABASE)
+        # Creating a cursor object for executing SQL statements and retrieving data from the database
         cur = con.cursor()
+        # SQL query to retrieve the administrator status of a user based on their user_id
         query = "SELECT administrator FROM users WHERE user_id = ?"
+        # Executing the SQL query with the user's session ID as a parameter
         cur.execute(query, (session.get("id"),))
+        # Fetch and assign the administrator status value from the query result
         is_admin = cur.fetchone()[0]
+        # Close the connection
         con.close()
     return is_admin
 
@@ -85,8 +92,8 @@ def sort_words(words, selected_language, sorting_method):
     """
     Sort words using a lambda function that takes an element of the tuple as its parameter
     :param words:
-    words[0] = maoriword
-    words[1] = englishword
+    words[0] = maori_word
+    words[1] = english_word
     words[2] = definition
     words[3] = level
     :param selected_language: The selected language for sorting (English-Māori or Māori-English)
@@ -174,7 +181,7 @@ def sign_up():
     """
     json_data = request.get_json()
     con = open_database(DATABASE)
-    query = "INSERT INTO users (firstName, lastName, username, email, password, administrator) " \
+    query = "INSERT INTO users (first_name, last_name, username, email, password, administrator) " \
             "VALUES (?, ?, ?, ?, ?, ?)"  # Insert sign up information into the users database
     cur = con.cursor()
     cur.execute(query,
@@ -280,7 +287,7 @@ def word_manager():
     english_word = data['english'].lower()
     con = open_database(DATABASE)
     cur = con.cursor()
-    query = "SELECT maoriword, englishword FROM words"  # Used for validation
+    query = "SELECT maori_word, english_word FROM words"  # Used for validation
     cur.execute(query)
     words = cur.fetchall()
     maori_words = [x[0].lower() for x in words]
@@ -302,7 +309,7 @@ def word_from_id():
     word_id = data["id"]
     con = open_database(DATABASE)
     cur = con.cursor()
-    query = "SELECT maoriword, englishword, cat_id, definition, level, image FROM words WHERE word_id = ?"
+    query = "SELECT maori_word, english_word, cat_id, definition, level, image FROM words WHERE word_id = ?"
     cur.execute(query, (word_id,))
     word_information = cur.fetchall()[0]
     maori_word = word_information[0]
@@ -330,7 +337,7 @@ def word_id_from_word():
     english_word = data["english"]
     con = open_database(DATABASE)
     cur = con.cursor()
-    query = "SELECT word_id FROM words WHERE maoriword = ? and englishword = ?"
+    query = "SELECT word_id FROM words WHERE maori_word = ? and english_word = ?"
     cur.execute(query, (maori_word, english_word))
     word_id = cur.fetchone()[0]
     con.close()
@@ -387,7 +394,7 @@ def add_word():
         image.save(image_path)
     if is_administrator():
         con = open_database(DATABASE)
-        query = "INSERT INTO words (maoriword, englishword, cat_id, definition, level, image, added_by, time_added) " \
+        query = "INSERT INTO words (maori_word, english_word, cat_id, definition, level, image, added_by, time_added) " \
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         cur = con.cursor()
         cur.execute(query, (maori_word, english_word, category, definition, level, image_name_refined,
@@ -426,7 +433,7 @@ def delete_word_from_data():
     con = create_connection(DATABASE)
     cur = con.cursor()
     # The query alternates between current_word and translated word as there can be English-Maori or Maori-English
-    query = "DELETE FROM words WHERE maoriword = ? OR englishword = ? OR maoriword = ? OR englishword = ?"
+    query = "DELETE FROM words WHERE maori_word = ? OR english_word = ? OR maori_word = ? OR english_word = ?"
     cur.execute(query, (current_word, translated_word, translated_word, current_word))
     con.commit()
     con.close()
@@ -575,13 +582,12 @@ def categories(category, page, search):
         # replace the whitespace with -
         sanitised_category_list = [re.sub(r'\s+', '-', x) for x in sanitised_category_list]
         category_sanitised = category.title().replace("-", " ").replace("+", "/")
-        # if re.match(r"\d", category_sanitised):
-        #     category_sanitised = category_sanitised.lower()
-        # Need to make it so that it checks if a word starts with a number
+        # Iterate over each word of category sanitised
         category_sanitised_array = category_sanitised.split(" ")
         new_category_sanitised = ""
         for string in category_sanitised_array:
             if len(string) > 1:
+                # Convert everything to lowercase except for the first character of the string
                 string = string[0] + string[1:len(string)].lower()
             new_category_sanitised += string + " "
         category_sanitised = new_category_sanitised.strip()
@@ -598,7 +604,7 @@ def categories(category, page, search):
         if current_category > 0:
             con = open_database(DATABASE)
             cur = con.cursor()
-            query = f"SELECT maoriword, englishword, definition, level, image, word_id FROM words WHERE cat_id = ?" \
+            query = f"SELECT maori_word, english_word, definition, level, image, word_id FROM words WHERE cat_id = ?" \
                     f" and level IN ({question_marks})"
             cur.execute(query, (current_category, *tuple(selected_levels)))
             word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
@@ -606,12 +612,12 @@ def categories(category, page, search):
         else:  # current category is 0 (or error has occurred so just display all)
             con = open_database(DATABASE)
             cur = con.cursor()
-            query = f"SELECT maoriword, englishword, definition, level, image, word_id FROM words WHERE level" \
+            query = f"SELECT maori_word, english_word, definition, level, image, word_id FROM words WHERE level" \
                     f" IN ({question_marks})"
             cur.execute(query, (*tuple(selected_levels),))
             word_list = sort_words(cur.fetchall(), selected_language, sorting_method)
             con.close()
-        # [0] is maoriword, [1] is english word, [2] is definition, [3] is level, [4] is image, [5] is word id
+        # [0] is maori_word, [1] is english_word, [2] is definition, [3] is level, [4] is image, [5] is word id
         # Only reset the current search when the category has changed
         current_search = ""
         if search is not None:
@@ -624,7 +630,7 @@ def categories(category, page, search):
                     matching_words.append(word)
             word_list = matching_words
         if current_category > 0:
-            category_name = category  # sanitised_category_list[current_category - 1]
+            category_name = category
         else:
             category_name = "all-categories"
         total_words = len(word_list)
@@ -642,6 +648,7 @@ def categories(category, page, search):
             page_count = math.ceil(len(word_list) / words_per_page)
             if len(word_list) > 0:
                 for i in range(0, len(word_list), words_per_page):
+                    # Append the words to the sorted world list
                     sorted_word_list.append(list(word_list[i:i + words_per_page]))
         else:  # Display all words
             page_count = 1
@@ -694,26 +701,27 @@ def translate(word, word_id):
     """
     con = open_database(DATABASE)
     cur = con.cursor()
-    query = "SELECT englishword FROM words WHERE englishword = ?"
+    query = "SELECT english_word FROM words WHERE english_word = ?"
     cur.execute(query, (word,))
     has_word = False
     if cur.fetchone() is not None:
         has_word = True
         if word_id is not None:
-            query = "SELECT maoriword, definition, level, image, added_by, time_added FROM words WHERE word_id = ?"
+            query = "SELECT maori_word, definition, level, image, added_by, time_added FROM words WHERE word_id = ?"
         else:
-            query = "SELECT maoriword, definition, level, image, added_by, time_added FROM words WHERE englishword = ?"
+            query = "SELECT maori_word, definition, level, image, added_by, time_added FROM words " \
+                    "WHERE english_word = ?"
     else:
-        query = "SELECT maoriword FROM words WHERE maoriword = ?"
+        query = "SELECT maori_word FROM words WHERE maori_word = ?"
         cur.execute(query, (word,))
         if cur.fetchone() is not None:
             has_word = True
             if word_id is not None:
-                query = "SELECT englishword, definition, level, image, added_by, time_added FROM words " \
+                query = "SELECT english_word, definition, level, image, added_by, time_added FROM words " \
                         "WHERE word_id = ?"
             else:
-                query = "SELECT englishword, definition, level, image, added_by, time_added FROM words " \
-                        "WHERE maoriword = ?"
+                query = "SELECT english_word, definition, level, image, added_by, time_added FROM words " \
+                        "WHERE maori_word = ?"
     if has_word:
         if word_id is not None:
             cur.execute(query, (word_id,))
@@ -765,11 +773,11 @@ def admin():
         cur.execute(query)
         levels = [x[0] for x in cur.fetchall()]
         # English words
-        query = "SELECT englishword, word_id FROM words"
+        query = "SELECT english_word, word_id FROM words"
         cur.execute(query)
         english_words = sorted(cur.fetchall(), key=lambda x: x[0])
         # Maori words
-        query = "SELECT maoriword, word_id FROM words"
+        query = "SELECT maori_word, word_id FROM words"
         cur.execute(query)
         maori_words = sorted(cur.fetchall(), key=lambda x: x[0])
         con.close()

@@ -14,6 +14,7 @@
 
 {% block main %}
 <h3>Add a word</h3>
+<!--Add word form-->
 <form class="admin-form add-word" id="add-word-form" method="post" action="/addword">
     <label for="english-word" class="form-label">English Word</label>
     <input type="text" name="english-word" id="english-word" class="form-element"/>
@@ -26,6 +27,7 @@
     <div class="field-incomplete" id="word-definition-incomplete"></div>
     <label for="word-select-category" class="form-label">Category</label><br>
     <select name="word-select-category" id="word-select-category" class="admin-dropdown">
+        <!--Add all category names into the dropdown-->
         {% for i in range(category_ids|length) %}
             <option value="{{ category_ids[i] }}">{{ category_names[i] }}</option>
         {% endfor %}
@@ -33,6 +35,7 @@
     <div class="field-incomplete"></div>
     <label for="level-select-category" class="form-label">Level</label><br>
     <select name="level-select-category" id="level-select-category" class="admin-dropdown">
+        <!--Add all levels into the dropdown-->
         {% for level in levels %}
             <option value="{{ level }}">{{ level }}</option>
         {% endfor %}
@@ -43,7 +46,7 @@
     <input type="button" value="Add Word" class="form-submit admin-button" id="add-word-confirmation" onclick="validateAddWord()">
 </form>
 
-{# Add word modal #}
+<!--Add word modal-->
 <div id="addWordModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -52,6 +55,7 @@
                  <h4 class="modal-title">Confirm Add Word</h4>
             </div>
             <div class="modal-body">
+                <!--Display all the word information-->
                 <div id="add-word-modal-english-word" class="form-label modal-margin">English Word:</div>
                 <div id="add-word-modal-maori-word" class="form-label modal-margin">Māori Word:</div>
                 <div id="add-word-modal-definition" class="form-label modal-margin">Definition:</div>
@@ -70,6 +74,7 @@
 </div>
 
 <h3>Delete a word</h3>
+<!--Delete word form-->
 <form class="delete-word admin-form" id="delete-word-form" method="post" action="/deleteword">
     <label for="englishword-select-category" class="form-label">English Word</label><br>
     <select name="englishword-select-category" id="englishword-select-category" class="admin-dropdown" onchange="handleDeleteEnglishWordChange(this)">
@@ -81,6 +86,7 @@
     <label for="maoriword-select-category" class="form-label">Māori Word</label><br>
     <select name="maoriword-select-category" id="maoriword-select-category" class="admin-dropdown" onchange="handleDeleteMaoriWordChange(this)">
         {% for maori_word in maori_words %}
+            <!--Select the maori word corresponding to the english word based on the word id-->
             {% if maori_word[1] == english_words[0][1] %}
                 <option value="{{ maori_word[1] }}" selected>{{ maori_word[0] }}</option>
             {% else %}
@@ -91,7 +97,7 @@
     <input type="button" value="Delete Word" class="form-submit admin-button" id="delete-word-confirmation" onclick="deleteWordModalConfirmation()">
 </form>
 
-{# Delete word modal #}
+<!--Delete word modal-->
 <div id="deleteWordModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -100,6 +106,7 @@
                  <h4 class="modal-title">Confirm Delete Word</h4>
             </div>
             <div class="modal-body">
+                <!--Display word information-->
                 <div id="delete-word-modal-english-word" class="form-label modal-margin">English Word:</div>
                 <div id="delete-word-modal-maori-word" class="form-label modal-margin">Māori Word:</div>
                 <div id="delete-word-modal-definition" class="form-label modal-margin">Definition:</div>
@@ -118,6 +125,7 @@
 </div>
 
 <h3>Add a category</h3>
+<!--Form for add category-->
 <form class="add-category admin-form" id="add-category-form" method="post" action="/addcategory">
     <label for="add-category-category" class="form-label">Category Name:</label><br>
     <input type="text" name="add-category-category" id="add-category-category" class="form-element"/>
@@ -125,7 +133,7 @@
     <input type="button" value="Add Category" class="form-submit admin-button" id="add-category-confirmation" onclick="validateAddCategoryForm()">
 </form>
 
-{# Add category modal #}
+<!--Add category modal-->
 <div id="addCategoryModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -147,6 +155,7 @@
 </div>
 
 <h3>Delete a category</h3>
+<!--Form for delete category-->
 <form class="delete-category admin-form" id="delete-category-form" method="post" action="">
     <label for="category-name-delete-category" class="form-label">Category Name</label><br>
     <select name="category-name-delete-category" id="category-name-delete-category" class="admin-dropdown">
@@ -157,7 +166,7 @@
     <input type="button" value="Delete Category" class="form-submit admin-button" id="delete-category-confirmation" onclick="validateDeleteCategory()">
 </form>
 
-{# Delete category modal #}
+<!--Delete category modal-->
 <div id="deleteCategoryModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
